@@ -32,7 +32,6 @@ HRESULT CCamera_Free::Initialize(void * pArg)
 void CCamera_Free::Priority_Tick(_float fTimeDelta)
 {
 	
-
 	if (GetKeyState('W') & 0x8000)
 	{
 		m_pTransformCom->Go_Straight(fTimeDelta);
@@ -66,10 +65,7 @@ void CCamera_Free::Priority_Tick(_float fTimeDelta)
 		m_pTransformCom->Turn(m_pTransformCom->Get_State(CTransform::STATE_RIGHT), fTimeDelta * MouseMove * m_fMouseSensor);
 	}
 
-	
-
-	if (FAILED(SetUp_TransformMatices()))
-		return;
+	__super::Priority_Tick(fTimeDelta);
 }
 
 void CCamera_Free::Tick(_float fTimeDelta)
@@ -83,6 +79,14 @@ void CCamera_Free::Late_Tick(_float fTimeDelta)
 HRESULT CCamera_Free::Render()
 {
 	return S_OK;
+}
+
+void CCamera_Free::CursorFixCenter()
+{
+	POINT	ptMouse{ g_iWinSizeX >> 1, g_iWinSizeY >> 1 };
+
+	ClientToScreen(g_hWnd, &ptMouse);
+	SetCursorPos(ptMouse.x, ptMouse.y);
 }
 
 CCamera_Free * CCamera_Free::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)

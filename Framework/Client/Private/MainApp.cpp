@@ -25,7 +25,7 @@ HRESULT CMainApp::Initialize()
 	if (FAILED(m_pGameInstance->Initialize_Engine(g_hInst, LEVEL_END, GraphicDesc, &m_pDevice, &m_pContext)))
 		return E_FAIL;	
 
-	if (FAILED(Ready_Gara()))
+	if (FAILED(Ready_ETC()))
 		return E_FAIL;
 
 	if (FAILED(Ready_Prototype_Component_Static()))
@@ -49,7 +49,7 @@ void CMainApp::Tick(_float fTimeDelta)
 
 HRESULT CMainApp::Render()
 {
-	if (FAILED(m_pGameInstance->Begin_Draw(_float4(0.f, 0.f, 1.f, 1.f))))
+	if (FAILED(m_pGameInstance->Begin_Draw(_float4(0.f, 0.5f, 0.5f, 1.f))))
 		return E_FAIL;	
 
 	if (FAILED(m_pGameInstance->Draw()))
@@ -90,7 +90,7 @@ HRESULT CMainApp::Open_Level(LEVEL eStartLevel)
 	
 }
 
-HRESULT CMainApp::Ready_Gara()
+HRESULT CMainApp::Ready_ETC()
 {
 	if (FAILED(m_pGameInstance->Add_Font(TEXT("Font_Default"), TEXT("../Bin/Resources/Fonts/140.spritefont"))))
 		return E_FAIL;

@@ -72,6 +72,8 @@ public:
 	void MoveTo(_fvector vPoint, _float fLimit, _float fTimeDelta);
 	void LookAt(_fvector vPoint);
 	void LookAt_ForLandObject(_fvector vPoint);
+	void Set_Look(_fvector direction);
+	void Set_Look_ForLandObject(_fvector direction);
 
 private:
 	_float4x4			m_WorldMatrix = {};

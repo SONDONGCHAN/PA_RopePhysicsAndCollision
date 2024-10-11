@@ -85,6 +85,10 @@ public: /* For.Frustum */
 	_bool isIn_Frustum_WorldSpace(_fvector vPosition, _float fRadius = 0.0f);
 	_bool isIn_Frustum_LocalSpace(_fvector vPosition, _float fRadius = 0.f);
 
+public: /* etc */
+	int		Get_CurrentLevel() { return m_iCurrent_Level;}
+	void	Set_CurrentLevel(_int _iLevel) { m_iCurrent_Level = _iLevel; }
+
 
 #ifdef _DEBUG
 	HRESULT Ready_Debug(const wstring& strTargetTag, _float fX, _float fY, _float fSizeX, _float fSizeY);
@@ -106,7 +110,9 @@ private:
 	class CFont_Manager*			m_pFont_Manager = { nullptr };
 	class CTarget_Manager*			m_pTarget_Manager = { nullptr };
 	class CFrustum*					m_pFrustum = { nullptr };
-
+	
+	
+	int m_iCurrent_Level = { 0 };
 
 public:
 	static void Release_Engine();

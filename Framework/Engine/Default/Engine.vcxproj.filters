@@ -324,6 +324,9 @@
     <ClInclude Include="..\public\QuadTree.h">
       <Filter>01.Utility\03.Component\VIBuffer\Terrain\QaudTree</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\VIBuffer_Terrain_Basic.h">
+      <Filter>01.Utility\03.Component\VIBuffer\Terrain</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\Base.cpp">
@@ -472,6 +475,9 @@
     </ClCompile>
     <ClCompile Include="..\private\QuadTree.cpp">
       <Filter>01.Utility\03.Component\VIBuffer\Terrain\QaudTree</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\VIBuffer_Terrain_Basic.cpp">
+      <Filter>01.Utility\03.Component\VIBuffer\Terrain</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

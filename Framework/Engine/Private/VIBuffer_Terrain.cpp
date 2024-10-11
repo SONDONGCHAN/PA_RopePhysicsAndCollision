@@ -229,7 +229,7 @@ void CVIBuffer_Terrain::Culling(CTransform * pTransform)
 	m_pContext->Map(m_pIB, 0, D3D11_MAP_WRITE_DISCARD, 0, &SubResource);
 
 	/* 모든 삼각형들을 순회하면서 절두체 안에 있냐 없냐? */	
-	/*
+	
 	for (size_t i = 0; i < m_iNumVerticesZ - 1; i++)
 	{
 		for (size_t j = 0; j < m_iNumVerticesX - 1; j++)
@@ -250,7 +250,7 @@ void CVIBuffer_Terrain::Culling(CTransform * pTransform)
 				m_pGameInstance->isIn_Frustum_LocalSpace(XMLoadFloat3(&m_pVerticesPos[iIndices[3]])),
 			};
 
-			/ * 오른쪽 위 삼각형이 절두체 안에 있냐? * /
+			/* 오른쪽 위 삼각형이 절두체 안에 있냐? */
 			if (true == isIn[0] &&
 				true == isIn[1] &&
 				true == isIn[2])	
@@ -260,7 +260,7 @@ void CVIBuffer_Terrain::Culling(CTransform * pTransform)
 				((_uint*)SubResource.pData)[iNumIndices++] = iIndices[2];
 			}
 
-			/ * 왼쪽 아래 삼각형이 절두체 안에 있냐? * /
+			/* 왼쪽 아래 삼각형이 절두체 안에 있냐? */
 			if (true == isIn[0] &&
 				true == isIn[2] &&
 				true == isIn[3])
@@ -271,9 +271,9 @@ void CVIBuffer_Terrain::Culling(CTransform * pTransform)
 			}
 		}
 	}
-	*/
+	
 
-	m_pQuadTree->Culling(m_pVerticesPos, ((_uint*)SubResource.pData), &iNumIndices);
+	//m_pQuadTree->Culling(m_pVerticesPos, ((_uint*)SubResource.pData), &iNumIndices);
 
 	m_pContext->Unmap(m_pIB, 0);
 

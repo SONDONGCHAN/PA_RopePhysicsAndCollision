@@ -5,7 +5,7 @@
 
 BEGIN(Engine)
 class CTransform;
-class CVIBuffer_Terrain;
+class CVIBuffer_Terrain_Basic;
 END
 
 BEGIN(Client)
@@ -16,7 +16,7 @@ public:
 	typedef struct : public GAMEOBJECT_DESC
 	{
 		CTransform*					pTerrainTransform = { nullptr };
-		CVIBuffer_Terrain*			pTerrainVIBuffer = { nullptr };
+		CVIBuffer_Terrain_Basic*	pTerrainVIBuffer = { nullptr };
 	}LANDOBJ_DESC;
 protected:
 	CLandObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -33,7 +33,7 @@ public:
 
 protected:
 	CTransform*					m_pTerrainTransform = { nullptr };
-	CVIBuffer_Terrain*			m_pTerrainVIBuffer = { nullptr };	
+	CVIBuffer_Terrain_Basic*	m_pTerrainVIBuffer = { nullptr };
 
 protected:
 	HRESULT SetUp_OnTerrain(class CTransform* pTargetTransform);

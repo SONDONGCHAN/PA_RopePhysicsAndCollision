@@ -1,41 +1,19 @@
-﻿  Client.cpp
-  Player.cpp
-  PartObject.cpp
-  Loader.cpp
-  LandObject.cpp
-  Camera_Free.cpp
-  BackGround.cpp
-d:\정의훈\140\framework\client\private\background.cpp(53): warning C4244: '인수': 'const unsigned int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-  Weapon.cpp
-d:\정의훈\140\framework\client\private\weapon.cpp(85): warning C4267: '인수': 'size_t'에서 'Engine::_uint'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-  Terrain.cpp
-  Sky.cpp
-  Particle_Rect.cpp
-  Particle_Point.cpp
-  Monster.cpp
-d:\정의훈\140\framework\client\private\monster.cpp(35): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-d:\정의훈\140\framework\client\private\monster.cpp(85): warning C4267: '인수': 'size_t'에서 'Engine::_uint'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-d:\정의훈\140\framework\client\private\monster.cpp(88): warning C4267: '인수': 'size_t'에서 'Engine::_uint'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-d:\정의훈\140\framework\client\private\monster.cpp(94): warning C4267: '인수': 'size_t'에서 'Engine::_uint'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-  MainApp.cpp
-d:\정의훈\140\framework\client\private\mainapp.cpp(150): warning C4267: '초기화 중': 'size_t'에서 'Engine::_uint'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-d:\정의훈\140\framework\client\private\mainapp.cpp(170): warning C4267: '초기화 중': 'size_t'에서 'Engine::_uint'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-  Level_Logo.cpp
-  Level_Loading.cpp
-  Level_GamePlay.cpp
-  Body_Player.cpp
-d:\정의훈\140\framework\client\private\body_player.cpp(82): warning C4267: '인수': 'size_t'에서 'Engine::_uint'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-d:\정의훈\140\framework\client\private\body_player.cpp(85): warning C4267: '인수': 'size_t'에서 'Engine::_uint'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-d:\정의훈\140\framework\client\private\body_player.cpp(91): warning C4267: '인수': 'size_t'에서 'Engine::_uint'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-d:\정의훈\140\framework\client\private\body_player.cpp(124): warning C4267: '인수': 'size_t'에서 'Engine::_uint'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-d:\정의훈\140\framework\client\private\body_player.cpp(130): warning C4267: '인수': 'size_t'에서 'Engine::_uint'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-  코드를 생성하고 있습니다...
-  컴파일하고 있습니다...
-  ForkLift.cpp
-d:\정의훈\140\framework\client\private\forklift.cpp(34): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-d:\정의훈\140\framework\client\private\forklift.cpp(64): warning C4267: '인수': 'size_t'에서 'Engine::_uint'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-d:\정의훈\140\framework\client\private\forklift.cpp(67): warning C4267: '인수': 'size_t'에서 'Engine::_uint'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-d:\정의훈\140\framework\client\private\forklift.cpp(73): warning C4267: '인수': 'size_t'에서 'Engine::_uint'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-  코드를 생성하고 있습니다...
-  Client.vcxproj -> D:\정의훈\140\Framework\Client\Default\..\Bin\Client.exe
-  Client.vcxproj -> ..\Bin\Client.pdb (Full PDB)
+﻿  Level_GamePlay.cpp
+C:\Users\dhqks6\Desktop\Task_ProJect\Task\Framework\Reference\Headers\Engine_Struct.h(35,2): warning C5208: typedef 이름에 사용되는 명명되지 않은 클래스가 비정적 데이터 멤버, 멤버 열거형 또는 멤버 클래스 이외의 멤버를 선언할 수 없습니다.
+C:\Users\dhqks6\Desktop\Task_ProJect\Task\Framework\Reference\Headers\Engine_Struct.h(43,2): warning C5208: typedef 이름에 사용되는 명명되지 않은 클래스가 비정적 데이터 멤버, 멤버 열거형 또는 멤버 클래스 이외의 멤버를 선언할 수 없습니다.
+C:\Users\dhqks6\Desktop\Task_ProJect\Task\Framework\Reference\Headers\Engine_Struct.h(53,2): warning C5208: typedef 이름에 사용되는 명명되지 않은 클래스가 비정적 데이터 멤버, 멤버 열거형 또는 멤버 클래스 이외의 멤버를 선언할 수 없습니다.
+C:\Users\dhqks6\Desktop\Task_ProJect\Task\Framework\Reference\Headers\Engine_Struct.h(62,2): warning C5208: typedef 이름에 사용되는 명명되지 않은 클래스가 비정적 데이터 멤버, 멤버 열거형 또는 멤버 클래스 이외의 멤버를 선언할 수 없습니다.
+C:\Users\dhqks6\Desktop\Task_ProJect\Task\Framework\Reference\Headers\Engine_Struct.h(71,2): warning C5208: typedef 이름에 사용되는 명명되지 않은 클래스가 비정적 데이터 멤버, 멤버 열거형 또는 멤버 클래스 이외의 멤버를 선언할 수 없습니다.
+C:\Users\dhqks6\Desktop\Task_ProJect\Task\Framework\Reference\Headers\Engine_Struct.h(81,2): warning C5208: typedef 이름에 사용되는 명명되지 않은 클래스가 비정적 데이터 멤버, 멤버 열거형 또는 멤버 클래스 이외의 멤버를 선언할 수 없습니다.
+C:\Users\dhqks6\Desktop\Task_ProJect\Task\Framework\Reference\Headers\Engine_Struct.h(93,2): warning C5208: typedef 이름에 사용되는 명명되지 않은 클래스가 비정적 데이터 멤버, 멤버 열거형 또는 멤버 클래스 이외의 멤버를 선언할 수 없습니다.
+C:\Users\dhqks6\Desktop\Task_ProJect\Task\Framework\Reference\Headers\Engine_Struct.h(119,2): warning C5208: typedef 이름에 사용되는 명명되지 않은 클래스가 비정적 데이터 멤버, 멤버 열거형 또는 멤버 클래스 이외의 멤버를 선언할 수 없습니다.
+C:\Users\dhqks6\Desktop\Task_ProJect\Task\Framework\Reference\Headers\Engine_Struct.h(125,2): warning C5208: typedef 이름에 사용되는 명명되지 않은 클래스가 비정적 데이터 멤버, 멤버 열거형 또는 멤버 클래스 이외의 멤버를 선언할 수 없습니다.
+C:\Users\dhqks6\Desktop\Task_ProJect\Task\Framework\Reference\Headers\Transform.h(17,2): warning C5208: typedef 이름에 사용되는 명명되지 않은 클래스가 비정적 데이터 멤버, 멤버 열거형 또는 멤버 클래스 이외의 멤버를 선언할 수 없습니다.
+C:\Users\dhqks6\Desktop\Task_ProJect\Task\Framework\Reference\Headers\Bounding_AABB.h(10,17): warning C5208: typedef 이름에 사용되는 명명되지 않은 클래스가 비정적 데이터 멤버, 멤버 열거형 또는 멤버 클래스 이외의 멤버를 선언할 수 없습니다.
+C:\Users\dhqks6\Desktop\Task_ProJect\Task\Framework\Reference\Headers\Bounding_OBB.h(18,17): warning C5208: typedef 이름에 사용되는 명명되지 않은 클래스가 비정적 데이터 멤버, 멤버 열거형 또는 멤버 클래스 이외의 멤버를 선언할 수 없습니다.
+C:\Users\dhqks6\Desktop\Task_ProJect\Task\Framework\Reference\Headers\Bounding_Sphere.h(10,17): warning C5208: typedef 이름에 사용되는 명명되지 않은 클래스가 비정적 데이터 멤버, 멤버 열거형 또는 멤버 클래스 이외의 멤버를 선언할 수 없습니다.
+C:\Users\dhqks6\Desktop\Task_ProJect\Task\Framework\Reference\Headers\GameObject.h(12,17): warning C5208: typedef 이름에 사용되는 명명되지 않은 클래스가 비정적 데이터 멤버, 멤버 열거형 또는 멤버 클래스 이외의 멤버를 선언할 수 없습니다.
+C:\Users\dhqks6\Desktop\Task_ProJect\Task\Framework\Client\Public\LandObject.h(16,17): warning C5208: typedef 이름에 사용되는 명명되지 않은 클래스가 비정적 데이터 멤버, 멤버 열거형 또는 멤버 클래스 이외의 멤버를 선언할 수 없습니다.
+C:\Users\dhqks6\Desktop\Task_ProJect\Task\Framework\Reference\Headers\Camera.h(10,18): warning C5208: typedef 이름에 사용되는 명명되지 않은 클래스가 비정적 데이터 멤버, 멤버 열거형 또는 멤버 클래스 이외의 멤버를 선언할 수 없습니다.
+C:\Users\dhqks6\Desktop\Task_ProJect\Task\Framework\Client\Public\Camera_Free.h(11,17): warning C5208: typedef 이름에 사용되는 명명되지 않은 클래스가 비정적 데이터 멤버, 멤버 열거형 또는 멤버 클래스 이외의 멤버를 선언할 수 없습니다.
+  Client.vcxproj -> C:\Users\dhqks6\Desktop\Task_ProJect\Task\Framework\Client\Bin\Client.exe

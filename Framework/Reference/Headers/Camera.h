@@ -36,6 +36,9 @@ protected:
 	_float				m_fAspect = { 0.0f };
 	
 protected:
+	_bool	m_isRecording = { false };
+
+protected:
 	HRESULT SetUp_TransformMatices();
 
 public:

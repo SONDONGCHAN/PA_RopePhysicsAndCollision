@@ -153,6 +153,32 @@ void CTransform::LookAt_ForLandObject(_fvector vPoint)
 	Set_State(STATE_LOOK, XMVector3Normalize(vLook) * vScaled.z);
 }
 
+void CTransform::Set_Look(_fvector direction)
+{
+	_float3	vScaled = Get_Scaled();
+
+	_vector	vPosition = Get_State(CTransform::STATE_POSITION);
+
+	_vector	vLook = direction;
+	_vector vRight = XMVector3Cross(XMVectorSet(0.f, 1.f, 0.f, 0.f), vLook);
+	_vector vUp = XMVector3Cross(vLook, vRight);
+
+	Set_State(STATE_RIGHT, XMVector3Normalize(vRight) * vScaled.x);
+	Set_State(STATE_UP, XMVector3Normalize(vUp) * vScaled.y);
+	Set_State(STATE_LOOK, XMVector3Normalize(vLook) * vScaled.z);
+}
+
+void CTransform::Set_Look_ForLandObject(_fvector direction)
+{
+	_float3	vScaled = Get_Scaled();
+	_vector	vLook = direction;
+	_vector vRight = XMVector3Cross(XMVectorSet(0.f, 1.f, 0.f, 0.f), vLook);
+	vLook = XMVector3Cross(vRight, XMVectorSet(0.f, 1.f, 0.f, 0.f));
+
+	Set_State(STATE_RIGHT, XMVector3Normalize(vRight) * vScaled.x);
+	Set_State(STATE_LOOK, XMVector3Normalize(vLook) * vScaled.z);
+}
+
 CTransform * CTransform::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 {
 	CTransform*		pInstance = new CTransform(pDevice, pContext);

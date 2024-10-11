@@ -23,7 +23,6 @@ private:
 	HRESULT Ready_Layer_Effect(const wstring& strLayerTag);
 	HRESULT Ready_LandObjects();
 	HRESULT Ready_Layer_Player(const wstring& strLayerTag, CLandObject::LANDOBJ_DESC& LandObjDesc);
-	HRESULT Ready_Layer_Monster(const wstring& strLayerTag, CLandObject::LANDOBJ_DESC& LandObjDesc);
 	HRESULT Ready_Layer_Static_Object(const wstring& strLayerTag, CLandObject::LANDOBJ_DESC& LandObjDesc);
 	
 

@@ -34,7 +34,7 @@ private:
 
 private:
 	HRESULT Open_Level(LEVEL eStartLevel);
-	HRESULT Ready_Gara();
+	HRESULT Ready_ETC();
 	HRESULT Ready_Prototype_Component_Static();
 
 

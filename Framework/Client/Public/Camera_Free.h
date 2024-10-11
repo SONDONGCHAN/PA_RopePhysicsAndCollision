@@ -28,6 +28,9 @@ public:
 	virtual HRESULT Render() override;
 
 private:
+	void CursorFixCenter();
+
+private:
 	_float			m_fMouseSensor = { 0.0f };
 
 public:

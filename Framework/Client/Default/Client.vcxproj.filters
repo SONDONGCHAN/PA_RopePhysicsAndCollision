@@ -79,6 +79,15 @@
     <Filter Include="02.GameObjects\LandObject\ForkLift">
       <UniqueIdentifier>{4d7a9e06-9fb1-443f-aaa9-ef9ae1d4c975}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Cameras\Camera_ThirdPerson">
+      <UniqueIdentifier>{35aed4b7-0ae1-4ff1-8fd0-b855a116da7e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Manager">
+      <UniqueIdentifier>{cd8ffafb-d467-4940-91d2-6782fbfa8384}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Manager\00. Camera Manager">
+      <UniqueIdentifier>{5bad9d4d-287e-4709-87a7-cfee38d64e16}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -150,6 +159,15 @@
     <ClInclude Include="..\Public\ForkLift.h">
       <Filter>02.GameObjects\LandObject\ForkLift</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Camera_ThirdPerson.h">
+      <Filter>02.GameObjects\Cameras\Camera_ThirdPerson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Terrain_Basic.h">
+      <Filter>02.GameObjects\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Camera_manager.h">
+      <Filter>03. Manager\00. Camera Manager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -211,6 +229,15 @@
     </ClCompile>
     <ClCompile Include="..\Private\ForkLift.cpp">
       <Filter>02.GameObjects\LandObject\ForkLift</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Camera_ThirdPerson.cpp">
+      <Filter>02.GameObjects\Cameras\Camera_ThirdPerson</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Terrain_Basic.cpp">
+      <Filter>02.GameObjects\Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Camera_manager.cpp">
+      <Filter>03. Manager\00. Camera Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

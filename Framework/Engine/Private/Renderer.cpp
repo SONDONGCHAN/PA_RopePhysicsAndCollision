@@ -121,18 +121,18 @@ HRESULT CRenderer::Initialize()
 
 
 #ifdef _DEBUG
-	if (FAILED(m_pGameInstance->Ready_Debug(TEXT("Target_Diffuse"), 100.0f, 100.0f, 200.0f, 200.0f)))
-		return E_FAIL;
-	if (FAILED(m_pGameInstance->Ready_Debug(TEXT("Target_Normal"), 100.0f, 300.0f, 200.0f, 200.0f)))
-		return E_FAIL;
-	if (FAILED(m_pGameInstance->Ready_Debug(TEXT("Target_Depth"), 100.0f, 500.0f, 200.0f, 200.0f)))
-		return E_FAIL;
-	if (FAILED(m_pGameInstance->Ready_Debug(TEXT("Target_Shade"), 300.0f, 100.0f, 200.0f, 200.0f)))
-		return E_FAIL;
-	if (FAILED(m_pGameInstance->Ready_Debug(TEXT("Target_Specular"), 300.0f, 300.0f, 200.0f, 200.0f)))
-		return E_FAIL;
-	if (FAILED(m_pGameInstance->Ready_Debug(TEXT("Target_Shadow"), ViewPortDesc.Width - 150.0f, 150.0f, 300.0f, 300.0f)))
-		return E_FAIL;
+	//if (FAILED(m_pGameInstance->Ready_Debug(TEXT("Target_Diffuse"), 100.0f, 100.0f, 200.0f, 200.0f)))
+	//	return E_FAIL;
+	//if (FAILED(m_pGameInstance->Ready_Debug(TEXT("Target_Normal"), 100.0f, 300.0f, 200.0f, 200.0f)))
+	//	return E_FAIL;
+	//if (FAILED(m_pGameInstance->Ready_Debug(TEXT("Target_Depth"), 100.0f, 500.0f, 200.0f, 200.0f)))
+	//	return E_FAIL;
+	//if (FAILED(m_pGameInstance->Ready_Debug(TEXT("Target_Shade"), 300.0f, 100.0f, 200.0f, 200.0f)))
+	//	return E_FAIL;
+	//if (FAILED(m_pGameInstance->Ready_Debug(TEXT("Target_Specular"), 300.0f, 300.0f, 200.0f, 200.0f)))
+	//	return E_FAIL;
+	//if (FAILED(m_pGameInstance->Ready_Debug(TEXT("Target_Shadow"), ViewPortDesc.Width - 150.0f, 150.0f, 300.0f, 300.0f)))
+	//	return E_FAIL;
 #endif // _DEBUG
 	
 
@@ -252,8 +252,6 @@ HRESULT CRenderer::Render_Shadow()
 
 HRESULT CRenderer::Render_NonBlend()
 {
-	/* Diffuse + Normal */
-	/* 장치에 원래셋팅되어있었던 백버퍼는 제거하고 백버퍼위치에 디퓨즈를 그 다음위치에 노멀을 바인딩한다. */
 	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_GameObjects"))))
 		return E_FAIL;
 
@@ -267,7 +265,6 @@ HRESULT CRenderer::Render_NonBlend()
 
 	m_RenderObjects[RENDER_NONBLEND].clear();
 
-	/* 백버퍼를 0번째위치에 복구한다. */
 	if (FAILED(m_pGameInstance->End_MRT()))
 		return E_FAIL;
 
@@ -276,12 +273,9 @@ HRESULT CRenderer::Render_NonBlend()
 
 HRESULT CRenderer::Render_Lights()
 {
-	/* 빛들을 그린다. 빛의 연산결과를 그려낸다. */
-	/* Shade + Specular */
 	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_LightAcc"))))
 		return E_FAIL;
 
-	/* 사각형을 직교투영으로 화면에 꽉 채워서 그린다. */
 	if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 		return E_FAIL;
 	if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
@@ -295,16 +289,13 @@ HRESULT CRenderer::Render_Lights()
 	if (FAILED(m_pShader->Bind_RawValue("g_vCamPosition", &m_pGameInstance->Get_CamPosition(), sizeof(_float4))))
 		return E_FAIL;
 
-	/* 노말 렌더타겟을 쉐이더에 던진다. */
 	if (FAILED(m_pGameInstance->Bind_SRV(TEXT("Target_Normal"), m_pShader, "g_NormalTexture")))
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Bind_SRV(TEXT("Target_Depth"), m_pShader, "g_DepthTexture")))
 		return E_FAIL;
 
-	/* 빛들을 하나씩 그린다.(사각형버퍼를 셰이드타겟에 그린다.) */
 	m_pGameInstance->Render_Light(m_pShader, m_pVIBuffer);
 
-	/* 백버퍼복구. */
 	if (FAILED(m_pGameInstance->End_MRT()))
 		return E_FAIL;
 
@@ -349,8 +340,6 @@ HRESULT CRenderer::Render_Final()
 
 	if (FAILED(m_pShader->Bind_Matrix("g_LightProjMatrix", &ProjMatrix)))
 		return E_FAIL;
-
-
 
 	m_pShader->Begin(3);
 
@@ -414,11 +403,11 @@ HRESULT CRenderer::Render_Debug()
 	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
 
-	m_pGameInstance->Render_MRT(TEXT("MRT_GameObjects"), m_pShader, m_pVIBuffer);
+	//m_pGameInstance->Render_MRT(TEXT("MRT_GameObjects"), m_pShader, m_pVIBuffer);
 
-	m_pGameInstance->Render_MRT(TEXT("MRT_LightAcc"), m_pShader, m_pVIBuffer);
+	//m_pGameInstance->Render_MRT(TEXT("MRT_LightAcc"), m_pShader, m_pVIBuffer);
 
-	m_pGameInstance->Render_MRT(TEXT("MRT_Shadow"), m_pShader, m_pVIBuffer);
+	//m_pGameInstance->Render_MRT(TEXT("MRT_Shadow"), m_pShader, m_pVIBuffer);
 
 	for (auto& pComponent : m_DebugCom)
 	{

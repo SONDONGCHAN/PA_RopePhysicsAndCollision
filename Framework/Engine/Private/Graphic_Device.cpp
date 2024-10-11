@@ -16,25 +16,18 @@ HRESULT CGraphic_Device::Ready_Graphic_Device(const GRAPHIC_DESC& GraphicDesc, I
 #endif
 	D3D_FEATURE_LEVEL			FeatureLV;
 
-	/* 그래픽 장치를 초기화한다. */
 	if (FAILED(D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE_HARDWARE, 0, iFlag, nullptr, 0, D3D11_SDK_VERSION, &m_pDevice, &FeatureLV, &m_pDeviceContext)))
 		return E_FAIL;
 
-	/* SwapChain 전면과 후면버퍼를 번갈아가며 화면에 보여준다.(Present) */
-
-	/* 백버퍼를 생성하기 위한 texture2D 만든거야. */
 	if (FAILED(Ready_SwapChain(GraphicDesc.hWnd, GraphicDesc.isWindowed, GraphicDesc.iWinSizeX, GraphicDesc.iWinSizeY)))
 		return E_FAIL;
 
-	/* 스왑체인이 들고 있는 텍스쳐 2D를 가져와서 이를 바탕으로 백버퍼 렌더타겟 뷰를 만든다.*/
 	if (FAILED(Ready_BackBufferRenderTargetView()))
 		return E_FAIL;
 
 	if (FAILED(Ready_DepthStencilRenderTargetView(GraphicDesc.iWinSizeX, GraphicDesc.iWinSizeY)))
 		return E_FAIL;
 
-	/* 장치에 바인드해놓을 렌더타겟들과 뎁스스텐실뷰를 세팅한다. */
-	/* 장치는 동시에 최대 8개의 렌더타겟을 들고 있을 수 있다. */
 	ID3D11RenderTargetView*		pRTVs[1] = {
 		m_pBackBufferRTV, 
 	};
@@ -71,7 +64,6 @@ HRESULT CGraphic_Device::Clear_BackBuffer_View(_float4 vClearColor)
 	//	vClearColor, 1.f, 0)
 	//
 
-	/* 백버퍼를 초기화한다.  */
 	m_pDeviceContext->ClearRenderTargetView(m_pBackBufferRTV, (_float*)&vClearColor);
 
  	return S_OK;
@@ -92,10 +84,6 @@ HRESULT CGraphic_Device::Present()
 	if (nullptr == m_pSwapChain)
 		return E_FAIL;
 
-	
-	
-	/* 전면 버퍼와 후면 버퍼를 교체하여 후면 버퍼를 전면으로 보여주는 역할을 한다. */
-	/* 후면 버퍼를 직접 화면에 보여줄게. */	
 	return m_pSwapChain->Present(0, 0);	
 }
 
@@ -111,11 +99,9 @@ HRESULT CGraphic_Device::Ready_SwapChain(HWND hWnd, _bool isWindowed, _uint iWin
 	IDXGIFactory*			pFactory = nullptr;
 	pAdapter->GetParent(__uuidof(IDXGIFactory), (void**)&pFactory);
 
-	/* 스왑체인을 생성한다. = 텍스쳐를 생성하는 행위 + 스왑하는 형태  */
 	DXGI_SWAP_CHAIN_DESC		SwapChain;
 	ZeroMemory(&SwapChain, sizeof(DXGI_SWAP_CHAIN_DESC));
 			
-	/*텍스처(백버퍼)를 생성하는 행위*/
 	SwapChain.BufferDesc.Width = iWinCX;
 	SwapChain.BufferDesc.Height = iWinCY;
 
@@ -126,7 +112,6 @@ HRESULT CGraphic_Device::Ready_SwapChain(HWND hWnd, _bool isWindowed, _uint iWin
 	SwapChain.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	SwapChain.BufferCount = 1;
 
-	/*스왑하는 형태*/
 	SwapChain.BufferDesc.RefreshRate.Numerator = 60;
 	SwapChain.BufferDesc.RefreshRate.Denominator = 1;
 	SwapChain.SampleDesc.Quality = 0;
@@ -136,11 +121,8 @@ HRESULT CGraphic_Device::Ready_SwapChain(HWND hWnd, _bool isWindowed, _uint iWin
 	SwapChain.Windowed = isWindowed;
 	SwapChain.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 
-	/* 백버퍼라는 텍스처를 생성했다. */
 	if (FAILED(pFactory->CreateSwapChain(m_pDevice, &SwapChain, &m_pSwapChain)))
 		return E_FAIL;
-
-	
 
 	Safe_Release(pFactory);
 	Safe_Release(pAdapter);
@@ -155,13 +137,8 @@ HRESULT CGraphic_Device::Ready_BackBufferRenderTargetView()
 	if (nullptr == m_pDevice)
 		return E_FAIL;
 
-	
-
-	/* 내가 앞으로 사용하기위한 용도의 텍스쳐를 생성하기위한 베이스 데이터를 가지고 있는 객체이다. */
-	/* 내가 앞으로 사용하기위한 용도의 텍스쳐 : ID3D11RenderTargetView, ID3D11ShaderResoureView, ID3D11DepthStencilView */
 	ID3D11Texture2D*		pBackBufferTexture = nullptr;
 
-	/* 스왑체인이 들고있던 텍스처를 가져와봐. */
 	if (FAILED(m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&pBackBufferTexture)))
 		return E_FAIL;
 

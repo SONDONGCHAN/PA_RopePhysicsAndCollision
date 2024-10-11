@@ -28,14 +28,12 @@ void CLevel_Logo::Tick(_float fTimeDelta)
 
 		return;
 	}
-
-	
 }
 
 HRESULT CLevel_Logo::Render()
 {
 #ifdef _DEBUG
-	SetWindowText(g_hWnd, TEXT("로고레벨입니다."));
+	SetWindowText(g_hWnd, TEXT("Logo"));
 #endif
 
 	return S_OK;

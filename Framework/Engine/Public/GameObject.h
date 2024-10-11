@@ -21,7 +21,7 @@ protected:
 
 public:
 	class CComponent* Get_Component(const wstring& strComTag);
-	
+	CTransform* Get_TranformCom() { return m_pTransformCom; }
 
 public:
 	virtual HRESULT Initialize_Prototype();
