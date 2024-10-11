@@ -2,6 +2,8 @@
 
 #include "Client_Defines.h"
 #include "Camera.h"
+#include "Camera_Free.h"
+#include "Camera_ThirdPerson.h"
 
 BEGIN(Client)
 

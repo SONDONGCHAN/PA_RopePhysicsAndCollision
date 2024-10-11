@@ -2,8 +2,8 @@
 #include "Level_GamePlay.h"
 
 #include "LandObject.h"
-#include "Camera_Free.h"
-#include "Camera_ThirdPerson.h"
+#include "Camera_manager.h"
+
 
 
 CLevel_GamePlay::CLevel_GamePlay(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
@@ -94,6 +94,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Camera(const wstring & strLayerTag)
 	if (FAILED(m_pGameInstance->Add_CloneObject(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Camera_Free"), &CameraDesc_Free)))
 		return E_FAIL;
 
+	CCamera_manager::GetInstance()->Add_Camera("Camera_Free", dynamic_cast<CCamera*>(m_pGameInstance-> Clone_GameObject(TEXT("Prototype_GameObject_Camera_Free"), &CameraDesc_Free)));
 
 	CCamera_ThirdPerson::CAMERA_THIRDPERSON_DESC CameraDesc_ThirdPerson = {};
 
@@ -109,6 +110,11 @@ HRESULT CLevel_GamePlay::Ready_Layer_Camera(const wstring & strLayerTag)
 
 	if (FAILED(m_pGameInstance->Add_CloneObject(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Camera_ThirdPerson"), &CameraDesc_ThirdPerson)))
 		return E_FAIL;
+
+	
+	CCamera_manager::GetInstance()->Add_Camera("Camera_ThirdPerson", dynamic_cast<CCamera*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Camera_ThirdPerson"), &CameraDesc_ThirdPerson)));
+
+
 
 	return S_OK;
 }
