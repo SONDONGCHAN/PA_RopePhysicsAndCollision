@@ -30,6 +30,7 @@ HRESULT CLevel_GamePlay::Initialize()
 
 void CLevel_GamePlay::Tick(_float fTimeDelta)
 {
+	CCamera_manager::GetInstance()->Tick(fTimeDelta);
 }
 
 HRESULT CLevel_GamePlay::Render()
@@ -91,30 +92,31 @@ HRESULT CLevel_GamePlay::Ready_Layer_Camera(const wstring & strLayerTag)
 	CameraDesc_Free.fSpeedPerSec = 100.f;
 	CameraDesc_Free.fRotationPerSec = XMConvertToRadians(90.0f);
 
-	if (FAILED(m_pGameInstance->Add_CloneObject(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Camera_Free"), &CameraDesc_Free)))
+	CGameObject* pCamera_Free = m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Camera_Free"), &CameraDesc_Free);
+	CCamera_manager::GetInstance()->Add_Camera("Camera_Free", dynamic_cast<CCamera*>(pCamera_Free));
+
+	if (FAILED(m_pGameInstance->Add_GameObject(LEVEL_GAMEPLAY, strLayerTag, pCamera_Free)))
 		return E_FAIL;
 
-	CCamera_manager::GetInstance()->Add_Camera("Camera_Free", dynamic_cast<CCamera*>(m_pGameInstance-> Clone_GameObject(TEXT("Prototype_GameObject_Camera_Free"), &CameraDesc_Free)));
 
 	CCamera_ThirdPerson::CAMERA_THIRDPERSON_DESC CameraDesc_ThirdPerson = {};
 
 	CameraDesc_ThirdPerson.fMouseSensor = 0.05f;
-	CameraDesc_ThirdPerson.fFovy = XMConvertToRadians(60.0f);
 	CameraDesc_ThirdPerson.vEye = _float4(0.0f, 30.f, -25.f, 1.f);
 	CameraDesc_ThirdPerson.vAt = _float4(0.f, 0.f, 0.f, 1.f);
+	CameraDesc_ThirdPerson.fFovy = XMConvertToRadians(60.0f);
 	CameraDesc_ThirdPerson.fAspect = (_float)g_iWinSizeX / g_iWinSizeY;
 	CameraDesc_ThirdPerson.fNear = 0.2f;
 	CameraDesc_ThirdPerson.fFar = 1000.f;
 	CameraDesc_ThirdPerson.fSpeedPerSec = 20.f;
 	CameraDesc_ThirdPerson.fRotationPerSec = XMConvertToRadians(90.f);
 
-	if (FAILED(m_pGameInstance->Add_CloneObject(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Camera_ThirdPerson"), &CameraDesc_ThirdPerson)))
+	CGameObject* pCamera_ThirdPerson = m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Camera_ThirdPerson"), &CameraDesc_ThirdPerson);
+	CCamera_manager::GetInstance()->Add_Camera("Camera_ThirdPerson", dynamic_cast<CCamera*>(pCamera_ThirdPerson));
+	CCamera_manager::GetInstance()->Change_Camera("Camera_ThirdPerson");
+
+	if (FAILED(m_pGameInstance->Add_GameObject(LEVEL_GAMEPLAY, strLayerTag, pCamera_ThirdPerson)))
 		return E_FAIL;
-
-	
-	CCamera_manager::GetInstance()->Add_Camera("Camera_ThirdPerson", dynamic_cast<CCamera*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Camera_ThirdPerson"), &CameraDesc_ThirdPerson)));
-
-
 
 	return S_OK;
 }

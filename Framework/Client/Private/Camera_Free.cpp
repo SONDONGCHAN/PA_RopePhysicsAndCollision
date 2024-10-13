@@ -31,40 +31,41 @@ HRESULT CCamera_Free::Initialize(void * pArg)
 
 void CCamera_Free::Priority_Tick(_float fTimeDelta)
 {
-	
-	if (GetKeyState('W') & 0x8000)
+	if (m_isRecording)
 	{
-		m_pTransformCom->Go_Straight(fTimeDelta);
+		if (GetKeyState('W') & 0x8000)
+		{
+			m_pTransformCom->Go_Straight(fTimeDelta);
+		}
+
+		if (GetKeyState('S') & 0x8000)
+		{
+			m_pTransformCom->Go_Backward(fTimeDelta);
+		}
+
+		if (GetKeyState('A') & 0x8000)
+		{
+			m_pTransformCom->Go_Left(fTimeDelta);
+		}
+
+		if (GetKeyState('D') & 0x8000)
+		{
+			m_pTransformCom->Go_Right(fTimeDelta);
+		}
+
+		_long	MouseMove = { 0 };
+
+		if (MouseMove = m_pGameInstance->Get_DIMouseMove(DIMS_X))
+		{
+			m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * MouseMove * m_fMouseSensor);
+		}
+
+
+		if (MouseMove = m_pGameInstance->Get_DIMouseMove(DIMS_Y))
+		{
+			m_pTransformCom->Turn(m_pTransformCom->Get_State(CTransform::STATE_RIGHT), fTimeDelta * MouseMove * m_fMouseSensor);
+		}
 	}
-
-	if (GetKeyState('S') & 0x8000)
-	{
-		m_pTransformCom->Go_Backward(fTimeDelta);
-	}
-
-	if (GetKeyState('A') & 0x8000)
-	{
-		m_pTransformCom->Go_Left(fTimeDelta);
-	}
-
-	if (GetKeyState('D') & 0x8000)
-	{
-		m_pTransformCom->Go_Right(fTimeDelta);
-	}
-
-	_long	MouseMove = { 0 };
-	
-	if (MouseMove = m_pGameInstance->Get_DIMouseMove(DIMS_X))
-	{
-		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * MouseMove * m_fMouseSensor);
-	}
-
-
-	if (MouseMove = m_pGameInstance->Get_DIMouseMove(DIMS_Y))
-	{
-		m_pTransformCom->Turn(m_pTransformCom->Get_State(CTransform::STATE_RIGHT), fTimeDelta * MouseMove * m_fMouseSensor);
-	}
-
 	__super::Priority_Tick(fTimeDelta);
 }
 

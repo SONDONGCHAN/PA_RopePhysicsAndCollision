@@ -29,16 +29,16 @@ HRESULT CCamera_ThirdPerson::Initialize(void* pArg)
 	pTarget_Transform = m_pGameInstance->Get_GameObject(CGameInstance::GetInstance()->Get_CurrentLevel(), TEXT("Layer_Player"))->Get_TranformCom();
 	Safe_AddRef(pTarget_Transform);
 
-	m_isRecording = true;
-
 	return S_OK;
 }
 
 void CCamera_ThirdPerson::Priority_Tick(_float fTimeDelta)
 {
-	KeyInput(fTimeDelta);
-	CamMove(fTimeDelta);
-
+	if (m_isRecording)
+	{
+		KeyInput(fTimeDelta);
+		CamMove(fTimeDelta);
+	}
 	__super::Priority_Tick(fTimeDelta);
 }
 

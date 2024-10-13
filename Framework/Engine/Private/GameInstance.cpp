@@ -83,18 +83,18 @@ void CGameInstance::Tick_Engine(_float fTimeDelta)
 
 	/* 다이렉트 인풋을 통해 키보드와 마우스의 상태를 저장ㅎ나다 .*/
 	m_pInput_Device->Tick();
-
-	m_pObject_Manager->Priority_Tick(fTimeDelta);
-
-	m_pPipeLine->Tick();
-
-	m_pFrustum->Tick();
-
-	m_pObject_Manager->Tick(fTimeDelta);
-
-	m_pObject_Manager->Late_Tick(fTimeDelta);
-
+	
 	m_pLevel_Manager->Tick(fTimeDelta);
+	
+	m_pObject_Manager->Priority_Tick(fTimeDelta);
+	
+	m_pPipeLine->Tick();
+	
+	m_pFrustum->Tick();
+	
+	m_pObject_Manager->Tick(fTimeDelta);
+	
+	m_pObject_Manager->Late_Tick(fTimeDelta);
 }
 
 HRESULT CGameInstance::Begin_Draw(const _float4 & vClearColor)
@@ -204,6 +204,14 @@ HRESULT CGameInstance::Add_CloneObject(_uint iLevelIndex, const wstring & strLay
 		return E_FAIL;
 
 	return m_pObject_Manager->Add_CloneObject(iLevelIndex, strLayerTag, strPrototypeTag, pArg);
+}
+
+HRESULT CGameInstance::Add_GameObject(_uint iLevelIndex, const wstring& strLayerTag, CGameObject* pGameObject)
+{
+	if (nullptr == m_pObject_Manager)
+		return E_FAIL;
+
+	return m_pObject_Manager->Add_GameObject(iLevelIndex, strLayerTag, pGameObject);
 }
 
 CGameObject * CGameInstance::Clone_GameObject(const wstring & strPrototypeTag, void * pArg)

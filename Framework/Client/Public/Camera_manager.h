@@ -16,12 +16,18 @@ public:
 	~CCamera_manager();
 
 public:
+	void Tick(_float fTimeDelta);
+
+public:
 	void Add_Camera(const string& _strCameraTag, CCamera* _pCamera);
 	void Change_Camera(const string& _strCameraTag);
 
 private:
 	CCamera* FindCamera(const string& _strCameraTag);
-	
+	void Set_Camera(CCamera* _pCamera);
+	void Next_Camera();
+
+
 private:
 	CCamera* m_pCurrent_Camara = { nullptr };
 	map<const string, CCamera* > m_Cameras;

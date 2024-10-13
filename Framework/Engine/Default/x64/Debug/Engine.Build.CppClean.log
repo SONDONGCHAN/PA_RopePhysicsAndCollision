@@ -1,69 +1,70 @@
-c:\users\dhqks6\desktop\task_project\task\framework\engine\default\x64\debug\animation.obj
-c:\users\dhqks6\desktop\task_project\task\framework\engine\default\x64\debug\vibuffer.obj
-c:\users\dhqks6\desktop\task_project\task\framework\engine\default\x64\debug\cell.obj
-c:\users\dhqks6\desktop\task_project\task\framework\engine\default\x64\debug\vibuffer_cube.obj
-c:\users\dhqks6\desktop\task_project\task\framework\engine\default\x64\debug\navigation.obj
-c:\users\dhqks6\desktop\task_project\task\framework\engine\default\x64\debug\gameinstance.obj
-c:\users\dhqks6\desktop\task_project\task\framework\engine\default\x64\debug\level_manager.obj
-c:\users\dhqks6\desktop\task_project\task\framework\engine\default\x64\debug\component_manager.obj
-c:\users\dhqks6\desktop\task_project\task\framework\engine\default\x64\debug\channel.obj
-c:\users\dhqks6\desktop\task_project\task\framework\engine\default\x64\debug\vibuffer_instancing.obj
-c:\users\dhqks6\desktop\task_project\task\framework\engine\default\x64\debug\pipeline.obj
-c:\users\dhqks6\desktop\task_project\task\framework\engine\default\x64\debug\timer_manager.obj
-c:\users\dhqks6\desktop\task_project\task\framework\engine\default\x64\debug\graphic_device.obj
-c:\users\dhqks6\desktop\task_project\task\framework\engine\default\x64\debug\vibuffer_terrain_basic.obj
-c:\users\dhqks6\desktop\task_project\task\framework\engine\default\x64\debug\light.obj
-c:\users\dhqks6\desktop\task_project\task\framework\engine\default\x64\debug\vibuffer_rect.obj
-c:\users\dhqks6\desktop\task_project\task\framework\engine\default\x64\debug\base.obj
-c:\users\dhqks6\desktop\task_project\task\framework\engine\default\x64\debug\target_manager.obj
-c:\users\dhqks6\desktop\task_project\task\framework\engine\default\x64\debug\light_manager.obj
-c:\users\dhqks6\desktop\task_project\task\framework\engine\default\x64\debug\transform.obj
-c:\users\dhqks6\desktop\task_project\task\framework\engine\default\x64\debug\debugdraw.obj
-c:\users\dhqks6\desktop\task_project\task\framework\engine\default\x64\debug\vibuffer_terrain.obj
-c:\users\dhqks6\desktop\task_project\task\framework\engine\default\x64\debug\bounding_aabb.obj
-c:\users\dhqks6\desktop\task_project\task\framework\engine\default\x64\debug\texture.obj
-c:\users\dhqks6\desktop\task_project\task\framework\engine\default\x64\debug\camera.obj
-c:\users\dhqks6\desktop\task_project\task\framework\engine\default\x64\debug\object_manager.obj
-c:\users\dhqks6\desktop\task_project\task\framework\engine\default\x64\debug\engine_sruct.obj
-c:\users\dhqks6\desktop\task_project\task\framework\engine\default\x64\debug\quadtree.obj
-c:\users\dhqks6\desktop\task_project\task\framework\engine\default\x64\debug\customfont.obj
-c:\users\dhqks6\desktop\task_project\task\framework\engine\default\x64\debug\vibuffer_particle_rect.obj
-c:\users\dhqks6\desktop\task_project\task\framework\engine\default\x64\debug\level.obj
-c:\users\dhqks6\desktop\task_project\task\framework\engine\default\x64\debug\mesh.obj
-c:\users\dhqks6\desktop\task_project\task\framework\engine\default\x64\debug\frustum.obj
-c:\users\dhqks6\desktop\task_project\task\framework\engine\default\x64\debug\model.obj
-c:\users\dhqks6\desktop\task_project\task\framework\engine\default\x64\debug\bone.obj
-c:\users\dhqks6\desktop\task_project\task\framework\engine\default\x64\debug\rendertarget.obj
-c:\users\dhqks6\desktop\task_project\task\framework\engine\default\x64\debug\layer.obj
-c:\users\dhqks6\desktop\task_project\task\framework\engine\default\x64\debug\bounding_obb.obj
-c:\users\dhqks6\desktop\task_project\task\framework\engine\default\x64\debug\shader.obj
-c:\users\dhqks6\desktop\task_project\task\framework\engine\default\x64\debug\bounding_sphere.obj
-c:\users\dhqks6\desktop\task_project\task\framework\engine\default\x64\debug\timer.obj
-c:\users\dhqks6\desktop\task_project\task\framework\engine\default\x64\debug\font_manager.obj
-c:\users\dhqks6\desktop\task_project\task\framework\engine\default\x64\debug\vibuffer_particle_point.obj
-c:\users\dhqks6\desktop\task_project\task\framework\engine\default\x64\debug\bounding.obj
-c:\users\dhqks6\desktop\task_project\task\framework\engine\default\x64\debug\renderer.obj
-c:\users\dhqks6\desktop\task_project\task\framework\engine\default\x64\debug\input_device.obj
-c:\users\dhqks6\desktop\task_project\task\framework\engine\default\x64\debug\vibuffer_cell.obj
-c:\users\dhqks6\desktop\task_project\task\framework\engine\default\x64\debug\collider.obj
-c:\users\dhqks6\desktop\task_project\task\framework\engine\default\x64\debug\gameobject.obj
-c:\users\dhqks6\desktop\task_project\task\framework\engine\default\x64\debug\component.obj
-c:\users\dhqks6\desktop\task_project\task\framework\engine\default\x64\debug\vc142.pdb
-c:\users\dhqks6\desktop\task_project\task\framework\engine\bin\engine.lib
-c:\users\dhqks6\desktop\task_project\task\framework\engine\bin\engine.exp
-c:\users\dhqks6\desktop\task_project\task\framework\engine\bin\shader_cell.cso
-c:\users\dhqks6\desktop\task_project\task\framework\engine\bin\shader_deferred.cso
-c:\users\dhqks6\desktop\task_project\task\framework\engine\bin\engine.dll
-c:\users\dhqks6\desktop\task_project\task\framework\engine\default\x64\debug\engine.ilk
-c:\users\dhqks6\desktop\task_project\task\framework\engine\bin\engine.pdb
-c:\users\dhqks6\desktop\task_project\task\framework\engine\default\x64\debug\vc142.idb
-c:\users\dhqks6\desktop\task_project\task\framework\engine\default\x64\debug\engine.tlog\cl.11516.write.1.tlog
-c:\users\dhqks6\desktop\task_project\task\framework\engine\default\x64\debug\engine.tlog\cl.command.1.tlog
-c:\users\dhqks6\desktop\task_project\task\framework\engine\default\x64\debug\engine.tlog\cl.read.1.tlog
-c:\users\dhqks6\desktop\task_project\task\framework\engine\default\x64\debug\engine.tlog\engine.write.1u.tlog
-c:\users\dhqks6\desktop\task_project\task\framework\engine\default\x64\debug\engine.tlog\fxc.command.1.tlog
-c:\users\dhqks6\desktop\task_project\task\framework\engine\default\x64\debug\engine.tlog\fxc.read.1.tlog
-c:\users\dhqks6\desktop\task_project\task\framework\engine\default\x64\debug\engine.tlog\fxc.write.1.tlog
-c:\users\dhqks6\desktop\task_project\task\framework\engine\default\x64\debug\engine.tlog\link.command.1.tlog
-c:\users\dhqks6\desktop\task_project\task\framework\engine\default\x64\debug\engine.tlog\link.read.1.tlog
-c:\users\dhqks6\desktop\task_project\task\framework\engine\default\x64\debug\engine.tlog\link.write.1.tlog
+c:\users\동찬\desktop\새 폴더\task\framework\engine\default\x64\debug\vc143.pdb
+c:\users\동찬\desktop\새 폴더\task\framework\engine\default\x64\debug\vc143.idb
+c:\users\동찬\desktop\새 폴더\task\framework\engine\default\x64\debug\camera.obj
+c:\users\동찬\desktop\새 폴더\task\framework\engine\default\x64\debug\cell.obj
+c:\users\동찬\desktop\새 폴더\task\framework\engine\default\x64\debug\level_manager.obj
+c:\users\동찬\desktop\새 폴더\task\framework\engine\default\x64\debug\vibuffer_cell.obj
+c:\users\동찬\desktop\새 폴더\task\framework\engine\default\x64\debug\debugdraw.obj
+c:\users\동찬\desktop\새 폴더\task\framework\engine\default\x64\debug\input_device.obj
+c:\users\동찬\desktop\새 폴더\task\framework\engine\default\x64\debug\rendertarget.obj
+c:\users\동찬\desktop\새 폴더\task\framework\engine\default\x64\debug\engine_sruct.obj
+c:\users\동찬\desktop\새 폴더\task\framework\engine\default\x64\debug\base.obj
+c:\users\동찬\desktop\새 폴더\task\framework\engine\default\x64\debug\gameobject.obj
+c:\users\동찬\desktop\새 폴더\task\framework\engine\default\x64\debug\vibuffer_instancing.obj
+c:\users\동찬\desktop\새 폴더\task\framework\engine\default\x64\debug\animation.obj
+c:\users\동찬\desktop\새 폴더\task\framework\engine\default\x64\debug\light.obj
+c:\users\동찬\desktop\새 폴더\task\framework\engine\default\x64\debug\shader.obj
+c:\users\동찬\desktop\새 폴더\task\framework\engine\default\x64\debug\vibuffer_terrain_basic.obj
+c:\users\동찬\desktop\새 폴더\task\framework\engine\default\x64\debug\bounding_aabb.obj
+c:\users\동찬\desktop\새 폴더\task\framework\engine\default\x64\debug\graphic_device.obj
+c:\users\동찬\desktop\새 폴더\task\framework\engine\default\x64\debug\renderer.obj
+c:\users\동찬\desktop\새 폴더\task\framework\engine\default\x64\debug\component_manager.obj
+c:\users\동찬\desktop\새 폴더\task\framework\engine\default\x64\debug\quadtree.obj
+c:\users\동찬\desktop\새 폴더\task\framework\engine\default\x64\debug\vibuffer_terrain.obj
+c:\users\동찬\desktop\새 폴더\task\framework\engine\default\x64\debug\component.obj
+c:\users\동찬\desktop\새 폴더\task\framework\engine\default\x64\debug\pipeline.obj
+c:\users\동찬\desktop\새 폴더\task\framework\engine\default\x64\debug\texture.obj
+c:\users\동찬\desktop\새 폴더\task\framework\engine\default\x64\debug\channel.obj
+c:\users\동찬\desktop\새 폴더\task\framework\engine\default\x64\debug\layer.obj
+c:\users\동찬\desktop\새 폴더\task\framework\engine\default\x64\debug\target_manager.obj
+c:\users\동찬\desktop\새 폴더\task\framework\engine\default\x64\debug\font_manager.obj
+c:\users\동찬\desktop\새 폴더\task\framework\engine\default\x64\debug\level.obj
+c:\users\동찬\desktop\새 폴더\task\framework\engine\default\x64\debug\vibuffer_cube.obj
+c:\users\동찬\desktop\새 폴더\task\framework\engine\default\x64\debug\customfont.obj
+c:\users\동찬\desktop\새 폴더\task\framework\engine\default\x64\debug\model.obj
+c:\users\동찬\desktop\새 폴더\task\framework\engine\default\x64\debug\vibuffer_particle_rect.obj
+c:\users\동찬\desktop\새 폴더\task\framework\engine\default\x64\debug\object_manager.obj
+c:\users\동찬\desktop\새 폴더\task\framework\engine\default\x64\debug\vibuffer_rect.obj
+c:\users\동찬\desktop\새 폴더\task\framework\engine\default\x64\debug\bounding.obj
+c:\users\동찬\desktop\새 폴더\task\framework\engine\default\x64\debug\frustum.obj
+c:\users\동찬\desktop\새 폴더\task\framework\engine\default\x64\debug\timer_manager.obj
+c:\users\동찬\desktop\새 폴더\task\framework\engine\default\x64\debug\bounding_sphere.obj
+c:\users\동찬\desktop\새 폴더\task\framework\engine\default\x64\debug\mesh.obj
+c:\users\동찬\desktop\새 폴더\task\framework\engine\default\x64\debug\transform.obj
+c:\users\동찬\desktop\새 폴더\task\framework\engine\default\x64\debug\bounding_obb.obj
+c:\users\동찬\desktop\새 폴더\task\framework\engine\default\x64\debug\light_manager.obj
+c:\users\동찬\desktop\새 폴더\task\framework\engine\default\x64\debug\timer.obj
+c:\users\동찬\desktop\새 폴더\task\framework\engine\default\x64\debug\bone.obj
+c:\users\동찬\desktop\새 폴더\task\framework\engine\default\x64\debug\gameinstance.obj
+c:\users\동찬\desktop\새 폴더\task\framework\engine\default\x64\debug\vibuffer.obj
+c:\users\동찬\desktop\새 폴더\task\framework\engine\default\x64\debug\collider.obj
+c:\users\동찬\desktop\새 폴더\task\framework\engine\default\x64\debug\navigation.obj
+c:\users\동찬\desktop\새 폴더\task\framework\engine\default\x64\debug\vibuffer_particle_point.obj
+c:\users\동찬\desktop\새 폴더\task\framework\engine\bin\shader_cell.cso
+c:\users\동찬\desktop\새 폴더\task\framework\engine\bin\shader_deferred.cso
+c:\users\동찬\desktop\새 폴더\task\framework\engine\bin\engine.dll
+c:\users\동찬\desktop\새 폴더\task\framework\engine\bin\engine.pdb
+c:\users\동찬\desktop\새 폴더\task\framework\engine\bin\engine.lib
+c:\users\동찬\desktop\새 폴더\task\framework\engine\bin\engine.exp
+c:\users\동찬\desktop\새 폴더\task\framework\engine\default\x64\debug\engine.ilk
+c:\users\동찬\desktop\새 폴더\task\framework\engine\default\x64\debug\engine.tlog\cl.command.1.tlog
+c:\users\동찬\desktop\새 폴더\task\framework\engine\default\x64\debug\engine.tlog\cl.items.tlog
+c:\users\동찬\desktop\새 폴더\task\framework\engine\default\x64\debug\engine.tlog\cl.read.1.tlog
+c:\users\동찬\desktop\새 폴더\task\framework\engine\default\x64\debug\engine.tlog\cl.write.1.tlog
+c:\users\동찬\desktop\새 폴더\task\framework\engine\default\x64\debug\engine.tlog\fxc.command.1.tlog
+c:\users\동찬\desktop\새 폴더\task\framework\engine\default\x64\debug\engine.tlog\fxc.read.1.tlog
+c:\users\동찬\desktop\새 폴더\task\framework\engine\default\x64\debug\engine.tlog\fxc.write.1.tlog
+c:\users\동찬\desktop\새 폴더\task\framework\engine\default\x64\debug\engine.tlog\link.command.1.tlog
+c:\users\동찬\desktop\새 폴더\task\framework\engine\default\x64\debug\engine.tlog\link.read.1.tlog
+c:\users\동찬\desktop\새 폴더\task\framework\engine\default\x64\debug\engine.tlog\link.secondary.1.tlog
+c:\users\동찬\desktop\새 폴더\task\framework\engine\default\x64\debug\engine.tlog\link.write.1.tlog

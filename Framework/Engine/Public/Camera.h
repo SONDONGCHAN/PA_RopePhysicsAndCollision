@@ -29,6 +29,9 @@ public:
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
+public:
+	void ChangeRecording() { m_isRecording = !m_isRecording; }
+
 protected:
 	_float				m_fFovy = { 0.0f };
 	_float				m_fNear = { 0.0f };

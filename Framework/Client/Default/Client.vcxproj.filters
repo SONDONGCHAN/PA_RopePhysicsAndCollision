@@ -85,7 +85,7 @@
     <Filter Include="03. Manager">
       <UniqueIdentifier>{cd8ffafb-d467-4940-91d2-6782fbfa8384}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Manager\00. Camera Manager">
+    <Filter Include="03. Manager\01. Camera Manager">
       <UniqueIdentifier>{5bad9d4d-287e-4709-87a7-cfee38d64e16}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -166,7 +166,7 @@
       <Filter>02.GameObjects\Terrain</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Camera_manager.h">
-      <Filter>03. Manager\00. Camera Manager</Filter>
+      <Filter>03. Manager\01. Camera Manager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -237,7 +237,7 @@
       <Filter>02.GameObjects\Terrain</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Camera_manager.cpp">
-      <Filter>03. Manager\00. Camera Manager</Filter>
+      <Filter>03. Manager\01. Camera Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
