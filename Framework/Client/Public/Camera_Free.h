@@ -29,6 +29,7 @@ public:
 
 private:
 	void CursorFixCenter();
+	void KeyInput(_float fTimeDelta);
 
 private:
 	_float			m_fMouseSensor = { 0.0f };

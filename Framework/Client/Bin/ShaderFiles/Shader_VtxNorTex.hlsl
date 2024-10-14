@@ -64,8 +64,8 @@ PS_OUT PS_MAIN(PS_IN In)
 {
 	PS_OUT		Out = (PS_OUT)0;
 
-	vector		vSourDiffuse = g_DiffuseTexture[0].Sample(g_LinearSampler, In.vTexcoord * 30.f);
-	vector		vDestDiffuse = g_DiffuseTexture[1].Sample(g_LinearSampler, In.vTexcoord * 30.f);
+	vector		vSourDiffuse = g_DiffuseTexture[0].Sample(g_LinearSampler, In.vTexcoord * 12.9f);
+	vector		vDestDiffuse = g_DiffuseTexture[1].Sample(g_LinearSampler, In.vTexcoord * 12.9f);
 	vector		vMask = g_MaskTexture.Sample(g_PointSampler, In.vTexcoord);
 	vector		vBrush = vector(0.f, 0.f, 0.f, 0.f);
 

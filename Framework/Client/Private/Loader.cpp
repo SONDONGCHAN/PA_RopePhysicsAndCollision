@@ -117,8 +117,11 @@ HRESULT CLoader::Loading_For_GamePlayLevel()
 {
 	m_strLoadingText = TEXT("텍스쳐를(을) 로딩 중 입니다.");
 	/* For.Prototype_Component_Texture_Terrain */
+	//if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Terrain"),
+	//	CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/Tile%d.dds"), 2))))
+	//	return E_FAIL;
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Terrain"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/Tile%d.dds"), 2))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/wooden_10x10.png"), 1))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Texture_Sky */

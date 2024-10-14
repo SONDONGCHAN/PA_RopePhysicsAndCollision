@@ -27,6 +27,8 @@ private:
 	void Set_Camera(CCamera* _pCamera);
 	void Next_Camera();
 
+public:
+	void Release_Manager();
 
 private:
 	CCamera* m_pCurrent_Camara = { nullptr };

@@ -5,10 +5,47 @@ Engine::CInput_Device::CInput_Device(void)
 
 }
 
+_bool CInput_Device::KeyDown(_ubyte _eKeyID)
+{
+	if (!(m_preKeyState[_eKeyID] & 0x80) && (m_byKeyState[_eKeyID] & 0x80))
+		return true;
+
+	return false;
+}
+
+_bool CInput_Device::KeyUp(_ubyte _eKeyID)
+{
+	if ((m_preKeyState[_eKeyID] & 0x80) && !(m_byKeyState[_eKeyID] & 0x80))
+		return true;
+
+	return false;
+}
+
+_bool CInput_Device::KeyPressing(_ubyte _eKeyID)
+{
+	if ((m_preKeyState[_eKeyID] & 0x80) && (m_byKeyState[_eKeyID] & 0x80))
+		return true;
+
+	return false;
+}
+
+_byte CInput_Device::MouseDown(MOUSEKEYSTATE _eMouse)
+{
+	return ((m_tMouseState.rgbButtons[_eMouse]) && !(m_preMouseState.rgbButtons[_eMouse]));
+}
+
+_byte CInput_Device::MousePressing(MOUSEKEYSTATE _eMouse)
+{
+	return ((m_tMouseState.rgbButtons[_eMouse]) && (m_preMouseState.rgbButtons[_eMouse]));
+}
+
+_byte CInput_Device::MouseUp(MOUSEKEYSTATE _eMouse)
+{
+	return (!(m_tMouseState.rgbButtons[_eMouse]) && !(m_preMouseState.rgbButtons[_eMouse]));
+}
+
 HRESULT Engine::CInput_Device::Ready_InputDev(HINSTANCE hInst, HWND hWnd)
 {
-
-	// DInput 컴객체를 생성하는 함수
 	if (FAILED(DirectInput8Create(hInst,
 		DIRECTINPUT_VERSION,
 		IID_IDirectInput8,
@@ -16,7 +53,6 @@ HRESULT Engine::CInput_Device::Ready_InputDev(HINSTANCE hInst, HWND hWnd)
 		nullptr)))
 		return E_FAIL;
 
-	// 키보드 객체 생성
 	if (FAILED(m_pInputSDK->CreateDevice(GUID_SysKeyboard, &m_pKeyBoard, nullptr)))
 		return E_FAIL;
 
@@ -49,6 +85,9 @@ HRESULT Engine::CInput_Device::Ready_InputDev(HINSTANCE hInst, HWND hWnd)
 
 void Engine::CInput_Device::Tick(void)
 {
+	memcpy(m_preKeyState, m_byKeyState, sizeof(_byte) * 256);
+	memcpy(&m_preMouseState, &m_tMouseState, sizeof(m_tMouseState));
+
 	m_pKeyBoard->GetDeviceState(256, m_byKeyState);
 	m_pMouse->GetDeviceState(sizeof(m_tMouseState), &m_tMouseState);
 }

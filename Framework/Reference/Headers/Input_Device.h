@@ -20,6 +20,14 @@ public:
 		return *(((_long*)&m_tMouseState) + eMouseState);	
 	}
 	
+	_bool KeyDown(_ubyte _eKeyID);
+	_bool KeyUp(_ubyte _eKeyID);
+	_bool KeyPressing(_ubyte _eKeyID);
+
+	_byte MouseDown(MOUSEKEYSTATE _eMouse);
+	_byte MousePressing(MOUSEKEYSTATE _eMouse);
+	_byte MouseUp(MOUSEKEYSTATE _eMouse);
+
 public:
 	HRESULT Ready_InputDev(HINSTANCE hInst, HWND hWnd);
 	void	Tick(void);
@@ -32,8 +40,11 @@ private:
 	LPDIRECTINPUTDEVICE8	m_pMouse	= nullptr;
 
 private:
-	_byte					m_byKeyState[256];		// 키보드에 있는 모든 키값을 저장하기 위한 변수
+	_byte	m_byKeyState[256];		// 키보드에 있는 모든 키값을 저장하기 위한 변수
+	_byte	m_preKeyState[256];
+
 	DIMOUSESTATE			m_tMouseState;	
+	DIMOUSESTATE			m_preMouseState;
 
 public:
 	static CInput_Device* Create(HINSTANCE hInst, HWND hWnd);

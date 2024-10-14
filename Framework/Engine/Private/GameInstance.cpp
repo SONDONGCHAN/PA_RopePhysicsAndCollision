@@ -149,6 +149,45 @@ _long CGameInstance::Get_DIMouseMove(MOUSEMOVESTATE eMouseState)
 	return m_pInput_Device->Get_DIMouseMove(eMouseState);
 }
 
+_bool CGameInstance::KeyDown(_ubyte _eKeyID)
+{
+	if (!m_pInput_Device)
+		return false;
+
+	return m_pInput_Device->KeyDown(_eKeyID);
+}
+
+_bool CGameInstance::KeyUp(_ubyte _eKeyID)
+{
+	if (!m_pInput_Device)
+		return false;
+
+	return m_pInput_Device->KeyUp(_eKeyID);
+}
+
+_bool CGameInstance::KeyPressing(_ubyte _eKeyID)
+{
+	if (!m_pInput_Device)
+		return false;
+
+	return m_pInput_Device->KeyPressing(_eKeyID);
+}
+
+_byte CGameInstance::MouseDown(MOUSEKEYSTATE _eMouse)
+{
+	return m_pInput_Device->MouseDown(_eMouse);
+}
+
+_byte CGameInstance::MousePressing(MOUSEKEYSTATE _eMouse)
+{
+	return m_pInput_Device->MousePressing(_eMouse);
+}
+
+_byte CGameInstance::MouseUp(MOUSEKEYSTATE _eMouse)
+{
+	return m_pInput_Device->MouseUp(_eMouse);
+}
+
 _float CGameInstance::Compute_TimeDelta(const wstring & pTimerTag)
 {
 	if (nullptr == m_pTimer_Manager)

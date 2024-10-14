@@ -31,6 +31,14 @@ public: /* For.Input_Device */
 	_byte	Get_DIMouseState(MOUSEKEYSTATE eMouse);
 	_long	Get_DIMouseMove(MOUSEMOVESTATE eMouseState);
 
+	_bool KeyDown(_ubyte _eKeyID);
+	_bool KeyUp(_ubyte _eKeyID);
+	_bool KeyPressing(_ubyte _eKeyID);
+
+	_byte MouseDown(MOUSEKEYSTATE _eMouse);
+	_byte MousePressing(MOUSEKEYSTATE _eMouse);
+	_byte MouseUp(MOUSEKEYSTATE _eMouse);
+
 public: /* For.Timer_Manager */
 	_float Compute_TimeDelta(const wstring& pTimerTag);
 	HRESULT Add_Timer(const wstring& pTimerTag);

@@ -89,7 +89,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Camera(const wstring & strLayerTag)
 	CameraDesc_Free.fAspect = (_float)g_iWinSizeX / g_iWinSizeY;
 	CameraDesc_Free.fNear = 0.2f;
 	CameraDesc_Free.fFar = 1000.f;
-	CameraDesc_Free.fSpeedPerSec = 100.f;
+	CameraDesc_Free.fSpeedPerSec = 50.f;
 	CameraDesc_Free.fRotationPerSec = XMConvertToRadians(90.0f);
 
 	CGameObject* pCamera_Free = m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Camera_Free"), &CameraDesc_Free);
@@ -193,6 +193,7 @@ CLevel_GamePlay * CLevel_GamePlay::Create(ID3D11Device * pDevice, ID3D11DeviceCo
 
 void CLevel_GamePlay::Free()
 {
+	CCamera_manager::GetInstance()->Release_Manager();
 	__super::Free();
 
 }

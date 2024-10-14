@@ -10,20 +10,18 @@ CCamera_manager::CCamera_manager()
 
 CCamera_manager::~CCamera_manager()
 {
-	Free();
 }
 
 void CCamera_manager::Tick(_float fTimeDelta)
 {
-	if (GetKeyState('P') & 0x8000)
+	if (CGameInstance::GetInstance()->KeyDown(DIK_P))
 	{
 		Change_Camera("Camera_ThirdPerson");
 	}
-
-	else if (GetKeyState('O') & 0x8000)
+	else if (CGameInstance::GetInstance()->KeyDown(DIK_O))
 	{
 		Change_Camera("Camera_Free");
-	}	
+	}
 }
 
 void CCamera_manager::Add_Camera(const string& _strCameraTag, CCamera* _pCamera)
@@ -44,11 +42,15 @@ void CCamera_manager::Change_Camera(const string& _strCameraTag)
 
 void CCamera_manager::Set_Camera(CCamera* _pCamera)
 {
+	if (_pCamera == m_pCurrent_Camara)
+		return;
+
 	if (m_pCurrent_Camara)
 	{
 		m_pCurrent_Camara->ChangeRecording();
 		Safe_Release(m_pCurrent_Camara);
 	}
+
 	_pCamera->ChangeRecording();
 	m_pCurrent_Camara = _pCamera;
 	Safe_AddRef(_pCamera);
@@ -57,6 +59,11 @@ void CCamera_manager::Set_Camera(CCamera* _pCamera)
 void CCamera_manager::Next_Camera()
 {
 
+}
+
+void CCamera_manager::Release_Manager()
+{
+	DestroyInstance();
 }
 
 CCamera* CCamera_manager::FindCamera(const string& _strCameraTag)
@@ -70,9 +77,9 @@ CCamera* CCamera_manager::FindCamera(const string& _strCameraTag)
 
 void CCamera_manager::Free()
 {
+	Safe_Release(m_pCurrent_Camara);
+
 	for (auto& Pair : m_Cameras)
 		Safe_Release(Pair.second);
 	m_Cameras.clear();
-
-	DestroyInstance();
 }
