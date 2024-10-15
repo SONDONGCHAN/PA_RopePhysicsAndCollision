@@ -70,6 +70,15 @@ namespace Engine
 	typedef struct ENGINE_DLL
 	{
 		XMFLOAT3		vPosition;
+		unsigned int	iBoneIndex;
+
+		static const unsigned int	iNumElements = { 2 };
+		static const D3D11_INPUT_ELEMENT_DESC		Elements[2];
+	}VTXANIMNONMESH;
+
+	typedef struct ENGINE_DLL
+	{
+		XMFLOAT3		vPosition;
 		XMFLOAT3		vNormal;
 		XMFLOAT2		vTexcoord;
 

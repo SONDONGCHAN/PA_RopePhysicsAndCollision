@@ -219,6 +219,7 @@
     <ClInclude Include="..\Public\VIBuffer_Particle_Point.h" />
     <ClInclude Include="..\public\VIBuffer_Particle_Rect.h" />
     <ClInclude Include="..\public\VIBuffer_Rect.h" />
+    <ClInclude Include="..\Public\VIBuffer_Skeletal.h" />
     <ClInclude Include="..\Public\VIBuffer_Terrain.h" />
     <ClInclude Include="..\Public\VIBuffer_Terrain_Basic.h" />
   </ItemGroup>
@@ -270,6 +271,7 @@
     <ClCompile Include="..\Private\VIBuffer_Particle_Point.cpp" />
     <ClCompile Include="..\private\VIBuffer_Particle_Rect.cpp" />
     <ClCompile Include="..\private\VIBuffer_Rect.cpp" />
+    <ClCompile Include="..\Private\VIBuffer_Skeletal.cpp" />
     <ClCompile Include="..\Private\VIBuffer_Terrain.cpp" />
     <ClCompile Include="..\Private\VIBuffer_Terrain_Basic.cpp" />
     <ClCompile Include="..\Public\Engine_Sruct.cpp" />

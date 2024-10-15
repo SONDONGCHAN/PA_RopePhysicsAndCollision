@@ -30,7 +30,8 @@ public:
 	virtual HRESULT Render() override;
 
 public:
-	void ChangeRecording() { m_isRecording = !m_isRecording; }
+	void ChangeRecording()	{ m_isRecording = !m_isRecording; }
+	void ChangeFixed()		{ m_isFixed		= !m_isFixed; }
 
 protected:
 	_float				m_fFovy = { 0.0f };
@@ -39,7 +40,8 @@ protected:
 	_float				m_fAspect = { 0.0f };
 	
 protected:
-	_bool	m_isRecording = { false };
+	_bool	m_isRecording	= { false };
+	_bool	m_isFixed		= { true };
 
 protected:
 	HRESULT SetUp_TransformMatices();

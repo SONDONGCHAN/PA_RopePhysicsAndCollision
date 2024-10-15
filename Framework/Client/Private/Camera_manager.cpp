@@ -22,6 +22,9 @@ void CCamera_manager::Tick(_float fTimeDelta)
 	{
 		Change_Camera("Camera_Free");
 	}
+
+	if (CGameInstance::GetInstance()->KeyDown(DIK_L))
+		m_pCurrent_Camara->ChangeFixed();
 }
 
 void CCamera_manager::Add_Camera(const string& _strCameraTag, CCamera* _pCamera)

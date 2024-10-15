@@ -5,6 +5,8 @@
 #include "Shader.h"
 #include "Texture.h"
 #include "Animation.h"
+#include "VIBuffer_Skeletal.h"
+#include "iostream"
 
 CModel::CModel(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CComponent(pDevice, pContext)
@@ -19,7 +21,8 @@ CModel::CModel(const CModel & rhs)
 	, m_Meshes(rhs.m_Meshes)
 	, m_iNumMaterials(rhs.m_iNumMaterials)
 	, m_Materials(rhs.m_Materials)	
-	, m_iNumAnimations(rhs.m_iNumAnimations)	
+	, m_iNumAnimations(rhs.m_iNumAnimations)
+	, m_pBuffer_Skeletal(rhs.m_pBuffer_Skeletal)
 {
 	for (auto& pPrototypeAnimation : rhs.m_Animations)
 		m_Animations.push_back(pPrototypeAnimation->Clone());
@@ -35,6 +38,9 @@ CModel::CModel(const CModel & rhs)
 
 	for (auto& pMesh : m_Meshes)
 		Safe_AddRef(pMesh);
+
+	Safe_AddRef(m_pBuffer_Skeletal);
+	Ready_Bone_Matrices();
 }
 
 _int CModel::Get_BoneIndex(const _char * pBoneName) const
@@ -90,14 +96,22 @@ HRESULT CModel::Initialize_Prototype(TYPE eModelType, const _char * pModelFilePa
 	if (FAILED(Ready_Bones(m_pAIScene->mRootNode, -1)))
 		return E_FAIL;
 
-	/* 모델을 구성하는 정점과 인덱스를 생성한다. */
-	/* 모델 = 메시 + 메시 + 메시 ... */
-	if (FAILED(Ready_Meshes()))
-		return E_FAIL;
+	if (eModelType != TYPE_ANIM_NONMESH)
+	{
+		/* 모델을 구성하는 정점과 인덱스를 생성한다. */
+		/* 모델 = 메시 + 메시 + 메시 ... */
+		if (FAILED(Ready_Meshes()))
+			return E_FAIL;
 
-	/* 텍스쳐를 로드해야한다. (머테리얼을 로드한다.) */
-	if (FAILED(Ready_Materials(pModelFilePath)))
-		return E_FAIL;
+		/* 텍스쳐를 로드해야한다. (머테리얼을 로드한다.) */
+		if (FAILED(Ready_Materials(pModelFilePath)))
+			return E_FAIL;
+	}
+	else
+	{
+		if (FAILED(Ready_Buffer_Skeletal()))
+			return E_FAIL;
+	}
 
 	if (FAILED(Ready_Animations()))
 		return E_FAIL;
@@ -118,6 +132,13 @@ HRESULT CModel::Render(_uint iMeshIndex)
 	return S_OK;
 }
 
+HRESULT CModel::Render()
+{
+	m_pBuffer_Skeletal->Render();
+
+	return S_OK;
+}
+
 HRESULT CModel::Bind_Material_ShaderResource(CShader * pShader, _uint iMeshIndex, aiTextureType eMaterialType, const _char* pConstantName)
 {
 	_uint		iMaterialIndex = m_Meshes[iMeshIndex]->Get_MaterialIndex();
@@ -132,6 +153,22 @@ HRESULT CModel::Bind_BoneMatrices(CShader * pShader, const _char * pConstantName
 	m_Meshes[iMeshIndex]->SetUp_BoneMatrices(BoneMatrices, m_Bones);
 
 	return pShader->Bind_Matrices(pConstantName, BoneMatrices, 512);
+}
+
+HRESULT CModel::Update_BoneMatrices(CShader* pShader, const _char* pConstantName)
+{
+	m_pBuffer_Skeletal->UpdateBoneMatrices(m_BoneMatrices);
+
+	_float4x4		BoneMatrices[512];
+
+	for (int i = 0; i < m_BoneMatrices.size(); ++i)
+	{
+		BoneMatrices[i] = *(m_BoneMatrices[i]);
+	}
+
+	HRESULT hr = pShader->Bind_Matrices(pConstantName, BoneMatrices, 512);
+
+	return hr;
 }
 
 void CModel::Play_Animation(_float fTimeDelta, _bool isLoop)
@@ -158,6 +195,16 @@ HRESULT CModel::Ready_Meshes()
 
 		m_Meshes.push_back(pMesh);
 	}
+
+	return S_OK;
+}
+
+HRESULT CModel::Ready_Buffer_Skeletal()
+{
+	m_pBuffer_Skeletal = CVIBuffer_Skeletal::Create(m_pDevice, m_pContext, m_Bones.size());
+	
+	if (nullptr == m_pBuffer_Skeletal)
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -202,7 +249,8 @@ HRESULT CModel::Ready_Materials(const _char* pModelFilePath)
 			MaterialDesc.pMtrlTextures[j] = CTexture::Create(m_pDevice, m_pContext, szFullPath, 1);		
 		}
 
-		m_Materials.push_back(MaterialDesc);
+		m_Materials
+			.push_back(MaterialDesc);
 	}
 
 	return S_OK;
@@ -221,6 +269,18 @@ HRESULT CModel::Ready_Bones(aiNode* pNode, _int iParentBoneIndex)
 	for (size_t i = 0; i < pNode->mNumChildren; i++)
 	{
 		Ready_Bones(pNode->mChildren[i], iParentIndex);
+	}
+
+	return S_OK;
+}
+
+HRESULT CModel::Ready_Bone_Matrices()
+{
+	m_BoneMatrices.resize(m_Bones.size());
+
+	for (_int i = 0; i < m_Bones.size(); ++i)
+	{
+		m_BoneMatrices[i] = m_Bones[i]->Get_CombindTransformationMatrixPtr();
 	}
 
 	return S_OK;
@@ -292,6 +352,7 @@ void CModel::Free()
 	for (auto& pMesh : m_Meshes)
 		Safe_Release(pMesh);
 
-	m_Importer.FreeScene();
+	Safe_Release(m_pBuffer_Skeletal);
 
+	m_Importer.FreeScene();
 }

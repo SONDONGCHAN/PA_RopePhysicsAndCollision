@@ -123,7 +123,8 @@ void CCamera_ThirdPerson::KeyInput(_float fTimeDelta)
 			m_degree_Vertical = Column_Min;
 	}
 
-	CursorFixCenter();
+	if(m_isFixed)
+		CursorFixCenter();
 }
 
 CCamera_ThirdPerson* CCamera_ThirdPerson::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

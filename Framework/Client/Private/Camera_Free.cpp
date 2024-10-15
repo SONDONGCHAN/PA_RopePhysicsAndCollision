@@ -94,7 +94,8 @@ void CCamera_Free::KeyInput(_float fTimeDelta)
 		m_pTransformCom->Turn(m_pTransformCom->Get_State(CTransform::STATE_RIGHT), fTimeDelta * MouseMove * m_fMouseSensor);
 	}
 
-	CursorFixCenter();
+	if (m_isFixed)
+		CursorFixCenter();
 }
 
 CCamera_Free * CCamera_Free::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
