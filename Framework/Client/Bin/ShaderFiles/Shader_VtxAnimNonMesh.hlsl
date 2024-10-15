@@ -2,7 +2,6 @@
 #include "Shader_Defines.hlsli"
 
 matrix		g_BoneMatrices[512];
-
 matrix		g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 
 struct VS_IN
@@ -16,16 +15,17 @@ struct VS_OUT
 	float4 vPosition : SV_POSITION;
 };
 
-
-
 VS_OUT VS_MAIN(VS_IN In)
 {	
 	VS_OUT		Out = (VS_OUT)0;
 
-	float4 vPosition = mul(vector(In.vPosition, 1.f), g_WorldMatrix);
-	vPosition = mul(vPosition, g_BoneMatrices[In.iBoneIndex]);
-	Out.vPosition = mul(vPosition, mul(g_ViewMatrix, g_ProjMatrix));
-
+    matrix matWV, matWVP;
+    matWV = mul(g_WorldMatrix, g_ViewMatrix);
+    matWVP = mul(matWV, g_ProjMatrix);
+	
+    float4 vPosition = mul(vector(In.vPosition, 1.f), g_BoneMatrices[In.iBoneIndex]);
+    Out.vPosition = mul(vPosition, matWVP);
+	
 	return Out;
 }
 
@@ -44,7 +44,7 @@ PS_OUT PS_MAIN(PS_IN In)
 {
 	PS_OUT		Out = (PS_OUT)0;
 
-	Out.vColor = vector(1.f, 0.f, 0.f, 1.f);
+	Out.vColor = vector(0.f, 0.f, 1.f, 1.f);
 
 	return Out;
 }

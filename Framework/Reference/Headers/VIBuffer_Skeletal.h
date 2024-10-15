@@ -6,6 +6,7 @@ BEGIN(Engine)
 
 struct BoneIndexVertex 
 {
+	XMFLOAT3 Position;
 	_int BoneIndex;
 };
 
@@ -27,10 +28,8 @@ public:
 
 private:
 	HRESULT Initialize_LineBuffer();
-	HRESULT Initialize_ConstantBuffer();
 
 public:
-	void UpdateBoneMatrices(const std::vector<XMFLOAT4X4*>& boneMatrices);
 	virtual HRESULT Render() override;
 
 public:
@@ -40,7 +39,7 @@ public:
 
 private:
 	_int			m_BoneCount { 0 };
-	ID3D11Buffer* m_pConstantBuffer { nullptr };
+
 };
 
 END

@@ -1,26 +1,12 @@
 ﻿  VIBuffer_Skeletal.cpp
-  Model.cpp
-C:\Users\dhqks6\Desktop\Task_ProJect\Task\Framework\Engine\Public\Engine_Struct.h(35,2): warning C5208: typedef 이름에 사용되는 명명되지 않은 클래스가 비정적 데이터 멤버, 멤버 열거형 또는 멤버 클래스 이외의 멤버를 선언할 수 없습니다. (소스 파일 컴파일 중 ..\Private\VIBuffer_Skeletal.cpp)
-C:\Users\dhqks6\Desktop\Task_ProJect\Task\Framework\Engine\Public\Engine_Struct.h(35,2): warning C5208: typedef 이름에 사용되는 명명되지 않은 클래스가 비정적 데이터 멤버, 멤버 열거형 또는 멤버 클래스 이외의 멤버를 선언할 수 없습니다. (소스 파일 컴파일 중 ..\private\Model.cpp)
-C:\Users\dhqks6\Desktop\Task_ProJect\Task\Framework\Engine\Public\Engine_Struct.h(43,2): warning C5208: typedef 이름에 사용되는 명명되지 않은 클래스가 비정적 데이터 멤버, 멤버 열거형 또는 멤버 클래스 이외의 멤버를 선언할 수 없습니다. (소스 파일 컴파일 중 ..\Private\VIBuffer_Skeletal.cpp)
-C:\Users\dhqks6\Desktop\Task_ProJect\Task\Framework\Engine\Public\Engine_Struct.h(43,2): warning C5208: typedef 이름에 사용되는 명명되지 않은 클래스가 비정적 데이터 멤버, 멤버 열거형 또는 멤버 클래스 이외의 멤버를 선언할 수 없습니다. (소스 파일 컴파일 중 ..\private\Model.cpp)
-C:\Users\dhqks6\Desktop\Task_ProJect\Task\Framework\Engine\Public\Engine_Struct.h(53,2): warning C5208: typedef 이름에 사용되는 명명되지 않은 클래스가 비정적 데이터 멤버, 멤버 열거형 또는 멤버 클래스 이외의 멤버를 선언할 수 없습니다. (소스 파일 컴파일 중 ..\Private\VIBuffer_Skeletal.cpp)
-C:\Users\dhqks6\Desktop\Task_ProJect\Task\Framework\Engine\Public\Engine_Struct.h(53,2): warning C5208: typedef 이름에 사용되는 명명되지 않은 클래스가 비정적 데이터 멤버, 멤버 열거형 또는 멤버 클래스 이외의 멤버를 선언할 수 없습니다. (소스 파일 컴파일 중 ..\private\Model.cpp)
-C:\Users\dhqks6\Desktop\Task_ProJect\Task\Framework\Engine\Public\Engine_Struct.h(62,2): warning C5208: typedef 이름에 사용되는 명명되지 않은 클래스가 비정적 데이터 멤버, 멤버 열거형 또는 멤버 클래스 이외의 멤버를 선언할 수 없습니다. (소스 파일 컴파일 중 ..\Private\VIBuffer_Skeletal.cpp)
-C:\Users\dhqks6\Desktop\Task_ProJect\Task\Framework\Engine\Public\Engine_Struct.h(62,2): warning C5208: typedef 이름에 사용되는 명명되지 않은 클래스가 비정적 데이터 멤버, 멤버 열거형 또는 멤버 클래스 이외의 멤버를 선언할 수 없습니다. (소스 파일 컴파일 중 ..\private\Model.cpp)
-C:\Users\dhqks6\Desktop\Task_ProJect\Task\Framework\Engine\Public\Engine_Struct.h(71,2): warning C5208: typedef 이름에 사용되는 명명되지 않은 클래스가 비정적 데이터 멤버, 멤버 열거형 또는 멤버 클래스 이외의 멤버를 선언할 수 없습니다. (소스 파일 컴파일 중 ..\Private\VIBuffer_Skeletal.cpp)
-C:\Users\dhqks6\Desktop\Task_ProJect\Task\Framework\Engine\Public\Engine_Struct.h(71,2): warning C5208: typedef 이름에 사용되는 명명되지 않은 클래스가 비정적 데이터 멤버, 멤버 열거형 또는 멤버 클래스 이외의 멤버를 선언할 수 없습니다. (소스 파일 컴파일 중 ..\private\Model.cpp)
-C:\Users\dhqks6\Desktop\Task_ProJect\Task\Framework\Engine\Public\Engine_Struct.h(80,2): warning C5208: typedef 이름에 사용되는 명명되지 않은 클래스가 비정적 데이터 멤버, 멤버 열거형 또는 멤버 클래스 이외의 멤버를 선언할 수 없습니다. (소스 파일 컴파일 중 ..\Private\VIBuffer_Skeletal.cpp)
-C:\Users\dhqks6\Desktop\Task_ProJect\Task\Framework\Engine\Public\Engine_Struct.h(80,2): warning C5208: typedef 이름에 사용되는 명명되지 않은 클래스가 비정적 데이터 멤버, 멤버 열거형 또는 멤버 클래스 이외의 멤버를 선언할 수 없습니다. (소스 파일 컴파일 중 ..\private\Model.cpp)
-C:\Users\dhqks6\Desktop\Task_ProJect\Task\Framework\Engine\Public\Engine_Struct.h(90,2): warning C5208: typedef 이름에 사용되는 명명되지 않은 클래스가 비정적 데이터 멤버, 멤버 열거형 또는 멤버 클래스 이외의 멤버를 선언할 수 없습니다. (소스 파일 컴파일 중 ..\Private\VIBuffer_Skeletal.cpp)
-C:\Users\dhqks6\Desktop\Task_ProJect\Task\Framework\Engine\Public\Engine_Struct.h(90,2): warning C5208: typedef 이름에 사용되는 명명되지 않은 클래스가 비정적 데이터 멤버, 멤버 열거형 또는 멤버 클래스 이외의 멤버를 선언할 수 없습니다. (소스 파일 컴파일 중 ..\private\Model.cpp)
-C:\Users\dhqks6\Desktop\Task_ProJect\Task\Framework\Engine\Public\Engine_Struct.h(102,2): warning C5208: typedef 이름에 사용되는 명명되지 않은 클래스가 비정적 데이터 멤버, 멤버 열거형 또는 멤버 클래스 이외의 멤버를 선언할 수 없습니다. (소스 파일 컴파일 중 ..\Private\VIBuffer_Skeletal.cpp)
-C:\Users\dhqks6\Desktop\Task_ProJect\Task\Framework\Engine\Public\Engine_Struct.h(102,2): warning C5208: typedef 이름에 사용되는 명명되지 않은 클래스가 비정적 데이터 멤버, 멤버 열거형 또는 멤버 클래스 이외의 멤버를 선언할 수 없습니다. (소스 파일 컴파일 중 ..\private\Model.cpp)
-C:\Users\dhqks6\Desktop\Task_ProJect\Task\Framework\Engine\Public\Engine_Struct.h(128,2): warning C5208: typedef 이름에 사용되는 명명되지 않은 클래스가 비정적 데이터 멤버, 멤버 열거형 또는 멤버 클래스 이외의 멤버를 선언할 수 없습니다. (소스 파일 컴파일 중 ..\Private\VIBuffer_Skeletal.cpp)
-C:\Users\dhqks6\Desktop\Task_ProJect\Task\Framework\Engine\Public\Engine_Struct.h(128,2): warning C5208: typedef 이름에 사용되는 명명되지 않은 클래스가 비정적 데이터 멤버, 멤버 열거형 또는 멤버 클래스 이외의 멤버를 선언할 수 없습니다. (소스 파일 컴파일 중 ..\private\Model.cpp)
-C:\Users\dhqks6\Desktop\Task_ProJect\Task\Framework\Engine\Public\Engine_Struct.h(134,2): warning C5208: typedef 이름에 사용되는 명명되지 않은 클래스가 비정적 데이터 멤버, 멤버 열거형 또는 멤버 클래스 이외의 멤버를 선언할 수 없습니다. (소스 파일 컴파일 중 ..\Private\VIBuffer_Skeletal.cpp)
-C:\Users\dhqks6\Desktop\Task_ProJect\Task\Framework\Engine\Public\Engine_Struct.h(134,2): warning C5208: typedef 이름에 사용되는 명명되지 않은 클래스가 비정적 데이터 멤버, 멤버 열거형 또는 멤버 클래스 이외의 멤버를 선언할 수 없습니다. (소스 파일 컴파일 중 ..\private\Model.cpp)
-C:\Users\dhqks6\Desktop\Task_ProJect\Task\Framework\Engine\private\Model.cpp(204,87): warning C4267: '인수': 'size_t'에서 'Engine::_int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\dhqks6\Desktop\Task_ProJect\Task\Framework\Engine\private\Model.cpp(247,77): warning C4267: '인수': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\dhqks6\Desktop\Task_ProJect\Task\Framework\Engine\private\Model.cpp(267,41): warning C4267: '초기화 중': 'size_t'에서 'Engine::_uint'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-  Engine.vcxproj -> C:\Users\dhqks6\Desktop\Task_ProJect\Task\Framework\Engine\Bin\Engine.dll
+C:\Users\동찬\Desktop\새 폴더\Task\Framework\Engine\Public\Engine_Struct.h(35,2): warning C5208: typedef 이름에 사용되는 명명되지 않은 클래스가 비정적 데이터 멤버, 멤버 열거형 또는 멤버 클래스 이외의 멤버를 선언할 수 없습니다.
+C:\Users\동찬\Desktop\새 폴더\Task\Framework\Engine\Public\Engine_Struct.h(43,2): warning C5208: typedef 이름에 사용되는 명명되지 않은 클래스가 비정적 데이터 멤버, 멤버 열거형 또는 멤버 클래스 이외의 멤버를 선언할 수 없습니다.
+C:\Users\동찬\Desktop\새 폴더\Task\Framework\Engine\Public\Engine_Struct.h(53,2): warning C5208: typedef 이름에 사용되는 명명되지 않은 클래스가 비정적 데이터 멤버, 멤버 열거형 또는 멤버 클래스 이외의 멤버를 선언할 수 없습니다.
+C:\Users\동찬\Desktop\새 폴더\Task\Framework\Engine\Public\Engine_Struct.h(62,2): warning C5208: typedef 이름에 사용되는 명명되지 않은 클래스가 비정적 데이터 멤버, 멤버 열거형 또는 멤버 클래스 이외의 멤버를 선언할 수 없습니다.
+C:\Users\동찬\Desktop\새 폴더\Task\Framework\Engine\Public\Engine_Struct.h(71,2): warning C5208: typedef 이름에 사용되는 명명되지 않은 클래스가 비정적 데이터 멤버, 멤버 열거형 또는 멤버 클래스 이외의 멤버를 선언할 수 없습니다.
+C:\Users\동찬\Desktop\새 폴더\Task\Framework\Engine\Public\Engine_Struct.h(80,2): warning C5208: typedef 이름에 사용되는 명명되지 않은 클래스가 비정적 데이터 멤버, 멤버 열거형 또는 멤버 클래스 이외의 멤버를 선언할 수 없습니다.
+C:\Users\동찬\Desktop\새 폴더\Task\Framework\Engine\Public\Engine_Struct.h(90,2): warning C5208: typedef 이름에 사용되는 명명되지 않은 클래스가 비정적 데이터 멤버, 멤버 열거형 또는 멤버 클래스 이외의 멤버를 선언할 수 없습니다.
+C:\Users\동찬\Desktop\새 폴더\Task\Framework\Engine\Public\Engine_Struct.h(102,2): warning C5208: typedef 이름에 사용되는 명명되지 않은 클래스가 비정적 데이터 멤버, 멤버 열거형 또는 멤버 클래스 이외의 멤버를 선언할 수 없습니다.
+C:\Users\동찬\Desktop\새 폴더\Task\Framework\Engine\Public\Engine_Struct.h(128,2): warning C5208: typedef 이름에 사용되는 명명되지 않은 클래스가 비정적 데이터 멤버, 멤버 열거형 또는 멤버 클래스 이외의 멤버를 선언할 수 없습니다.
+C:\Users\동찬\Desktop\새 폴더\Task\Framework\Engine\Public\Engine_Struct.h(134,2): warning C5208: typedef 이름에 사용되는 명명되지 않은 클래스가 비정적 데이터 멤버, 멤버 열거형 또는 멤버 클래스 이외의 멤버를 선언할 수 없습니다.
+  Engine.vcxproj -> C:\Users\동찬\Desktop\새 폴더\Task\Framework\Engine\Bin\Engine.dll

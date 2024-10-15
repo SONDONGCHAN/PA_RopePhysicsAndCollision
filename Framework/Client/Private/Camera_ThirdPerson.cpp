@@ -34,7 +34,7 @@ HRESULT CCamera_ThirdPerson::Initialize(void* pArg)
 
 void CCamera_ThirdPerson::Priority_Tick(_float fTimeDelta)
 {
-	if (m_isRecording)
+	if (m_isRecording && m_isFixed)
 	{
 		KeyInput(fTimeDelta);
 		CamMove(fTimeDelta);
@@ -123,8 +123,7 @@ void CCamera_ThirdPerson::KeyInput(_float fTimeDelta)
 			m_degree_Vertical = Column_Min;
 	}
 
-	if(m_isFixed)
-		CursorFixCenter();
+	CursorFixCenter();
 }
 
 CCamera_ThirdPerson* CCamera_ThirdPerson::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

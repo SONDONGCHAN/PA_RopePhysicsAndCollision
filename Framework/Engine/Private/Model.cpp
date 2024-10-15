@@ -134,6 +134,7 @@ HRESULT CModel::Render(_uint iMeshIndex)
 
 HRESULT CModel::Render()
 {
+	//m_pBuffer_Skeletal->Bind_Buffers();
 	m_pBuffer_Skeletal->Render();
 
 	return S_OK;
@@ -157,7 +158,7 @@ HRESULT CModel::Bind_BoneMatrices(CShader * pShader, const _char * pConstantName
 
 HRESULT CModel::Update_BoneMatrices(CShader* pShader, const _char* pConstantName)
 {
-	m_pBuffer_Skeletal->UpdateBoneMatrices(m_BoneMatrices);
+	//m_pBuffer_Skeletal->UpdateBoneMatrices(m_BoneMatrices);
 
 	_float4x4		BoneMatrices[512];
 
@@ -166,9 +167,7 @@ HRESULT CModel::Update_BoneMatrices(CShader* pShader, const _char* pConstantName
 		BoneMatrices[i] = *(m_BoneMatrices[i]);
 	}
 
-	HRESULT hr = pShader->Bind_Matrices(pConstantName, BoneMatrices, 512);
-
-	return hr;
+	return pShader->Bind_Matrices(pConstantName, BoneMatrices, 512);
 }
 
 void CModel::Play_Animation(_float fTimeDelta, _bool isLoop)
