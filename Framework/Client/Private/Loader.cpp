@@ -145,14 +145,23 @@ HRESULT CLoader::Loading_For_GamePlayLevel()
 		CVIBuffer_Cube::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+	/* For.Prototype_Component_Model_Human_Skeletal */
 	_matrix			PivotMatrix = XMMatrixIdentity();
 
-	/* For.Prototype_Component_Model_Fiona */
-	PivotMatrix = XMMatrixRotationY(XMConvertToRadians(180.0f));
-
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Model_Fiona"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM_NONMESH, "../Bin/Resources/Models/Fiona/Fiona.fbx", PivotMatrix))))
+	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Model_Human_Skeletal"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM_NONMESH, "../Bin/Resources/Models/Human/Human_1.fbx", PivotMatrix))))
 		return E_FAIL;
+
+	/* For.Prototype_Component_Model_Fiona */
+	//PivotMatrix = XMMatrixRotationY(XMConvertToRadians(180.0f));
+
+	//if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Model_Fiona"),
+	//	CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Fiona/Fiona.fbx", PivotMatrix))))
+	//	return E_FAIL;
+	//if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Model_Fiona_Skeletal"),
+	//	CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM_NONMESH, "../Bin/Resources/Models/Fiona/Fiona.fbx", PivotMatrix))))
+	//	return E_FAIL;
 
 	/* For.Prototype_Component_Model_ForkLift */
 	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
@@ -202,8 +211,8 @@ HRESULT CLoader::Loading_For_GamePlayLevel()
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxAnimMesh.hlsl"), VTXANIMMESH::Elements, VTXANIMMESH::iNumElements))))
 		return E_FAIL;
 
-	/* For.Prototype_Component_Shader_VtxAnimNonMesh */
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Shader_VtxAnimNonMesh"),
+	/* For.Prototype_Component_Shader_VtxAnimSkeletal */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Shader_VtxAnimSkeletal"),
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxAnimNonMesh.hlsl"), VTXANIMNONMESH::Elements, VTXANIMNONMESH::iNumElements))))
 		return E_FAIL;
 

@@ -40,7 +40,9 @@ public:
 
 private:
 	CShader*			m_pShaderCom = { nullptr };	
+	CShader*			m_pSkeletalShaderCom = { nullptr };
 	CModel*				m_pModelCom = { nullptr };
+	CModel*				m_pSkeletalModelCom = { nullptr };
 	CCollider*			m_pColliderCom = { nullptr };
 
 

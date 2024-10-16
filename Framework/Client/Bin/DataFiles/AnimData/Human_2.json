@@ -1,0 +1,242 @@
+{
+	"0" : 
+	{
+		"AnimName" : "1. Eula_Standby",
+		"Speed" : 1.0
+	},
+	"1" : 
+	{
+		"AnimName" : "2. Eula_Walk",
+		"Speed" : 1.0
+	},
+	"10" : 
+	{
+		"AnimName" : "11. Eula_SprintStopL",
+		"Speed" : 1.0
+	},
+	"11" : 
+	{
+		"AnimName" : "12. Eula_SprintToRun",
+		"Speed" : 1.0
+	},
+	"12" : 
+	{
+		"AnimName" : "13. Eula_Jump",
+		"Speed" : 1.0
+	},
+	"13" : 
+	{
+		"AnimName" : "14. Eula_JumpForWalkL",
+		"Speed" : 1.0
+	},
+	"14" : 
+	{
+		"AnimName" : "15. Eula_JumpForRun",
+		"Speed" : 1.0
+	},
+	"15" : 
+	{
+		"AnimName" : "16. Eula_JumpForSprintL",
+		"Speed" : 1.0
+	},
+	"16" : 
+	{
+		"AnimName" : "17. Eula_JumpUpstairsHighL",
+		"Speed" : 1.0
+	},
+	"17" : 
+	{
+		"AnimName" : "18. Eula_JumpUpstairsLowL",
+		"Speed" : 1.0
+	},
+	"18" : 
+	{
+		"AnimName" : "19. Eula_JumpOffWall",
+		"Speed" : 1.0
+	},
+	"19" : 
+	{
+		"AnimName" : "20. Eula_FallToGroundL",
+		"Speed" : 1.0
+	},
+	"2" : 
+	{
+		"AnimName" : "3. Eula_WalkStop",
+		"Speed" : 1.0
+	},
+	"20" : 
+	{
+		"AnimName" : "21. Eula_FallToGroundH",
+		"Speed" : 1.0
+	},
+	"21" : 
+	{
+		"AnimName" : "22. Eula_FallToGroundBSH",
+		"Speed" : 1.0
+	},
+	"22" : 
+	{
+		"AnimName" : "23. Eula_ClimbIdleD",
+		"Speed" : 1.0
+	},
+	"23" : 
+	{
+		"AnimName" : "24. Eula_ClimbL",
+		"Speed" : 1.0
+	},
+	"24" : 
+	{
+		"AnimName" : "25. Eula_ClimbU",
+		"Speed" : 1.0
+	},
+	"25" : 
+	{
+		"AnimName" : "26. Eula_ClimbR",
+		"Speed" : 1.0
+	},
+	"26" : 
+	{
+		"AnimName" : "27. Eula_ClimbDashL",
+		"Speed" : 1.0
+	},
+	"27" : 
+	{
+		"AnimName" : "28. Eula_ClimbDashLU",
+		"Speed" : 1.0
+	},
+	"28" : 
+	{
+		"AnimName" : "29. Eula_ClimbDashU",
+		"Speed" : 1.0
+	},
+	"29" : 
+	{
+		"AnimName" : "30. Eula_ClimbDashRU",
+		"Speed" : 1.0
+	},
+	"3" : 
+	{
+		"AnimName" : "4. Eula_RunStart",
+		"Speed" : 1.0
+	},
+	"30" : 
+	{
+		"AnimName" : "31. Eula_ClimbDashR",
+		"Speed" : 1.0
+	},
+	"31" : 
+	{
+		"AnimName" : "32. Eula_FlyStart",
+		"Speed" : 1.0
+	},
+	"32" : 
+	{
+		"AnimName" : "33. Eula_FlyNormal",
+		"Speed" : 1.0
+	},
+	"33" : 
+	{
+		"AnimName" : "34. Eula_FlyTurnL",
+		"Speed" : 1.0
+	},
+	"34" : 
+	{
+		"AnimName" : "35. Eula_FlyTurnR",
+		"Speed" : 1.0
+	},
+	"35" : 
+	{
+		"AnimName" : "36. Eula_Attack_1",
+		"Speed" : 1.0
+	},
+	"36" : 
+	{
+		"AnimName" : "37. Eula_Attack_2",
+		"Speed" : 1.0
+	},
+	"37" : 
+	{
+		"AnimName" : "38. Eula_Attack_3",
+		"Speed" : 1.0
+	},
+	"38" : 
+	{
+		"AnimName" : "39. Eula_Attack_4",
+		"Speed" : 1.0
+	},
+	"39" : 
+	{
+		"AnimName" : "40. Eula_Attack_5",
+		"Speed" : 1.0
+	},
+	"4" : 
+	{
+		"AnimName" : "5. Eula_RunCycle",
+		"Speed" : 1.0
+	},
+	"40" : 
+	{
+		"AnimName" : "41. Eula_ElementalArt_Click",
+		"Speed" : 1.0
+	},
+	"41" : 
+	{
+		"AnimName" : "42. Eula_ElementalArt_Charge",
+		"Speed" : 1.0
+	},
+	"42" : 
+	{
+		"AnimName" : "43. Eula_ElementalBurst",
+		"Speed" : 1.0
+	},
+	"43" : 
+	{
+		"AnimName" : "44. Eula_ClimbD",
+		"Speed" : 1.0
+	},
+	"44" : 
+	{
+		"AnimName" : "Eula_Hit_H",
+		"Speed" : 1.0
+	},
+	"45" : 
+	{
+		"AnimName" : "Eula_Hit_L",
+		"Speed" : 1.0
+	},
+	"46" : 
+	{
+		"AnimName" : "Eula_HitThrow",
+		"Speed" : 1.0
+	},
+	"47" : 
+	{
+		"AnimName" : "Eula_HitFallToGround",
+		"Speed" : 1.0
+	},
+	"5" : 
+	{
+		"AnimName" : "6. Eula_RunStop",
+		"Speed" : 1.0
+	},
+	"6" : 
+	{
+		"AnimName" : "7. Eula_RunDownHill50D",
+		"Speed" : 1.0
+	},
+	"7" : 
+	{
+		"AnimName" : "8. Eula_RunToWalk",
+		"Speed" : 1.0
+	},
+	"8" : 
+	{
+		"AnimName" : "9. Eula_SprintStart",
+		"Speed" : 1.0
+	},
+	"9" : 
+	{
+		"AnimName" : "10. Eula_SprintCycle",
+		"Speed" : 1.0
+	}
+}

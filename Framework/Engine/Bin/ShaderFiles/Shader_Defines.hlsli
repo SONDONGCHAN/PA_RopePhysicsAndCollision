@@ -52,6 +52,13 @@ DepthStencilState DSS_None_ZTestAndWrite
 	DepthWriteMask = zero;	
 };
 
+DepthStencilState DSS_None_ZTest
+{
+	DepthEnable = false;
+	DepthWriteMask = all;
+};
+
+
 BlendState BS_Default
 {
 	BlendEnable[0] = false;

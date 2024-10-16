@@ -24,12 +24,17 @@ HRESULT CBone::Initialize(const aiNode * pAIBone, _int iParentBoneIndex, _fmatri
 	return S_OK;
 }
 
-void CBone::Invalidate_CombinedTransformationMatrix(const vector<CBone*>& Bones)
+void CBone::Invalidate_CombinedTransformationMatrix(const vector<CBone*>& Bones, _bool _isBlending, _float _fRatio)
 {
 	if (-1 == m_iParentBoneIndex)
 		m_CombinedTransformationMatrix = m_TransformationMatrix;
 	else
 		XMStoreFloat4x4(&m_CombinedTransformationMatrix, XMLoadFloat4x4(&m_TransformationMatrix) * XMLoadFloat4x4(&Bones[m_iParentBoneIndex]->m_CombinedTransformationMatrix));
+
+	if (_isBlending)
+	{
+
+	}
 }
 
 CBone * CBone::Create(const aiNode * pAIBone, _int iParentBoneIndex, _fmatrix PivotMatrix)

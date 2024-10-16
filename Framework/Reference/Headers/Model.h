@@ -22,10 +22,6 @@ public:
 
 	_float4x4* Get_CombinedBoneMatrixPtr(const _char* pBoneName);
 
-	void Set_Animation(_uint iAnimIndex) {
-		m_iCurrentAnimation = iAnimIndex;
-	}
-
 public:
 	HRESULT Initialize_Prototype(TYPE eModelType, const _char* pModelFilePath, _fmatrix PivotMatrix);
 	HRESULT Initialize(void* pArg);
@@ -37,6 +33,7 @@ public:
 	HRESULT Bind_Material_ShaderResource(class CShader* pShader, _uint iMeshIndex, aiTextureType eMaterialType, const _char* pConstantName);
 	HRESULT Bind_BoneMatrices(class CShader* pShader, const _char* pConstantName, _uint iMeshIndex);
 	HRESULT Update_BoneMatrices(CShader* pShader, const _char* pConstantName);
+	void Set_Animation(_uint iAnimIndex);
 	void Play_Animation(_float fTimeDelta, _bool isLoop = false);
 
 private:
@@ -65,12 +62,21 @@ private:
 	class CVIBuffer_Skeletal*	m_pBuffer_Skeletal { nullptr };
 
 private:
+	_float	m_fBlendingTime		= { 0.f };
+	_float	m_fEndBlendingTime	= { 0.1f };
+	_bool	m_isBlending		= { false };
+
+	/*애니메이션 Json Data Parsing*/
+	wstring m_strAnimSavePath = TEXT("..\\..\\Client\\Bin\\DataFiles\\AnimData\\");
+
+private:
 	HRESULT Ready_Meshes();
 	HRESULT Ready_Buffer_Skeletal();
 	HRESULT Ready_Materials(const _char* pModelFilePath);
 	HRESULT Ready_Bones(aiNode * pNode, _int iParentBoneIndex);
 	HRESULT Ready_Bone_Matrices();
-	HRESULT Ready_Animations();
+	HRESULT Ready_Animations(const _char* pModelFilePath);
+	void	Make_Anim_Json(const _char* pModelFilePath);
 
 public:
 	static CModel* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, TYPE eModelType, const _char* pModelFilePath, _fmatrix PivotMatrix = XMMatrixIdentity());

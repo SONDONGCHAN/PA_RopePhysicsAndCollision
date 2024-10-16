@@ -1,7 +1,8 @@
 #include "..\Public\VIBuffer_Skeletal.h"
+#include "Bone.h"
 
-CVIBuffer_Skeletal::CVIBuffer_Skeletal(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _int _BoneCount)
-	: CVIBuffer(pDevice, pContext), m_BoneCount(_BoneCount)
+CVIBuffer_Skeletal::CVIBuffer_Skeletal(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, vector<class CBone*>& _Bones)
+	: CVIBuffer(pDevice, pContext), m_BoneCount(_Bones.size())
 {
 }
 
@@ -10,9 +11,9 @@ CVIBuffer_Skeletal::CVIBuffer_Skeletal(const CVIBuffer_Skeletal& rhs)
 {
 }
 
-HRESULT CVIBuffer_Skeletal::Initialize_Prototype()
+HRESULT CVIBuffer_Skeletal::Initialize_Prototype(vector<class CBone*>& _Bones)
 {
-    if (FAILED(Initialize_LineBuffer()))
+    if (FAILED(Initialize_LineBuffer(_Bones)))
         return E_FAIL;
 
     return S_OK;
@@ -23,17 +24,25 @@ HRESULT CVIBuffer_Skeletal::Initialize(void* pArg)
 	return S_OK;
 }
 
-HRESULT CVIBuffer_Skeletal::Initialize_LineBuffer()
+HRESULT CVIBuffer_Skeletal::Initialize_LineBuffer(vector<class CBone*>& _Bones)
 {
     BoneIndexVertex* pVertices = new BoneIndexVertex[(m_BoneCount - 1) * 2];
 
-    for (_int i = 0; i < m_BoneCount - 1; ++i) {
-        // 첫 번째 정점 (본 i의 위치)
-        pVertices[i * 2] = { XMFLOAT3(0.0f, 0.0f, 0.0f), i };
-
+    for (_int i = 1; i < m_BoneCount; ++i)
+    {
+        pVertices[(i-1) * 2] = { XMFLOAT3(0.0f, 0.0f, 0.0f), i };
         // 두 번째 정점 (본 i+1의 위치)
-        pVertices[i * 2 + 1] = { XMFLOAT3(0.0f, 0.0f, 0.0f), i + 1 };
+        pVertices[(i-1) * 2 + 1] = { XMFLOAT3(0.0f, 0.0f, 0.0f), _Bones[i]->Get_ParentBoneIndex() };
+        
     }
+
+    //for (_int i = 0; i < m_BoneCount - 1; ++i) {
+    //    // 첫 번째 정점 (본 i의 위치)
+    //    pVertices[i * 2] = { XMFLOAT3(0.0f, 0.0f, 0.0f), i };
+
+    //    // 두 번째 정점 (본 i+1의 위치)
+    //    pVertices[i * 2 + 1] = { XMFLOAT3(0.0f, 0.0f, 0.0f), i + 1 };
+    //}
 
     D3D11_BUFFER_DESC bufferDesc = {};
     bufferDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -67,11 +76,11 @@ HRESULT CVIBuffer_Skeletal::Render()
     return S_OK;
 }
 
-CVIBuffer_Skeletal* CVIBuffer_Skeletal::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _int _BoneCount)
+CVIBuffer_Skeletal* CVIBuffer_Skeletal::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, vector<class CBone*>& _Bones)
 {
-    CVIBuffer_Skeletal* pInstance = new CVIBuffer_Skeletal(pDevice, pContext, _BoneCount);
+    CVIBuffer_Skeletal* pInstance = new CVIBuffer_Skeletal(pDevice, pContext, _Bones);
 
-    if (FAILED(pInstance->Initialize_Prototype()))
+    if (FAILED(pInstance->Initialize_Prototype(_Bones)))
     {
         MSG_BOX("Failed to Created : CVIBuffer_Skeletal");
         Safe_Release(pInstance);
