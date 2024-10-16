@@ -52,6 +52,10 @@ namespace Engine
 using namespace Engine;
 
 
+/*Json*/
+#include "Json/json.h"
+using namespace Json;
+
 
 #ifdef _DEBUG
 

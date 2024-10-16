@@ -35,6 +35,9 @@ public:
 	virtual HRESULT Render() override;
 
 private:
+	void	KeyInput(_float fTimeDelta);
+
+private:
 	CNavigation*				m_pNavigationCom = { nullptr };
 	CCollider*					m_pColliderCom = { nullptr };
 	_uint						m_iState = { 0 };

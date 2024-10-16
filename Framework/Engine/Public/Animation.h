@@ -15,6 +15,9 @@ public:
 	HRESULT Initialize(const aiAnimation* pAIAnimation, class CModel* pModel);
 	void Invalidate_TransformationMatrix(_float fTimeDelta, const vector<class CBone*>& Bones, _bool isLoop);
 
+public:
+	void Reset_TrackPosition();
+
 private:
 	_uint					m_iNumAnimations = { 0 };
 	_char					m_szName[MAX_PATH] = "";

@@ -6,7 +6,7 @@
 #include "Texture.h"
 #include "Animation.h"
 #include "VIBuffer_Skeletal.h"
-#include "iostream"
+#include "GameInstance.h"
 
 CModel::CModel(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CComponent(pDevice, pContext)
@@ -113,7 +113,7 @@ HRESULT CModel::Initialize_Prototype(TYPE eModelType, const _char * pModelFilePa
 			return E_FAIL;
 	}
 
-	if (FAILED(Ready_Animations()))
+	if (FAILED(Ready_Animations(pModelFilePath)))
 		return E_FAIL;
 
 	return S_OK;
@@ -160,26 +160,52 @@ HRESULT CModel::Update_BoneMatrices(CShader* pShader, const _char* pConstantName
 {
 	//m_pBuffer_Skeletal->UpdateBoneMatrices(m_BoneMatrices);
 
-	_float4x4		BoneMatrices[512];
+	_float4x4		BoneMatrices[700];
 
 	for (int i = 0; i < m_BoneMatrices.size(); ++i)
 	{
 		BoneMatrices[i] = *(m_BoneMatrices[i]);
 	}
 
-	return pShader->Bind_Matrices(pConstantName, BoneMatrices, 512);
+	return pShader->Bind_Matrices(pConstantName, BoneMatrices, 700);
+}
+
+void CModel::Set_Animation(_uint iAnimIndex)
+{
+	if (m_iCurrentAnimation != iAnimIndex)
+	{
+		m_Animations[m_iCurrentAnimation]->Reset_TrackPosition(); // 초기화
+		m_iCurrentAnimation = iAnimIndex;
+
+		for (auto& iter : m_Bones)
+			iter->Save_PreMatrix();
+
+		m_isBlending = true;
+		m_fBlendingTime = 0.f;
+	}
 }
 
 void CModel::Play_Animation(_float fTimeDelta, _bool isLoop)
 {
-	/* 현재 애니메이션 상태에 맞게 뼈들의 TransformationMatrix행렬을 갱신한다. */
+	/* 현재 애니메이션 상태에 맞게 뼈들의 TransformationMatrix행렬 갱신 */
 	m_Animations[m_iCurrentAnimation]->Invalidate_TransformationMatrix(fTimeDelta, m_Bones, isLoop);
 
+	_float fRatio = 1.f;
 
-	/* 모든 뼈들의 CombinedTransformationMatrix를 구해준다. */
-	for (auto& pBone : m_Bones)	
-		pBone->Invalidate_CombinedTransformationMatrix(m_Bones);
-	
+	if (m_isBlending)
+	{
+		m_fBlendingTime += fTimeDelta;
+		
+		if (m_fBlendingTime >= m_fEndBlendingTime)
+			m_isBlending = false;
+		else
+			fRatio = m_fBlendingTime / m_fEndBlendingTime;
+
+	}
+
+	/* 모든 뼈들의 CombinedTransformationMatrix 연산 */
+	for (auto& pBone : m_Bones)
+		pBone->Invalidate_CombinedTransformationMatrix(m_Bones, m_isBlending, fRatio);
 }
 
 HRESULT CModel::Ready_Meshes()
@@ -200,7 +226,7 @@ HRESULT CModel::Ready_Meshes()
 
 HRESULT CModel::Ready_Buffer_Skeletal()
 {
-	m_pBuffer_Skeletal = CVIBuffer_Skeletal::Create(m_pDevice, m_pContext, m_Bones.size());
+	m_pBuffer_Skeletal = CVIBuffer_Skeletal::Create(m_pDevice, m_pContext, m_Bones);
 	
 	if (nullptr == m_pBuffer_Skeletal)
 		return E_FAIL;
@@ -265,7 +291,12 @@ HRESULT CModel::Ready_Bones(aiNode* pNode, _int iParentBoneIndex)
 
 	_uint	iParentIndex = m_Bones.size() - 1;
 
-	for (size_t i = 0; i < pNode->mNumChildren; i++)
+	_int iNumChildren = pNode->mNumChildren;
+
+	if (iNumChildren == 0)
+		pBone->Set_IsLeaf(true);
+
+	for (size_t i = 0; i < iNumChildren; i++)
 	{
 		Ready_Bones(pNode->mChildren[i], iParentIndex);
 	}
@@ -285,7 +316,7 @@ HRESULT CModel::Ready_Bone_Matrices()
 	return S_OK;
 }
 
-HRESULT CModel::Ready_Animations()
+HRESULT CModel::Ready_Animations(const _char* pModelFilePath)
 {
 	m_iNumAnimations = m_pAIScene->mNumAnimations;
 
@@ -298,7 +329,52 @@ HRESULT CModel::Ready_Animations()
 		m_Animations.push_back(pAnimation);
 	}
 
+	//Make_Anim_Json(pModelFilePath);
+
 	return S_OK;
+}
+
+void CModel::Make_Anim_Json(const _char* pModelFilePath)
+{
+	Json::Value root;
+
+	for (size_t i = 0; i < m_iNumAnimations; ++i)
+	{
+		Json::Value Animation;
+
+		_char m_szName[MAX_PATH] = "";
+		strcpy_s(m_szName, m_pAIScene->mAnimations[i]->mName.data);
+
+		/*Json Data*/
+		Animation["AnimName"] = m_szName;
+		Animation["Speed"] = 1.f;
+		
+		string index = to_string(i);
+		root[index] = Animation;
+	}
+
+	const char* pLastSlash = strrchr(pModelFilePath, '/');
+	if (!pLastSlash) 
+		pLastSlash = strrchr(pModelFilePath, '\\');  // Windows 경로 지원
+	
+
+	// 슬래시가 없으면 전체 문자열이 파일 이름이므로 그대로 설정
+	const char* fileName = (pLastSlash) ? (pLastSlash + 1) : pModelFilePath;
+
+	// 확장자 위치 찾기
+	const char* pExtension = strrchr(fileName, '.');
+
+	string tempName;
+	if (pExtension) 
+		tempName.assign(fileName, pExtension - fileName);  // 확장자 제거
+	else 
+		tempName = fileName;  // 확장자가 없으면 전체 파일명 그대로 사용
+
+	// std::string을 std::wstring으로 변환하여 strObjName에 저장
+	wstring strObjName = std::wstring(tempName.begin(), tempName.end());
+	wstring strCompletePath = m_strAnimSavePath + strObjName + TEXT(".json");
+
+	CGameInstance::GetInstance()->WriteJson(root, strCompletePath);
 }
 
 CModel * CModel::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, TYPE eModelType, const _char * pModelFilePath, _fmatrix PivotMatrix)

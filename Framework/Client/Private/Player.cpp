@@ -55,38 +55,14 @@ void CPlayer::Priority_Tick(_float fTimeDelta)
 
 void CPlayer::Tick(_float fTimeDelta)
 {
-	if (GetKeyState(VK_LEFT) & 0x8000)
-	{
-		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * -1.f);
-	}
-
-	if (GetKeyState(VK_RIGHT) & 0x8000)
-	{
-		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * 1.f);
-	}
-
-	if (GetKeyState(VK_DOWN) & 0x8000)
-	{
-		m_pTransformCom->Go_Backward(fTimeDelta);
-	}
-
-	if (GetKeyState(VK_UP) & 0x8000)
-	{
-		m_pTransformCom->Go_Straight(fTimeDelta, m_pNavigationCom);		
-		m_iState |= STATE_RUN;
-	}
-	else
-	{
-		m_iState = 0x00000000;
-		m_iState |= STATE_IDLE;
-	}
+	KeyInput(fTimeDelta);
 
 	for (auto& Pair : m_PlayerParts)
 		(Pair.second)->Tick(fTimeDelta);
 
 	SetUp_OnTerrain(m_pTransformCom);
 
-	m_pColliderCom->Tick(m_pTransformCom->Get_WorldMatrix());
+	//m_pColliderCom->Tick(m_pTransformCom->Get_WorldMatrix());
 }
 
 void CPlayer::Late_Tick(_float fTimeDelta)
@@ -98,7 +74,7 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 #ifdef _DEBUG
 
 	m_pGameInstance->Add_DebugComponent(m_pNavigationCom);
-	m_pGameInstance->Add_DebugComponent(m_pColliderCom);
+	//m_pGameInstance->Add_DebugComponent(m_pColliderCom);
 
 #endif
 
@@ -112,6 +88,43 @@ HRESULT CPlayer::Render()
 	return S_OK;
 }
 
+void CPlayer::KeyInput(_float fTimeDelta)
+{
+	
+	if (CGameInstance::GetInstance()->KeyDown(DIK_RIGHT))
+	{
+		m_iState++;
+		if (m_iState > 47) m_iState = 47;
+	}
+	else if (CGameInstance::GetInstance()->KeyDown(DIK_LEFT))
+	{
+		m_iState--;
+		if (m_iState < 0) m_iState = 0;
+	}
+
+	if (CGameInstance::GetInstance()->KeyPressing(DIK_W))
+	{
+		m_pTransformCom->Go_Straight(fTimeDelta);
+	}
+	else if(CGameInstance::GetInstance()->KeyUp(DIK_W))
+	{
+		m_iState = 0x00000000;
+		m_iState = STATE_IDLE;
+	}
+	if (CGameInstance::GetInstance()->KeyPressing(DIK_S))
+	{
+		m_pTransformCom->Go_Backward(fTimeDelta);
+	}
+	if (CGameInstance::GetInstance()->KeyPressing(DIK_A))
+	{
+		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * -1.f);
+	}
+	if (CGameInstance::GetInstance()->KeyPressing(DIK_D))
+	{
+		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * 1.f);
+	}
+}
+
 HRESULT CPlayer::Add_Components()
 {
 	/* Com_Navigation */
@@ -123,16 +136,16 @@ HRESULT CPlayer::Add_Components()
 		TEXT("Com_Navigation"), reinterpret_cast<CComponent**>(&m_pNavigationCom), &NaviDesc)))
 		return E_FAIL;
 
-	/* Com_Collider */
-	CBounding_AABB::AABB_DESC		BoundingDesc{};
+	///* Com_Collider */
+	//CBounding_AABB::AABB_DESC		BoundingDesc{};
 
-	BoundingDesc.vExtents = _float3(0.3f, 0.7f, 0.3f);
-	BoundingDesc.vCenter = _float3(0.f, BoundingDesc.vExtents.y, 0.f);
-	
+	//BoundingDesc.vExtents = _float3(0.3f, 0.7f, 0.3f);
+	//BoundingDesc.vCenter = _float3(0.f, BoundingDesc.vExtents.y, 0.f);
+	//
 
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Collider_AABB"),
-		TEXT("Com_Collider"), reinterpret_cast<CComponent**>(&m_pColliderCom), &BoundingDesc)))
-		return E_FAIL;
+	//if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Collider_AABB"),
+	//	TEXT("Com_Collider"), reinterpret_cast<CComponent**>(&m_pColliderCom), &BoundingDesc)))
+	//	return E_FAIL;
 
 	return S_OK;
 }
@@ -149,18 +162,18 @@ HRESULT CPlayer::Add_PartObjects()
 		return E_FAIL;
 	m_PlayerParts.emplace(TEXT("Part_Body"), pBody_Player);
 
-	CModel*				pBodyModel = dynamic_cast<CModel*>(pBody_Player->Get_Component(TEXT("Com_Model")));
-	if (nullptr == pBodyModel)
-		return E_FAIL;
+	//CModel*				pBodyModel = dynamic_cast<CModel*>(pBody_Player->Get_Component(TEXT("Com_Model")));
+	//if (nullptr == pBodyModel)
+	//	return E_FAIL;
 
-	CWeapon::WEAPON_DESC			WeaponObjDesc{};
-	WeaponObjDesc.pParentTransform = m_pTransformCom;
-	WeaponObjDesc.pSocketMatrix = pBodyModel->Get_CombinedBoneMatrixPtr("SWORD");
+	//CWeapon::WEAPON_DESC			WeaponObjDesc{};
+	//WeaponObjDesc.pParentTransform = m_pTransformCom;
+	//WeaponObjDesc.pSocketMatrix = pBodyModel->Get_CombinedBoneMatrixPtr("SWORD");
 
-	CPartObject*		pWeapon = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Weapon"), &WeaponObjDesc));
-	if (nullptr == pWeapon)
-		return E_FAIL;
-	m_PlayerParts.emplace(TEXT("Part_Weapon"), pWeapon);
+	//CPartObject*		pWeapon = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Weapon"), &WeaponObjDesc));
+	//if (nullptr == pWeapon)
+	//	return E_FAIL;
+	//m_PlayerParts.emplace(TEXT("Part_Weapon"), pWeapon);
 
 	return S_OK;
 }

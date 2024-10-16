@@ -59,11 +59,15 @@ void CAnimation::Invalidate_TransformationMatrix(_float fTimeDelta, const vector
 		if (false == isLoop)
 		{
 			m_isFinished = true;
+
+			for (size_t i = 0; i < m_iNumChannels; i++)
+				m_Channels[i]->Invalidate_TransformationMatrix(m_Duration, &m_iCurrentKeyFrames[i], Bones);
+
 			return;
 		}
 		else
 		{
-			m_TrackPosition = 0.0;
+			Reset_TrackPosition();
 		}
 	}
 
@@ -71,6 +75,13 @@ void CAnimation::Invalidate_TransformationMatrix(_float fTimeDelta, const vector
 	{
 		m_Channels[i]->Invalidate_TransformationMatrix(m_TrackPosition, &m_iCurrentKeyFrames[i], Bones);
 	}
+}
+
+void CAnimation::Reset_TrackPosition()
+{
+	m_TrackPosition = 0.f;
+	for (auto iter : m_iCurrentKeyFrames)
+		iter = 0;
 }
 
 CAnimation * CAnimation::Create(const aiAnimation * pAIAnimation, class CModel* pModel)

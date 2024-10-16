@@ -61,22 +61,19 @@ void CCamera_Free::CursorFixCenter()
 
 void CCamera_Free::KeyInput(_float fTimeDelta)
 {
-	if (GetKeyState('W') & 0x8000)
+	if (CGameInstance::GetInstance()->KeyPressing(DIK_UP))
 	{
 		m_pTransformCom->Go_Straight(fTimeDelta);
 	}
-
-	if (GetKeyState('S') & 0x8000)
+	if (CGameInstance::GetInstance()->KeyPressing(DIK_DOWN))
 	{
 		m_pTransformCom->Go_Backward(fTimeDelta);
 	}
-
-	if (GetKeyState('A') & 0x8000)
+	if (CGameInstance::GetInstance()->KeyPressing(DIK_LEFT))
 	{
 		m_pTransformCom->Go_Left(fTimeDelta);
 	}
-
-	if (GetKeyState('D') & 0x8000)
+	if (CGameInstance::GetInstance()->KeyPressing(DIK_RIGHT))
 	{
 		m_pTransformCom->Go_Right(fTimeDelta);
 	}

@@ -9,6 +9,8 @@
 #include "Font_Manager.h"
 #include "Target_Manager.h"
 #include "Frustum.h"
+#include "Json_Manager.h"
+
 
 IMPLEMENT_SINGLETON(CGameInstance)
 
@@ -70,6 +72,11 @@ HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInst, _uint iNumLevels, cons
 
 	m_pFrustum = CFrustum::Create();
 	if (nullptr == m_pFrustum)
+		return E_FAIL;
+
+
+	m_pJson_Manager = CJson_Manager::Create();
+	if (nullptr == m_pJson_Manager)
 		return E_FAIL;
 
 	return S_OK;
@@ -385,6 +392,19 @@ _bool CGameInstance::isIn_Frustum_LocalSpace(_fvector vPosition, _float fRadius)
 	return m_pFrustum->isIn_LocalSpace(vPosition, fRadius);	
 }
 
+void CGameInstance::WriteJson(Json::Value _value, const wstring& _strSavePath)
+{
+	if (!m_pJson_Manager)
+		return;
+
+	m_pJson_Manager->WriteJson(_value, _strSavePath);
+}
+
+Json::Value CGameInstance::ReadJson(const wstring& _strReadPath)
+{
+	return m_pJson_Manager->ReadJson(_strReadPath);
+}
+
 #ifdef _DEBUG
 HRESULT CGameInstance::Ready_Debug(const wstring & strTargetTag, _float fX, _float fY, _float fSizeX, _float fSizeY)
 {
@@ -417,6 +437,7 @@ void CGameInstance::Release_Manager()
 	Safe_Release(m_pTimer_Manager);
 	Safe_Release(m_pInput_Device);	
 	Safe_Release(m_pGraphic_Device);
+	Safe_Release(m_pJson_Manager);
 }
 
 void CGameInstance::Free()

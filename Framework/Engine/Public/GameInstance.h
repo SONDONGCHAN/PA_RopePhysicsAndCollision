@@ -94,9 +94,16 @@ public: /* For.Frustum */
 	_bool isIn_Frustum_WorldSpace(_fvector vPosition, _float fRadius = 0.0f);
 	_bool isIn_Frustum_LocalSpace(_fvector vPosition, _float fRadius = 0.f);
 
+public: /* For.Json_Manager */
+	void WriteJson(Json::Value _value, const wstring & _strSavePath);
+	Json::Value ReadJson(const wstring & _strReadPath);
+
 public: /* etc */
 	int		Get_CurrentLevel() { return m_iCurrent_Level;}
 	void	Set_CurrentLevel(_int _iLevel) { m_iCurrent_Level = _iLevel; }
+
+
+
 
 
 #ifdef _DEBUG
@@ -119,6 +126,8 @@ private:
 	class CFont_Manager*			m_pFont_Manager = { nullptr };
 	class CTarget_Manager*			m_pTarget_Manager = { nullptr };
 	class CFrustum*					m_pFrustum = { nullptr };
+	class CJson_Manager*			m_pJson_Manager = { nullptr };
+
 	
 	
 	int m_iCurrent_Level = { 0 };

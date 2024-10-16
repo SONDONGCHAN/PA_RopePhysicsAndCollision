@@ -166,6 +166,9 @@
     <Filter Include="01.Utility\03.Component\VIBuffer\Skeletal">
       <UniqueIdentifier>{b6f0dc18-4921-4bd1-b9b2-c462eaabf3a0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\97.JsonParser">
+      <UniqueIdentifier>{08a62c01-1f39-4244-aa13-13b62062818f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\public\Base.h">
@@ -333,6 +336,9 @@
     <ClInclude Include="..\Public\VIBuffer_Skeletal.h">
       <Filter>01.Utility\03.Component\VIBuffer\Skeletal</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Json_Manager.h">
+      <Filter>01.Utility\97.JsonParser</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\Base.cpp">
@@ -487,6 +493,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\VIBuffer_Skeletal.cpp">
       <Filter>01.Utility\03.Component\VIBuffer\Skeletal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Json_Manager.cpp">
+      <Filter>01.Utility\97.JsonParser</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

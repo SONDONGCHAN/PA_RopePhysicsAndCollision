@@ -18,22 +18,22 @@ struct CB_BoneMatrices
 class ENGINE_DLL CVIBuffer_Skeletal final : public CVIBuffer
 {
 private:
-	CVIBuffer_Skeletal(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _int _BoneCount);
+	CVIBuffer_Skeletal(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, vector<class CBone*>& _Bones);
 	CVIBuffer_Skeletal(const CVIBuffer_Skeletal& rhs);
 	virtual ~CVIBuffer_Skeletal() = default;
 
 public:
-	virtual HRESULT Initialize_Prototype() override;
+	HRESULT Initialize_Prototype(vector<class CBone*>& _Bones) ;
 	virtual HRESULT Initialize(void* pArg) override;
 
 private:
-	HRESULT Initialize_LineBuffer();
+	HRESULT Initialize_LineBuffer(vector<class CBone*>& _Bones);
 
 public:
 	virtual HRESULT Render() override;
 
 public:
-	static CVIBuffer_Skeletal* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _int _BoneCount);
+	static CVIBuffer_Skeletal* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, vector<class CBone*>& _Bones);
 	virtual CComponent* Clone(void* pArg) override;
 	virtual void Free() override;
 

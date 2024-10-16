@@ -1,0 +1,195 @@
+{
+	"0": {
+		"AnimName": "Ambor_Standby",
+		"Speed": 1.0
+	},
+	"1": {
+		"AnimName": "Ambor_Walk",
+		"Speed": 1.0
+	},
+	"2": {
+		"AnimName": "Ambor_WalkStop",
+		"Speed": 1.0
+	},
+	"3": {
+		"AnimName": "Ambor_RunStart",
+		"Speed": 1.0
+	},
+	"4": {
+		"AnimName": "Ambor_RunCycle",
+		"Speed": 1.0
+	},
+	"5": {
+		"AnimName": "Ambor_RunStop",
+		"Speed": 1.0
+	},
+	"6": {
+		"AnimName": "Ambor_RunDownHill",
+		"Speed": 1.0
+	},
+	"7": {
+		"AnimName": "Ambor_RunToWalk",
+		"Speed": 1.0
+	},
+	"8": {
+		"AnimName": "Ambor_SprintStart",
+		"Speed": 1.0
+	},
+	"9": {
+		"AnimName": "Ambor_SprintCycle",
+		"Speed": 1.0
+	},
+	"10": {
+		"AnimName": "Ambor_SprintStop",
+		"Speed": 1.0
+	},
+	"11": {
+		"AnimName": "Ambor_SprintToRun",
+		"Speed": 1.0
+	},
+	"12": {
+		"AnimName": "Ambor_Jump",
+		"Speed": 1.0
+	},
+	"13": {
+		"AnimName": "Ambor_JumpForWalk",
+		"Speed": 1.0
+	},
+	"14": {
+		"AnimName": "Ambor_JumpForRun",
+		"Speed": 1.0
+	},
+	"15": {
+		"AnimName": "Ambor_JumpForSprint",
+		"Speed": 1.0
+	},
+	"16": {
+		"AnimName": "Ambor_JumpUpStairs_H",
+		"Speed": 1.0
+	},
+	"17": {
+		"AnimName": "Ambor_JumpUpStairs_L",
+		"Speed": 1.0
+	},
+	"18": {
+		"AnimName": "Ambor_JumpOffWall",
+		"Speed": 1.0
+	},
+	"19": {
+		"AnimName": "Ambor_FallToGroundL",
+		"Speed": 1.0
+	},
+	"20": {
+		"AnimName": "Ambor_FallToGroundH",
+		"Speed": 1.0
+	},
+	"21": {
+		"AnimName": "Ambor_FallToGroundBSH",
+		"Speed": 1.0
+	},
+	"22": {
+		"AnimName": "Ambor_ClimbIdleD",
+		"Speed": 1.0
+	},
+	"23": {
+		"AnimName": "Ambor_ClimbL",
+		"Speed": 1.0
+	},
+	"24": {
+		"AnimName": "Ambor_ClimbU",
+		"Speed": 1.0
+	},
+	"25": {
+		"AnimName": "Ambor_ClimbR",
+		"Speed": 1.0
+	},
+	"26": {
+		"AnimName": "Ambor_ClimbDashL",
+		"Speed": 1.0
+	},
+	"27": {
+		"AnimName": "Ambor_ClimbDashLU",
+		"Speed": 1.0
+	},
+	"28": {
+		"AnimName": "Ambor_ClimbDashU",
+		"Speed": 1.0
+	},
+	"29": {
+		"AnimName": "Ambor_ClimbDashRU",
+		"Speed": 1.0
+	},
+	"30": {
+		"AnimName": "Ambor_ClimbDashR",
+		"Speed": 1.0
+	},
+	"31": {
+		"AnimName": "Ambor_FlyStart",
+		"Speed": 1.0
+	},
+	"32": {
+		"AnimName": "Ambor_FlyNormal",
+		"Speed": 1.0
+	},
+	"33": {
+		"AnimName": "Ambor_FlyTurnL",
+		"Speed": 1.0
+	},
+	"34": {
+		"AnimName": "Ambor_FlyTurnR",
+		"Speed": 1.0
+	},
+	"35": {
+		"AnimName": "Ambor_Attack1",
+		"Speed": 1.0
+	},
+	"36": {
+		"AnimName": "Ambor_Attack2",
+		"Speed": 1.0
+	},
+	"37": {
+		"AnimName": "Ambor_Attack3",
+		"Speed": 1.0
+	},
+	"38": {
+		"AnimName": "Ambor_Attack4",
+		"Speed": 1.0
+	},
+	"39": {
+		"AnimName": "Ambor_Attack5",
+		"Speed": 1.0
+	},
+	"40": {
+		"AnimName": "Ambor_ElementalClick",
+		"Speed": 1.0
+	},
+	"41": {
+		"AnimName": "Ambor_ElementalCharge",
+		"Speed": 1.0
+	},
+	"42": {
+		"AnimName": "Ambor_ElementalBurst",
+		"Speed": 1.0
+	},
+	"43": {
+		"AnimName": "Ambor_ClimbD",
+		"Speed": 1.0
+	},
+	"44": {
+		"AnimName": "Ambor_HitH",
+		"Speed": 1.0
+	},
+	"45": {
+		"AnimName": "Ambor_HitL",
+		"Speed": 1.0
+	},
+	"46": {
+		"AnimName": "Ambor_HitThrow",
+		"Speed": 1.0
+	},
+	"47": {
+		"AnimName": "Ambor_HitFallToGround",
+		"Speed": 1.0
+	}
+
+}
