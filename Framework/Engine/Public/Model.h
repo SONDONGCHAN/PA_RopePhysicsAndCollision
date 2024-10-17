@@ -23,7 +23,7 @@ public:
 	_float4x4* Get_CombinedBoneMatrixPtr(const _char* pBoneName);
 
 public:
-	HRESULT Initialize_Prototype(TYPE eModelType, const _char* pModelFilePath, _fmatrix PivotMatrix);
+	HRESULT Initialize_Prototype(TYPE eModelType, const _char* pModelFilePath, _fmatrix PivotMatrix, _uint _RootBoneIndex);
 	HRESULT Initialize(void* pArg);
 	HRESULT Render(_uint iMeshIndex);
 	HRESULT Render();
@@ -35,6 +35,9 @@ public:
 	HRESULT Update_BoneMatrices(CShader* pShader, const _char* pConstantName);
 	void Set_Animation(_uint iAnimIndex);
 	void Play_Animation(_float fTimeDelta, _bool isLoop = false);
+	_float3 Get_Root_Transform() { return m_RootTransform; }
+	void Reset_Root_Transform() { m_RootTransform = { 0.f, 0.f, 0.f }; }
+
 
 private:
 	const aiScene*			m_pAIScene = {};
@@ -63,11 +66,13 @@ private:
 
 private:
 	_float	m_fBlendingTime		= { 0.f };
-	_float	m_fEndBlendingTime	= { 0.1f };
+	_float	m_fEndBlendingTime	= { 0.2f };
 	_bool	m_isBlending		= { false };
+	_uint	m_RootBoneIndex		= { 0 };
 
 	/*애니메이션 Json Data Parsing*/
 	wstring m_strAnimSavePath = TEXT("..\\..\\Client\\Bin\\DataFiles\\AnimData\\");
+	_float3 m_RootTransform = {0.f, 0.f, 0.f};
 
 private:
 	HRESULT Ready_Meshes();
@@ -79,7 +84,7 @@ private:
 	void	Make_Anim_Json(const _char* pModelFilePath);
 
 public:
-	static CModel* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, TYPE eModelType, const _char* pModelFilePath, _fmatrix PivotMatrix = XMMatrixIdentity());
+	static CModel* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, TYPE eModelType, const _char* pModelFilePath, _fmatrix PivotMatrix = XMMatrixIdentity(), _uint _RootBoneIndex = 0);
 	virtual CComponent* Clone(void* pArg) override;
 	virtual void Free() override;
 

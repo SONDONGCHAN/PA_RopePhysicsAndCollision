@@ -31,7 +31,7 @@ HRESULT CBody_Player::Initialize(void * pArg)
 	if (FAILED(Add_Component()))
 		return E_FAIL;
 
-	//m_pModelCom->Set_Animation(3);
+	//m_pModelCom->Set_Animation(0);
 	m_pSkeletalModelCom->Set_Animation(0);
 	
 	return S_OK;
@@ -154,9 +154,9 @@ HRESULT CBody_Player::Render_Shadow()
 HRESULT CBody_Player::Add_Component()
 {
 	/* Com_Shader */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Shader_VtxAnimMesh"),
-		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
-		return E_FAIL;	
+	//if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Shader_VtxAnimMesh"),
+	//	TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
+	//	return E_FAIL;	
 	
 	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Shader_VtxAnimSkeletal"),
 		TEXT("Com_Shader_Skel"), reinterpret_cast<CComponent**>(&m_pSkeletalShaderCom))))
@@ -176,7 +176,6 @@ HRESULT CBody_Player::Add_Component()
 		return E_FAIL;
 
 	
-
 	/* Com_Collider */
 	CBounding_Sphere::SPHERE_DESC		BoundingDesc{};
 
@@ -192,14 +191,14 @@ HRESULT CBody_Player::Add_Component()
 
 HRESULT CBody_Player::Bind_ShaderResources()
 {
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
-		return E_FAIL;
+	//if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+	//	return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_VIEW))))
-		return E_FAIL;
+	//if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_VIEW))))
+	//	return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_PROJ))))
-		return E_FAIL;	
+	//if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_PROJ))))
+	//	return E_FAIL;	
 
 	if (FAILED(m_pSkeletalShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 		return E_FAIL;

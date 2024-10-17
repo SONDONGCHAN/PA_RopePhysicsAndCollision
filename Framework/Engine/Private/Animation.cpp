@@ -50,10 +50,8 @@ HRESULT CAnimation::Initialize(const aiAnimation * pAIAnimation, class CModel* p
 	return S_OK;
 }
 
-void CAnimation::Invalidate_TransformationMatrix(_float fTimeDelta, const vector<class CBone*>& Bones, _bool isLoop)
+void CAnimation::Invalidate_TransformationMatrix(_float fTimeDelta, const vector<class CBone*>& Bones, _bool isLoop, _float3& RootTransform)
 {
-	m_TrackPosition += m_TickPerSecond * fTimeDelta;
-
 	if (m_TrackPosition >= m_Duration)
 	{
 		if (false == isLoop)
@@ -61,7 +59,7 @@ void CAnimation::Invalidate_TransformationMatrix(_float fTimeDelta, const vector
 			m_isFinished = true;
 
 			for (size_t i = 0; i < m_iNumChannels; i++)
-				m_Channels[i]->Invalidate_TransformationMatrix(m_Duration, &m_iCurrentKeyFrames[i], Bones);
+				m_Channels[i]->Invalidate_TransformationMatrix(m_Duration, &m_iCurrentKeyFrames[i], Bones, RootTransform);
 
 			return;
 		}
@@ -73,8 +71,10 @@ void CAnimation::Invalidate_TransformationMatrix(_float fTimeDelta, const vector
 
 	for (size_t i = 0; i < m_iNumChannels; i++)
 	{
-		m_Channels[i]->Invalidate_TransformationMatrix(m_TrackPosition, &m_iCurrentKeyFrames[i], Bones);
+		m_Channels[i]->Invalidate_TransformationMatrix(m_TrackPosition, &m_iCurrentKeyFrames[i], Bones, RootTransform);
 	}
+
+	m_TrackPosition += m_TickPerSecond * fTimeDelta;
 }
 
 void CAnimation::Reset_TrackPosition()

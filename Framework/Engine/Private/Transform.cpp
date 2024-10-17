@@ -83,6 +83,21 @@ void CTransform::Go_Right(_float fTimeDelta)
 	Set_State(STATE_POSITION, vPosition);
 }
 
+void CTransform::Move(_float fTimeDelta, XMVECTOR _Movement, CNavigation* pNavigation)
+{
+	_vector		vPosition = Get_State(STATE_POSITION);
+
+	_vector		vLook = Get_State(STATE_LOOK);
+	vPosition += XMVector3Normalize(vLook) * XMVectorGetZ(_Movement) * fTimeDelta;
+
+	_vector		vRight = Get_State(STATE_RIGHT);
+	vPosition += XMVector3Normalize(vRight) * XMVectorGetX(_Movement) * fTimeDelta;
+
+	if (nullptr == pNavigation ||
+		true == pNavigation->isMove(vPosition))
+		Set_State(STATE_POSITION, vPosition);
+}
+
 void CTransform::Turn(_fvector vAxis, _float fTimeDelta)
 {
 	_matrix		RotationMatrix = XMMatrixRotationAxis(vAxis, m_fRotationPerSec * fTimeDelta);

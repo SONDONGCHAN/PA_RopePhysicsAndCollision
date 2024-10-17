@@ -38,11 +38,7 @@ HRESULT CCamera::Initialize(void * pArg)
 
 void CCamera::Priority_Tick(_float fTimeDelta)
 {
-	if (m_isRecording)
-	{
-		if (FAILED(SetUp_TransformMatices()))
-			return;
-	}
+
 }
 
 void CCamera::Tick(_float fTimeDelta)
@@ -51,6 +47,11 @@ void CCamera::Tick(_float fTimeDelta)
 
 void CCamera::Late_Tick(_float fTimeDelta)
 {
+	if (m_isRecording)
+	{
+		if (FAILED(SetUp_TransformMatices()))
+			return;
+	}
 }
 
 HRESULT CCamera::Render()

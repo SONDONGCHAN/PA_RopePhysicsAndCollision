@@ -38,6 +38,10 @@ public:
 	virtual HRESULT Render() override;
 	virtual HRESULT Render_Shadow() override;
 
+public:
+	_float3 Get_RootTranform() { return m_pSkeletalModelCom->Get_Root_Transform(); }
+	void	Set_RootTranform() { m_pSkeletalModelCom->Reset_Root_Transform(); }
+
 private:
 	CShader*			m_pShaderCom = { nullptr };	
 	CShader*			m_pSkeletalShaderCom = { nullptr };

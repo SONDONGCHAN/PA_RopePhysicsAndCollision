@@ -20,7 +20,8 @@ private:
 
 public:
 	HRESULT Initialize(const aiNodeAnim* pAIChannel, class CModel* pModel);
-	void Invalidate_TransformationMatrix(_double TrackPosition, _uint* pCurrentKeyFrame, const vector<class CBone*>& Bones);
+	void Invalidate_TransformationMatrix(_double TrackPosition, _uint* pCurrentKeyFrame, const vector<class CBone*>& Bones, _float3& RootTransform);
+	_uint Get_BoneIndex() { return m_iBoneIndex; }
 
 private:
 	_char				m_szName[MAX_PATH] = "";

@@ -13,7 +13,7 @@ private:
 
 public:
 	HRESULT Initialize(const aiAnimation* pAIAnimation, class CModel* pModel);
-	void Invalidate_TransformationMatrix(_float fTimeDelta, const vector<class CBone*>& Bones, _bool isLoop);
+	void Invalidate_TransformationMatrix(_float fTimeDelta, const vector<class CBone*>& Bones, _bool isLoop, _float3& RootTransform);
 
 public:
 	void Reset_TrackPosition();

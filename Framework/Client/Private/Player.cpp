@@ -56,28 +56,23 @@ void CPlayer::Priority_Tick(_float fTimeDelta)
 void CPlayer::Tick(_float fTimeDelta)
 {
 	KeyInput(fTimeDelta);
+	SetUp_OnTerrain(m_pTransformCom);
 
 	for (auto& Pair : m_PlayerParts)
 		(Pair.second)->Tick(fTimeDelta);
 
-	SetUp_OnTerrain(m_pTransformCom);
-
-	//m_pColliderCom->Tick(m_pTransformCom->Get_WorldMatrix());
+	Root_Transform(fTimeDelta);
 }
 
 void CPlayer::Late_Tick(_float fTimeDelta)
 {
-	for (auto& Pair : m_PlayerParts)
-		(Pair.second)->Late_Tick(fTimeDelta);
-
-
 #ifdef _DEBUG
-
 	m_pGameInstance->Add_DebugComponent(m_pNavigationCom);
 	//m_pGameInstance->Add_DebugComponent(m_pColliderCom);
-
 #endif
 
+	for (auto& Pair : m_PlayerParts)
+		(Pair.second)->Late_Tick(fTimeDelta);
 }
 
 HRESULT CPlayer::Render()
@@ -93,23 +88,18 @@ void CPlayer::KeyInput(_float fTimeDelta)
 	
 	if (CGameInstance::GetInstance()->KeyDown(DIK_RIGHT))
 	{
-		m_iState++;
-		if (m_iState > 47) m_iState = 47;
+		if (m_iState < 47);
+			++m_iState;
 	}
 	else if (CGameInstance::GetInstance()->KeyDown(DIK_LEFT))
 	{
-		m_iState--;
-		if (m_iState < 0) m_iState = 0;
+		if (m_iState > 0)
+			--m_iState;
 	}
 
 	if (CGameInstance::GetInstance()->KeyPressing(DIK_W))
 	{
-		m_pTransformCom->Go_Straight(fTimeDelta);
-	}
-	else if(CGameInstance::GetInstance()->KeyUp(DIK_W))
-	{
-		m_iState = 0x00000000;
-		m_iState = STATE_IDLE;
+		m_pTransformCom->Go_Straight(fTimeDelta, m_pNavigationCom);
 	}
 	if (CGameInstance::GetInstance()->KeyPressing(DIK_S))
 	{
@@ -123,6 +113,16 @@ void CPlayer::KeyInput(_float fTimeDelta)
 	{
 		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * 1.f);
 	}
+}
+
+void CPlayer::Root_Transform(_float fTimeDelta)
+{
+	CBody_Player* pBody = dynamic_cast<CBody_Player*>(m_PlayerParts[TEXT("Part_Body")]);
+	_float3 vRootTransform = pBody->Get_RootTranform();
+
+	m_pTransformCom->Move(fTimeDelta, XMLoadFloat3(&vRootTransform), m_pNavigationCom);
+
+	pBody->Set_RootTranform();
 }
 
 HRESULT CPlayer::Add_Components()

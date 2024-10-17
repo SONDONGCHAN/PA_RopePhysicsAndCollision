@@ -34,20 +34,24 @@ HRESULT CCamera_ThirdPerson::Initialize(void* pArg)
 
 void CCamera_ThirdPerson::Priority_Tick(_float fTimeDelta)
 {
-	if (m_isRecording && m_isFixed)
-	{
-		KeyInput(fTimeDelta);
-		CamMove(fTimeDelta);
-	}
 	__super::Priority_Tick(fTimeDelta);
 }
 
 void CCamera_ThirdPerson::Tick(_float fTimeDelta)
 {
+
+	__super::Tick(fTimeDelta);
 }
 
 void CCamera_ThirdPerson::Late_Tick(_float fTimeDelta)
 {
+
+	if (m_isRecording && m_isFixed)
+	{
+		KeyInput(fTimeDelta);
+		CamMove(fTimeDelta);
+	}
+	__super::Late_Tick(fTimeDelta);
 }
 
 HRESULT CCamera_ThirdPerson::Render()

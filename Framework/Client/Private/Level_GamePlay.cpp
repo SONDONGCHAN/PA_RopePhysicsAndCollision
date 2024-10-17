@@ -55,26 +55,6 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 	if (FAILED(m_pGameInstance->Add_Light(LightDesc)))
 		return E_FAIL;
 
-	//LightDesc.eType = LIGHT_DESC::TYPE_POINT;
-	//LightDesc.vPosition = _float4(30.f, 10.f, 30.f, 1.f);
-	//LightDesc.fRange = 30.0f;
-	//LightDesc.vDiffuse = _float4(1.f, 0.0f, 0.f, 1.f);
-	//LightDesc.vAmbient = _float4(0.3f, 0.1f, 0.1f, 1.f);
-	//LightDesc.vSpecular = LightDesc.vDiffuse;
-
-	//if (FAILED(m_pGameInstance->Add_Light(LightDesc)))
-	//	return E_FAIL;
-
-	//LightDesc.eType = LIGHT_DESC::TYPE_POINT;
-	//LightDesc.vPosition = _float4(60.f, 10.f, 30.f, 1.f);
-	//LightDesc.fRange = 30.0f;
-	//LightDesc.vDiffuse = _float4(0.0f, 1.f, 0.f, 1.f);
-	//LightDesc.vAmbient = _float4(0.1f, 0.3f, 0.1f, 1.f);
-	//LightDesc.vSpecular = LightDesc.vDiffuse;
-
-	//if (FAILED(m_pGameInstance->Add_Light(LightDesc)))
-	//	return E_FAIL;
-
 	return S_OK;
 }
 
@@ -141,9 +121,6 @@ HRESULT CLevel_GamePlay::Ready_Layer_BackGround(const wstring & strLayerTag)
 {
 	if (FAILED(m_pGameInstance->Add_CloneObject(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Terrain_Basic"))))
 		return E_FAIL;
-
-	//if (FAILED(m_pGameInstance->Add_CloneObject(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Terrain"))))
-	//	return E_FAIL;
 
 	//if (FAILED(m_pGameInstance->Add_CloneObject(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Sky"))))
 	//	return E_FAIL;

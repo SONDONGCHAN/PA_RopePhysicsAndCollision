@@ -54,7 +54,7 @@ HRESULT CChannel::Initialize(const aiNodeAnim * pAIChannel, class CModel* pModel
 	return S_OK;
 }
 
-void CChannel::Invalidate_TransformationMatrix(_double TrackPosition, _uint* pCurrentKeyFrame, const vector<class CBone*>& Bones)
+void CChannel::Invalidate_TransformationMatrix(_double TrackPosition, _uint* pCurrentKeyFrame, const vector<class CBone*>& Bones, _float3& RootTransform)
 {
 	if (0.0 == TrackPosition)
 		*pCurrentKeyFrame = 0;
@@ -87,7 +87,7 @@ void CChannel::Invalidate_TransformationMatrix(_double TrackPosition, _uint* pCu
 
 	TransformationMatrix = XMMatrixAffineTransformation(vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vRotation, vTranslation);
 
-	Bones[m_iBoneIndex]->Set_TranslationMatrix(TransformationMatrix);
+	Bones[m_iBoneIndex]->Set_TranslationMatrix(TransformationMatrix, RootTransform);
 }
 
 CChannel * CChannel::Create(const aiNodeAnim * pAIChannel, class CModel* pModel)

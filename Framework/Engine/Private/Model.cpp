@@ -7,6 +7,7 @@
 #include "Animation.h"
 #include "VIBuffer_Skeletal.h"
 #include "GameInstance.h"
+#include "Channel.h"
 
 CModel::CModel(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CComponent(pDevice, pContext)
@@ -23,6 +24,7 @@ CModel::CModel(const CModel & rhs)
 	, m_Materials(rhs.m_Materials)	
 	, m_iNumAnimations(rhs.m_iNumAnimations)
 	, m_pBuffer_Skeletal(rhs.m_pBuffer_Skeletal)
+	, m_RootBoneIndex(rhs.m_RootBoneIndex)
 {
 	for (auto& pPrototypeAnimation : rhs.m_Animations)
 		m_Animations.push_back(pPrototypeAnimation->Clone());
@@ -45,7 +47,6 @@ CModel::CModel(const CModel & rhs)
 
 _int CModel::Get_BoneIndex(const _char * pBoneName) const
 {
-
 	_int		iBoneIndex = { -1 };
 
 	auto	iter = find_if(m_Bones.begin(), m_Bones.end(), [&](class CBone* pBone) {
@@ -75,7 +76,7 @@ _float4x4 * CModel::Get_CombinedBoneMatrixPtr(const _char * pBoneName)
 	return (*iter)->Get_CombindTransformationMatrixPtr();
 }
 
-HRESULT CModel::Initialize_Prototype(TYPE eModelType, const _char * pModelFilePath, _fmatrix PivotMatrix)
+HRESULT CModel::Initialize_Prototype(TYPE eModelType, const _char * pModelFilePath, _fmatrix PivotMatrix, _uint _RootBoneIndex)
 {
 	m_eModelType = eModelType;
 
@@ -93,8 +94,13 @@ HRESULT CModel::Initialize_Prototype(TYPE eModelType, const _char * pModelFilePa
 
 	/* aiScene안에있는 정보들을 내가 사용하기 좋도록 정리하면된다.  */
 
-	if (FAILED(Ready_Bones(m_pAIScene->mRootNode, -1)))
-		return E_FAIL;
+	if (eModelType != TYPE_NONANIM)
+	{
+		if (FAILED(Ready_Bones(m_pAIScene->mRootNode, -1)))
+			return E_FAIL;
+
+		m_RootBoneIndex = _RootBoneIndex;
+	}
 
 	if (eModelType != TYPE_ANIM_NONMESH)
 	{
@@ -113,8 +119,11 @@ HRESULT CModel::Initialize_Prototype(TYPE eModelType, const _char * pModelFilePa
 			return E_FAIL;
 	}
 
-	if (FAILED(Ready_Animations(pModelFilePath)))
-		return E_FAIL;
+	if (eModelType != TYPE_NONANIM)
+	{
+		if (FAILED(Ready_Animations(pModelFilePath)))
+			return E_FAIL;
+	}
 
 	return S_OK;
 }
@@ -174,21 +183,22 @@ void CModel::Set_Animation(_uint iAnimIndex)
 {
 	if (m_iCurrentAnimation != iAnimIndex)
 	{
+		for (auto& iter : m_Bones)
+			iter->Save_PreTransformationMatrix();
+
 		m_Animations[m_iCurrentAnimation]->Reset_TrackPosition(); // 초기화
+
 		m_iCurrentAnimation = iAnimIndex;
 
-		for (auto& iter : m_Bones)
-			iter->Save_PreMatrix();
-
 		m_isBlending = true;
-		m_fBlendingTime = 0.f;
+		m_fBlendingTime = 0.f; 
 	}
 }
 
 void CModel::Play_Animation(_float fTimeDelta, _bool isLoop)
 {
 	/* 현재 애니메이션 상태에 맞게 뼈들의 TransformationMatrix행렬 갱신 */
-	m_Animations[m_iCurrentAnimation]->Invalidate_TransformationMatrix(fTimeDelta, m_Bones, isLoop);
+	m_Animations[m_iCurrentAnimation]->Invalidate_TransformationMatrix(fTimeDelta, m_Bones, isLoop, m_RootTransform);
 
 	_float fRatio = 1.f;
 
@@ -197,12 +207,14 @@ void CModel::Play_Animation(_float fTimeDelta, _bool isLoop)
 		m_fBlendingTime += fTimeDelta;
 		
 		if (m_fBlendingTime >= m_fEndBlendingTime)
+		{
+			m_fBlendingTime = 0.f;
 			m_isBlending = false;
+		}
 		else
 			fRatio = m_fBlendingTime / m_fEndBlendingTime;
 
 	}
-
 	/* 모든 뼈들의 CombinedTransformationMatrix 연산 */
 	for (auto& pBone : m_Bones)
 		pBone->Invalidate_CombinedTransformationMatrix(m_Bones, m_isBlending, fRatio);
@@ -377,11 +389,11 @@ void CModel::Make_Anim_Json(const _char* pModelFilePath)
 	CGameInstance::GetInstance()->WriteJson(root, strCompletePath);
 }
 
-CModel * CModel::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, TYPE eModelType, const _char * pModelFilePath, _fmatrix PivotMatrix)
+CModel * CModel::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, TYPE eModelType, const _char * pModelFilePath, _fmatrix PivotMatrix, _uint _RootBoneIndex)
 {
 	CModel*		pInstance = new CModel(pDevice, pContext);
 
-	if (FAILED(pInstance->Initialize_Prototype(eModelType, pModelFilePath, PivotMatrix)))
+	if (FAILED(pInstance->Initialize_Prototype(eModelType, pModelFilePath, PivotMatrix, _RootBoneIndex)))
 	{
 		MSG_BOX("Failed to Created : CModel");
 		Safe_Release(pInstance);
