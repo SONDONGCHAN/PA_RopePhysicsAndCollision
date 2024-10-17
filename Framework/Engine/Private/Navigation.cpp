@@ -126,11 +126,12 @@ HRESULT CNavigation::Render()
 
 	if (-1 == m_iCurrentIndex)
 	{
+		WorldMatrix._42 += 0.1f;
 		vColor = _float4(0.f, 1.f, 0.f, 1.f);
 	}
 	else
 	{
-		WorldMatrix._42 += 0.1f;
+		WorldMatrix._42 += 0.2f;
 		vColor = _float4(1.f, 0.f, 0.f, 1.f);
 	}
 

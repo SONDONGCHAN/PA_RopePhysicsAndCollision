@@ -61,7 +61,7 @@ void CPlayer::Tick(_float fTimeDelta)
 	for (auto& Pair : m_PlayerParts)
 		(Pair.second)->Tick(fTimeDelta);
 
-	Root_Transform(fTimeDelta);
+	Root_Transform();
 }
 
 void CPlayer::Late_Tick(_float fTimeDelta)
@@ -86,12 +86,12 @@ HRESULT CPlayer::Render()
 void CPlayer::KeyInput(_float fTimeDelta)
 {
 	
-	if (CGameInstance::GetInstance()->KeyDown(DIK_RIGHT))
+	if (CGameInstance::GetInstance()->KeyDown(DIK_PERIOD))
 	{
 		if (m_iState < 47);
 			++m_iState;
 	}
-	else if (CGameInstance::GetInstance()->KeyDown(DIK_LEFT))
+	else if (CGameInstance::GetInstance()->KeyDown(DIK_COMMA))
 	{
 		if (m_iState > 0)
 			--m_iState;
@@ -115,14 +115,12 @@ void CPlayer::KeyInput(_float fTimeDelta)
 	}
 }
 
-void CPlayer::Root_Transform(_float fTimeDelta)
+void CPlayer::Root_Transform()
 {
 	CBody_Player* pBody = dynamic_cast<CBody_Player*>(m_PlayerParts[TEXT("Part_Body")]);
 	_float3 vRootTransform = pBody->Get_RootTranform();
 
-	m_pTransformCom->Move(fTimeDelta, XMLoadFloat3(&vRootTransform), m_pNavigationCom);
-
-	pBody->Set_RootTranform();
+	m_pTransformCom->Move(XMLoadFloat3(&vRootTransform), m_pNavigationCom);
 }
 
 HRESULT CPlayer::Add_Components()

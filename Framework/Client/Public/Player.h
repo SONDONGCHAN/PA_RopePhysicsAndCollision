@@ -36,7 +36,7 @@ public:
 
 private:
 	void	KeyInput(_float fTimeDelta);
-	void	Root_Transform(_float fTimeDelta);
+	void	Root_Transform();
 
 private:
 	CNavigation*				m_pNavigationCom = { nullptr };

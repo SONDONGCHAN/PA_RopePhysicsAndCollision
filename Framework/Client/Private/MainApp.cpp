@@ -101,25 +101,43 @@ HRESULT CMainApp::Ready_ETC()
 
 	_float3			vPoints[3];
 
-	vPoints[0] = _float3(0.0f, 0.f, 0.f);
-	vPoints[1] = _float3(0.0f, 0.f, 10.f);
-	vPoints[2] = _float3(10.0f, 0.f, 0.f);
-	WriteFile(hFile, vPoints, sizeof(_float3) * 3, &dwByte, nullptr);
+	_uint CellSize = 10.f;
 
-	vPoints[0] = _float3(0.0f, 0.f, 10.f);
-	vPoints[1] = _float3(10.0f, 0.f, 10.f);
-	vPoints[2] = _float3(10.0f, 0.f, 0.f);
-	WriteFile(hFile, vPoints, sizeof(_float3) * 3, &dwByte, nullptr);
+	for (int i = 0; i < 5; ++i)
+	{
+		for (int j = 0; j < 5; ++j)
+		{
+			vPoints[0] = _float3(i * CellSize,		 0.f, j * CellSize);
+			vPoints[1] = _float3(i * CellSize,		 0.f, (j + 1) * CellSize);
+			vPoints[2] = _float3((i + 1) * CellSize, 0.f, j * CellSize);
+			WriteFile(hFile, vPoints, sizeof(_float3) * 3, &dwByte, nullptr);
+			
+			vPoints[0] = _float3(i * CellSize, 0.f, (j + 1) * CellSize);
+			vPoints[1] = _float3((i + 1) * CellSize, 0.f, (j + 1) * CellSize);
+			vPoints[2] = _float3((i + 1) * CellSize, 0.f, j * CellSize);
+			WriteFile(hFile, vPoints, sizeof(_float3) * 3, &dwByte, nullptr);
+		}
+	}
 
-	vPoints[0] = _float3(0.0f, 0.f, 20.f);
-	vPoints[1] = _float3(10.0f, 0.f, 10.f);
-	vPoints[2] = _float3(0.0f, 0.f, 10.f);
-	WriteFile(hFile, vPoints, sizeof(_float3) * 3, &dwByte, nullptr);
+	//vPoints[0] = _float3(0.0f, 0.f, 0.f);
+	//vPoints[1] = _float3(0.0f, 0.f, 10.f);
+	//vPoints[2] = _float3(10.0f, 0.f, 0.f);
+	//WriteFile(hFile, vPoints, sizeof(_float3) * 3, &dwByte, nullptr);
 
-	vPoints[0] = _float3(10.0f, 0.f, 10.f);
-	vPoints[1] = _float3(20.0f, 0.f, 0.f);
-	vPoints[2] = _float3(10.0f, 0.f, 0.f);
-	WriteFile(hFile, vPoints, sizeof(_float3) * 3, &dwByte, nullptr);
+	//vPoints[0] = _float3(0.0f, 0.f, 10.f);
+	//vPoints[1] = _float3(10.0f, 0.f, 10.f);
+	//vPoints[2] = _float3(10.0f, 0.f, 0.f);
+	//WriteFile(hFile, vPoints, sizeof(_float3) * 3, &dwByte, nullptr);
+
+	//vPoints[0] = _float3(0.0f, 0.f, 20.f);
+	//vPoints[1] = _float3(10.0f, 0.f, 10.f);
+	//vPoints[2] = _float3(0.0f, 0.f, 10.f);
+	//WriteFile(hFile, vPoints, sizeof(_float3) * 3, &dwByte, nullptr);
+
+	//vPoints[0] = _float3(10.0f, 0.f, 10.f);
+	//vPoints[1] = _float3(20.0f, 0.f, 0.f);
+	//vPoints[2] = _float3(10.0f, 0.f, 0.f);
+	//WriteFile(hFile, vPoints, sizeof(_float3) * 3, &dwByte, nullptr);
 
 	CloseHandle(hFile);
 

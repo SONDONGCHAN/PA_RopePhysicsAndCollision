@@ -192,13 +192,17 @@ void CModel::Set_Animation(_uint iAnimIndex)
 
 		m_isBlending = true;
 		m_fBlendingTime = 0.f; 
+		Reset_Root_Transform();
 	}
 }
 
 void CModel::Play_Animation(_float fTimeDelta, _bool isLoop)
 {
+	m_PreRootTransform = m_RootTransform;
 	/* 현재 애니메이션 상태에 맞게 뼈들의 TransformationMatrix행렬 갱신 */
-	m_Animations[m_iCurrentAnimation]->Invalidate_TransformationMatrix(fTimeDelta, m_Bones, isLoop, m_RootTransform);
+
+	if (!(m_Animations[m_iCurrentAnimation]->Invalidate_TransformationMatrix(fTimeDelta, m_Bones, isLoop, m_RootTransform)))
+		m_PreRootTransform = { 0.f, 0.f, 0.f };
 
 	_float fRatio = 1.f;
 
@@ -219,6 +223,13 @@ void CModel::Play_Animation(_float fTimeDelta, _bool isLoop)
 	for (auto& pBone : m_Bones)
 		pBone->Invalidate_CombinedTransformationMatrix(m_Bones, m_isBlending, fRatio);
 }
+
+_float3 CModel::Get_Root_Transform()
+{
+	_float3 result;
+	XMStoreFloat3(&result, XMLoadFloat3(&m_RootTransform) - XMLoadFloat3(&m_PreRootTransform));
+	return result;
+} 
 
 HRESULT CModel::Ready_Meshes()
 {

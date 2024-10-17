@@ -50,8 +50,9 @@ HRESULT CAnimation::Initialize(const aiAnimation * pAIAnimation, class CModel* p
 	return S_OK;
 }
 
-void CAnimation::Invalidate_TransformationMatrix(_float fTimeDelta, const vector<class CBone*>& Bones, _bool isLoop, _float3& RootTransform)
+_bool CAnimation::Invalidate_TransformationMatrix(_float fTimeDelta, const vector<class CBone*>& Bones, _bool isLoop, _float3& RootTransform)
 {
+	_bool bResult = true;   // 애니메이션 끝 부분 이면 false 반환,
 	if (m_TrackPosition >= m_Duration)
 	{
 		if (false == isLoop)
@@ -61,11 +62,12 @@ void CAnimation::Invalidate_TransformationMatrix(_float fTimeDelta, const vector
 			for (size_t i = 0; i < m_iNumChannels; i++)
 				m_Channels[i]->Invalidate_TransformationMatrix(m_Duration, &m_iCurrentKeyFrames[i], Bones, RootTransform);
 
-			return;
+			return false;
 		}
 		else
 		{
 			Reset_TrackPosition();
+			bResult = false;
 		}
 	}
 
@@ -75,13 +77,15 @@ void CAnimation::Invalidate_TransformationMatrix(_float fTimeDelta, const vector
 	}
 
 	m_TrackPosition += m_TickPerSecond * fTimeDelta;
+
+	return bResult;
 }
 
 void CAnimation::Reset_TrackPosition()
 {
 	m_TrackPosition = 0.f;
-	for (auto iter : m_iCurrentKeyFrames)
-		iter = 0;
+	for (_uint i =0; i < m_iCurrentKeyFrames.size(); ++i)
+		m_iCurrentKeyFrames[i] = 0;
 }
 
 CAnimation * CAnimation::Create(const aiAnimation * pAIAnimation, class CModel* pModel)

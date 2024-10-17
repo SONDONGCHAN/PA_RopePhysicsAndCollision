@@ -35,7 +35,7 @@ public:
 	HRESULT Update_BoneMatrices(CShader* pShader, const _char* pConstantName);
 	void Set_Animation(_uint iAnimIndex);
 	void Play_Animation(_float fTimeDelta, _bool isLoop = false);
-	_float3 Get_Root_Transform() { return m_RootTransform; }
+	_float3 Get_Root_Transform();
 	void Reset_Root_Transform() { m_RootTransform = { 0.f, 0.f, 0.f }; }
 
 
@@ -73,6 +73,8 @@ private:
 	/*애니메이션 Json Data Parsing*/
 	wstring m_strAnimSavePath = TEXT("..\\..\\Client\\Bin\\DataFiles\\AnimData\\");
 	_float3 m_RootTransform = {0.f, 0.f, 0.f};
+	_float3 m_PreRootTransform = { 0.f, 0.f, 0.f };
+
 
 private:
 	HRESULT Ready_Meshes();

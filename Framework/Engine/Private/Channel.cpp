@@ -56,9 +56,6 @@ HRESULT CChannel::Initialize(const aiNodeAnim * pAIChannel, class CModel* pModel
 
 void CChannel::Invalidate_TransformationMatrix(_double TrackPosition, _uint* pCurrentKeyFrame, const vector<class CBone*>& Bones, _float3& RootTransform)
 {
-	if (0.0 == TrackPosition)
-		*pCurrentKeyFrame = 0;
-
 	KEYFRAME		LastKeyFrame = m_KeyFrames.back();
 
 	_matrix			TransformationMatrix;
