@@ -25,6 +25,8 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_Layer_Camera(TEXT("Layer_Camera"))))
 		return E_FAIL;
 
+	ShowCursor(FALSE);
+
 	return S_OK;
 }
 
