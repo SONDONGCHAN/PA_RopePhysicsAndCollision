@@ -2,6 +2,7 @@
 
 #include "Client_Defines.h"
 #include "PartObject.h"
+#include "Player.h"
 
 /* 플레이어의 각 파츠를 모아서 가지고 있는 객체. */
 
@@ -19,7 +20,7 @@ public:
 	typedef struct : public CPartObject::PARTOBJ_DESC
 	{
 
-		_uint*		pPlayerState;
+		CPlayer::PlayerAnim*		pPlayerAnimation;
 
 	}BODY_PLAYER_DESC;
 
@@ -50,7 +51,7 @@ private:
 
 
 private:
-	_uint*		m_pPlayerState = { nullptr };
+	CPlayer::PlayerAnim*		m_pPlayerAnimation = { nullptr };
 
 private:
 	HRESULT Add_Component();

@@ -68,11 +68,14 @@ public:
 	void Go_Left(_float fTimeDelta);
 	void Go_Right(_float fTimeDelta);
 	void Move(XMVECTOR _Movement, CNavigation* pNavigation);
+
 	void Turn(_fvector vAxis, _float fTimeDelta);
 	void Rotation(_fvector vAxis, _float fRadian);
+
 	void MoveTo(_fvector vPoint, _float fLimit, _float fTimeDelta);
 	void LookAt(_fvector vPoint);
 	void LookAt_ForLandObject(_fvector vPoint);
+
 	void Set_Look(_fvector direction);
 	void Set_Look_ForLandObject(_fvector direction);
 

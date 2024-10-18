@@ -31,19 +31,16 @@ HRESULT CCamera_Free::Initialize(void * pArg)
 
 void CCamera_Free::Priority_Tick(_float fTimeDelta)
 {
-
 	__super::Priority_Tick(fTimeDelta);
 }
 
 void CCamera_Free::Tick(_float fTimeDelta)
 {
-
 	__super::Tick(fTimeDelta);
 }
 
 void CCamera_Free::Late_Tick(_float fTimeDelta)
 {
-
 	if (m_isRecording && m_isFixed)
 	{
 		KeyInput(fTimeDelta);

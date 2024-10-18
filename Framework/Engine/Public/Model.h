@@ -66,7 +66,7 @@ private:
 
 private:
 	_float	m_fBlendingTime		= { 0.f };
-	_float	m_fEndBlendingTime	= { 0.2f };
+	_float	m_fEndBlendingTime	= { 0.1f };
 	_bool	m_isBlending		= { false };
 	_uint	m_RootBoneIndex		= { 0 };
 

@@ -77,42 +77,14 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 
 HRESULT CPlayer::Render()
 {
-
-
-
 	return S_OK;
 }
 
 void CPlayer::KeyInput(_float fTimeDelta)
 {
-	
-	if (CGameInstance::GetInstance()->KeyDown(DIK_PERIOD))
-	{
-		if (m_iState < 47);
-			++m_iState;
-	}
-	else if (CGameInstance::GetInstance()->KeyDown(DIK_COMMA))
-	{
-		if (m_iState > 0)
-			--m_iState;
-	}
+	Update_State(fTimeDelta);
 
-	if (CGameInstance::GetInstance()->KeyPressing(DIK_W))
-	{
-		m_pTransformCom->Go_Straight(fTimeDelta, m_pNavigationCom);
-	}
-	if (CGameInstance::GetInstance()->KeyPressing(DIK_S))
-	{
-		m_pTransformCom->Go_Backward(fTimeDelta);
-	}
-	if (CGameInstance::GetInstance()->KeyPressing(DIK_A))
-	{
-		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * -1.f);
-	}
-	if (CGameInstance::GetInstance()->KeyPressing(DIK_D))
-	{
-		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * 1.f);
-	}
+
 }
 
 void CPlayer::Root_Transform()
@@ -121,6 +93,174 @@ void CPlayer::Root_Transform()
 	_float3 vRootTransform = pBody->Get_RootTranform();
 
 	m_pTransformCom->Move(XMLoadFloat3(&vRootTransform), m_pNavigationCom);
+}
+
+void CPlayer::Change_State(PlayerState eNewState)
+{
+	if (m_eCurrentState == eNewState) return;
+
+	m_eNextState = eNewState;  // 다음 상태 설정
+	m_fStateTimer = 0.0f;      // 타이머 초기화
+}
+
+void CPlayer::Update_State(_float fTimeDelta)
+{	
+	m_fStateTimer += fTimeDelta;
+
+	switch (m_eCurrentState) 
+	{
+	case PlayerState::STATE_IDLE:
+		Handle_IdleState(fTimeDelta);
+		break;
+
+	case PlayerState::STATE_MOVE:
+		Handle_MoveState(fTimeDelta);
+		break;
+
+	case PlayerState::STATE_ATTACK:
+		Handle_AttackState(fTimeDelta);
+		break;
+
+	case PlayerState::STATE_JUMP:
+		Handle_JumpState(fTimeDelta);
+		break;
+	}
+
+	// 상태 전환이 발생했을 경우, 다음 상태로 변경
+	if (m_eCurrentState != m_eNextState)
+	{
+		m_eCurrentState = m_eNextState;
+	}	
+}
+
+void CPlayer::Change_Anim(PlayerAnim eNewAnim)
+{
+	if (m_iAnimation == eNewAnim)
+		return;
+
+	m_iAnimation = eNewAnim;
+}
+
+void CPlayer::Handle_IdleState(_float fTimeDelta)
+{
+	Change_Anim(IDLE);
+
+	if (KEYINPUT(DIK_W) || KEYINPUT(DIK_A) || KEYINPUT(DIK_S) || KEYINPUT(DIK_D))
+	{	
+		Change_State(PlayerState::STATE_MOVE);
+	}
+}
+
+void CPlayer::Handle_MoveState(_float fTimeDelta)
+{
+	if (KEYPRESSING(DIK_W) || KEYPRESSING(DIK_A) || KEYPRESSING(DIK_S) || KEYPRESSING(DIK_D))
+	{
+		Change_Anim(RUN_CYCLE);
+
+		_vector vLook = m_pTransformCom->Get_State(CTransform::STATE_POSITION) - XMLoadFloat4(&CGameInstance::GetInstance()->Get_CamPosition());
+		vLook = XMVector4Normalize(XMVectorSetY(vLook, 0.f));
+		_vector vRight = XMVector4Normalize(XMVector3Cross(XMVectorSet(0.f, 1.f, 0.f, 0.f), vLook));
+		_vector vMyLook = m_pTransformCom->Get_State(CTransform::STATE_LOOK);
+		_vector vTargetDir;
+
+		if (KEYPRESSING(DIK_W))
+		{
+			if (KEYPRESSING(DIK_A))
+				Set_Dir_From_Cam(fTimeDelta, Direction::DIR_FLEFT);
+			else if (KEYPRESSING(DIK_D))
+				Set_Dir_From_Cam(fTimeDelta, Direction::DIR_FRIGHT);
+			else
+				Set_Dir_From_Cam(fTimeDelta, Direction::DIR_FRONT);
+		}
+		else if (KEYPRESSING(DIK_S))
+		{
+			if (KEYPRESSING(DIK_A))
+				Set_Dir_From_Cam(fTimeDelta, Direction::DIR_BLEFT);
+			else if (KEYPRESSING(DIK_D))
+				Set_Dir_From_Cam(fTimeDelta, Direction::DIR_BRIGHT);
+			else
+				Set_Dir_From_Cam(fTimeDelta, Direction::DIR_BACK);
+		}
+		else if (KEYPRESSING(DIK_A))
+		{
+			Set_Dir_From_Cam(fTimeDelta, Direction::DIR_LEFT);
+		}
+		else if (KEYPRESSING(DIK_D))
+		{
+			Set_Dir_From_Cam(fTimeDelta, Direction::DIR_RIGHT);
+		}
+	}
+	else
+	{ 
+		Change_State(PlayerState::STATE_IDLE);
+	}
+}
+
+void CPlayer::Handle_AttackState(_float fTimeDelta)
+{
+
+}
+
+void CPlayer::Handle_JumpState(_float fTimeDelta)
+{
+}
+
+void CPlayer::Set_Dir_From_Cam(_float fTimeDelta, Direction _DIRType)
+{
+	_vector vLook = m_pTransformCom->Get_State(CTransform::STATE_POSITION) - XMLoadFloat4(&CGameInstance::GetInstance()->Get_CamPosition());
+	vLook = XMVector4Normalize(XMVectorSetY(vLook, 0.f));
+	_vector vRight = XMVector4Normalize(XMVector3Cross(XMVectorSet(0.f, 1.f, 0.f, 0.f), vLook));
+	_vector vMyLook = m_pTransformCom->Get_State(CTransform::STATE_LOOK);
+	_vector vTargetDir = {1.f, 1.f, 1.f, 0.f};
+
+	switch (_DIRType)
+	{
+	case Direction::DIR_FRONT:
+		vTargetDir = vLook;
+		break;
+
+	case Direction::DIR_BACK:
+		vTargetDir = -vLook;
+		break;
+
+	case Direction::DIR_LEFT:
+		vTargetDir = -vRight;
+		break;
+
+	case Direction::DIR_RIGHT:
+		vTargetDir = vRight;
+		break;
+
+	case Direction::DIR_FLEFT:
+		vTargetDir = XMVector4Normalize(vLook - vRight);
+		break;
+
+	case Direction::DIR_FRIGHT:
+		vTargetDir = XMVector4Normalize(vLook + vRight);
+		break;
+
+	case Direction::DIR_BLEFT:
+		vTargetDir = XMVector4Normalize(-vLook - vRight);
+		break;
+
+	case Direction::DIR_BRIGHT:
+		vTargetDir = XMVector4Normalize(-vLook + vRight);
+		break;
+	}
+
+	_float fLerpSpeed = 10.0f * fTimeDelta;
+	//XMVECTOR qCurrent = XMQuaternionRotationMatrix(m_pTransformCom->Get_WorldMatrix());
+	//XMVECTOR qTarget = XMQuaternionRotationMatrix(XMMatrixLookToLH(XMVectorZero(), vTargetDir, XMVectorSet(0.f, 1.f, 0.f, 0.f)));
+
+	//XMVECTOR qNewRotation = XMQuaternionSlerp(qCurrent, qTarget, fLerpSpeed);
+
+	//XMMATRIX mNewWorld = XMMatrixRotationQuaternion(qNewRotation);
+	//m_pTransformCom->Set_WorldMatrix(mNewWorld);
+
+
+	vLook = XMVectorLerp(vMyLook, vTargetDir, fLerpSpeed);
+	vLook = XMVector4Normalize(vLook);
+	m_pTransformCom->Set_Look_ForLandObject(vLook);
 }
 
 HRESULT CPlayer::Add_Components()
@@ -153,7 +293,7 @@ HRESULT CPlayer::Add_PartObjects()
 	CBody_Player::BODY_PLAYER_DESC BodyPlayerDesc{};
 
 	BodyPlayerDesc.pParentTransform = m_pTransformCom;
-	BodyPlayerDesc.pPlayerState = &m_iState;
+	BodyPlayerDesc.pPlayerAnimation = &m_iAnimation;
 
 	CPartObject*		pBody_Player = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Body_Player"), &BodyPlayerDesc));
 	if (nullptr == pBody_Player)

@@ -23,7 +23,7 @@ HRESULT CBody_Player::Initialize(void * pArg)
 {	
 	BODY_PLAYER_DESC*		pBodyPlayerDesc = (BODY_PLAYER_DESC*)pArg;
 
-	m_pPlayerState = pBodyPlayerDesc->pPlayerState;
+	m_pPlayerAnimation = pBodyPlayerDesc->pPlayerAnimation;
 		 
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;	
@@ -44,23 +44,11 @@ void CBody_Player::Priority_Tick(_float fTimeDelta)
 
 void CBody_Player::Tick(_float fTimeDelta)
 {
-	//if (*m_pPlayerState == STATE_IDLE)
-	//{
-	//	m_pModelCom->Set_Animation(3);
-	//	m_pSkeletalModelCom->Set_Animation(3);
-	//}
-	//if (*m_pPlayerState == STATE_RUN)
-	//{
-	//	m_pModelCom->Set_Animation(4);
-	//	m_pSkeletalModelCom->Set_Animation(4);
-	//}
-	
 	//m_pModelCom->Set_Animation(*m_pPlayerState);
 	//m_pModelCom->Play_Animation(fTimeDelta, true);	
 
-	m_pSkeletalModelCom->Set_Animation(*m_pPlayerState);
+	m_pSkeletalModelCom->Set_Animation(static_cast<int>(*m_pPlayerAnimation));
 	m_pSkeletalModelCom->Play_Animation(fTimeDelta, true);
-	
 }
 
 void CBody_Player::Late_Tick(_float fTimeDelta)
@@ -71,8 +59,8 @@ void CBody_Player::Late_Tick(_float fTimeDelta)
 
 	if (FAILED(m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this)))
 		return;
-	if (FAILED(m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
-		return;
+	//if (FAILED(m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
+	//	return;
 
 #ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponent(m_pColliderCom);
@@ -119,34 +107,34 @@ HRESULT CBody_Player::Render()
 
 HRESULT CBody_Player::Render_Shadow()
 {
-	//if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
-	//	return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+		return E_FAIL;
 
-	//_float4x4		ViewMatrix, ProjMatrix;
+	_float4x4		ViewMatrix, ProjMatrix;
 
-	//XMStoreFloat4x4(&ViewMatrix, XMMatrixLookAtLH(XMVectorSet(20.f, 20.f, -20.f, 1.f), XMVectorSet(0.f, 0.f, 0.f, 1.f), XMVectorSet(0.f, 1.f, 0.f, 0.f)));
-	//XMStoreFloat4x4(&ProjMatrix, XMMatrixPerspectiveFovLH(XMConvertToRadians(90.0f), (_float)g_iWinSizeX / g_iWinSizeY, 0.1f, 2000.f));
+	XMStoreFloat4x4(&ViewMatrix, XMMatrixLookAtLH(XMVectorSet(20.f, 20.f, -20.f, 1.f), XMVectorSet(0.f, 0.f, 0.f, 1.f), XMVectorSet(0.f, 1.f, 0.f, 0.f)));
+	XMStoreFloat4x4(&ProjMatrix, XMMatrixPerspectiveFovLH(XMConvertToRadians(90.0f), (_float)g_iWinSizeX / g_iWinSizeY, 0.1f, 2000.f));
 
-	//if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &ViewMatrix)))
-	//	return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &ViewMatrix)))
+		return E_FAIL;
 
-	//if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &ProjMatrix)))
-	//	return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &ProjMatrix)))
+		return E_FAIL;
 
 
-	//_uint	iNumMeshes = m_pModelCom->Get_NumMeshes();
+	_uint	iNumMeshes = m_pModelCom->Get_NumMeshes();
 
-	//for (size_t i = 0; i < iNumMeshes; i++)
-	//{
-	//	if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", i)))
-	//		return E_FAIL;
+	for (size_t i = 0; i < iNumMeshes; i++)
+	{
+		if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", i)))
+			return E_FAIL;
 
-	//	if (FAILED(m_pShaderCom->Begin(1)))
-	//		return E_FAIL;
+		if (FAILED(m_pShaderCom->Begin(1)))
+			return E_FAIL;
 
-	//	if (FAILED(m_pModelCom->Render(i)))
-	//		return E_FAIL;
-	//}
+		if (FAILED(m_pModelCom->Render(i)))
+			return E_FAIL;
+	}
 
 	return S_OK;
 }
