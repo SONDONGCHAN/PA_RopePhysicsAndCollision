@@ -210,7 +210,6 @@ void CPlayer::Set_Dir_From_Cam(_float fTimeDelta, Direction _DIRType)
 	_vector vLook = m_pTransformCom->Get_State(CTransform::STATE_POSITION) - XMLoadFloat4(&CGameInstance::GetInstance()->Get_CamPosition());
 	vLook = XMVector4Normalize(XMVectorSetY(vLook, 0.f));
 	_vector vRight = XMVector4Normalize(XMVector3Cross(XMVectorSet(0.f, 1.f, 0.f, 0.f), vLook));
-	_vector vMyLook = m_pTransformCom->Get_State(CTransform::STATE_LOOK);
 	_vector vTargetDir = {1.f, 1.f, 1.f, 0.f};
 
 	switch (_DIRType)
@@ -232,35 +231,41 @@ void CPlayer::Set_Dir_From_Cam(_float fTimeDelta, Direction _DIRType)
 		break;
 
 	case Direction::DIR_FLEFT:
-		vTargetDir = XMVector4Normalize(vLook - vRight);
+		vTargetDir = vLook - vRight;
 		break;
 
 	case Direction::DIR_FRIGHT:
-		vTargetDir = XMVector4Normalize(vLook + vRight);
+		vTargetDir = vLook + vRight;
 		break;
 
 	case Direction::DIR_BLEFT:
-		vTargetDir = XMVector4Normalize(-vLook - vRight);
+		vTargetDir = (-vLook) - vRight;
 		break;
 
 	case Direction::DIR_BRIGHT:
-		vTargetDir = XMVector4Normalize(-vLook + vRight);
+		vTargetDir = (- vLook) + vRight;
 		break;
 	}
 
+	vTargetDir = XMVector4Normalize(vTargetDir);
+
 	_float fLerpSpeed = 10.0f * fTimeDelta;
-	//XMVECTOR qCurrent = XMQuaternionRotationMatrix(m_pTransformCom->Get_WorldMatrix());
-	//XMVECTOR qTarget = XMQuaternionRotationMatrix(XMMatrixLookToLH(XMVectorZero(), vTargetDir, XMVectorSet(0.f, 1.f, 0.f, 0.f)));
 
-	//XMVECTOR qNewRotation = XMQuaternionSlerp(qCurrent, qTarget, fLerpSpeed);
+	XMMATRIX myWorld = m_pTransformCom->Get_WorldMatrix();
+	XMVECTOR qCurrent = XMQuaternionRotationMatrix(myWorld);
+	XMVECTOR qTarget = XMQuaternionInverse(XMQuaternionRotationMatrix(XMMatrixLookToLH(
+		m_pTransformCom->Get_State(CTransform::STATE_POSITION), vTargetDir, XMVectorSet(0.f, 1.f, 0.f, 0.f))));
 
-	//XMMATRIX mNewWorld = XMMatrixRotationQuaternion(qNewRotation);
-	//m_pTransformCom->Set_WorldMatrix(mNewWorld);
+	XMVECTOR qNewRotation = XMQuaternionSlerp(qCurrent, qTarget, fLerpSpeed);
 
+	XMVECTOR vScale, vTranslation, vRotation;
+	XMMatrixDecompose(&vScale, &vRotation, &vTranslation, myWorld);
 
-	vLook = XMVectorLerp(vMyLook, vTargetDir, fLerpSpeed);
-	vLook = XMVector4Normalize(vLook);
-	m_pTransformCom->Set_Look_ForLandObject(vLook);
+	XMMATRIX mNewWorld = XMMatrixScalingFromVector(vScale) *
+						 XMMatrixRotationQuaternion(qNewRotation) *
+						 XMMatrixTranslationFromVector(vTranslation);
+
+	m_pTransformCom->Set_WorldMatrix(mNewWorld);
 }
 
 HRESULT CPlayer::Add_Components()

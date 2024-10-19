@@ -48,6 +48,8 @@ HRESULT CCollider::Initialize_Prototype(TYPE eType)
 
 HRESULT CCollider::Initialize(void * pArg)
 {
+	m_ColData = *((ColData*)pArg);
+	
 	switch (m_eType)
 	{
 	case TYPE_AABB:
@@ -68,6 +70,53 @@ void CCollider::Tick(_fmatrix WorldMatrix)
 {
 	m_pBounding->Tick(WorldMatrix);
 }
+
+_bool CCollider::Find_CurrentCollision(CCollider* pTarget_Collider)
+{
+	if (m_CurrentCollisions.find(pTarget_Collider) == m_CurrentCollisions.end())
+	{
+		m_CurrentCollisions.insert(pTarget_Collider);
+		Safe_AddRef(pTarget_Collider);
+		return false;
+	}
+	return true;
+}
+
+_bool CCollider::Delete_CurrentCollision(CCollider* pTarget_Collider)
+{
+	if (m_CurrentCollisions.find(pTarget_Collider) == m_CurrentCollisions.end())
+		return false;
+
+	Safe_Release(pTarget_Collider);
+	m_CurrentCollisions.erase(pTarget_Collider);
+	return true;
+}
+
+void CCollider::Clear_Collisions()
+{
+	for (auto iter : m_CurrentCollisions)
+	{
+		Safe_Release(iter);
+	}
+	m_CurrentCollisions.clear();
+}
+
+void CCollider::CollisionEnter()
+{
+	m_ColData.pGameObject;
+}
+
+void CCollider::OnCollisionStay()
+{
+	m_ColData.pGameObject;
+}
+
+void CCollider::OnCollisionExit()
+{
+	m_ColData.pGameObject;
+
+}
+
 #ifdef _DEBUG
 
 HRESULT CCollider::Render()
