@@ -103,18 +103,17 @@ void CCollider::Clear_Collisions()
 
 void CCollider::CollisionEnter()
 {
-	m_ColData.pGameObject;
+	m_ColData.pGameObject->Event_CollisionEnter();
 }
 
-void CCollider::OnCollisionStay()
+void CCollider::CollisionStay()
 {
-	m_ColData.pGameObject;
+	m_ColData.pGameObject->Event_CollisionStay();
 }
 
-void CCollider::OnCollisionExit()
+void CCollider::CollisionExit()
 {
-	m_ColData.pGameObject;
-
+	m_ColData.pGameObject->Event_CollisionExit();
 }
 
 #ifdef _DEBUG

@@ -32,6 +32,11 @@ public:
 	virtual HRESULT Render();
 	virtual HRESULT Render_Shadow() { return S_OK; }
 
+public:
+	virtual void Event_CollisionEnter() {};
+	virtual void Event_CollisionStay() {};
+	virtual void Event_CollisionExit() {};
+
 protected:
 	ID3D11Device*				m_pDevice = { nullptr };
 	ID3D11DeviceContext*		m_pContext = { nullptr };

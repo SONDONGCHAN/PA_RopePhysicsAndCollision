@@ -144,9 +144,6 @@
     <ClInclude Include="..\public\Weapon.h">
       <Filter>02.GameObjects\LandObject\Player\PartObject\Weapon</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\PartObject.h">
-      <Filter>02.GameObjects\LandObject\Player\PartObject</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Sky.h">
       <Filter>02.GameObjects\Sky</Filter>
     </ClInclude>
@@ -167,6 +164,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\Camera_manager.h">
       <Filter>03. Manager\00. Camera Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\PartObject.h">
+      <Filter>02.GameObjects\LandObject\Player\PartObject</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

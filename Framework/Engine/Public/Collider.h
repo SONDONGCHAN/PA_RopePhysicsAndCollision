@@ -14,6 +14,9 @@ public:
 	struct ColData
 	{
 		CGameObject* pGameObject = { nullptr };
+		COL_TYPE	eMyColType;
+		COL_TYPE	eTargetColType;
+		_bool		isDead = { false };
 	};
 
 private:
@@ -34,9 +37,11 @@ public:
 	void	Clear_Collisions();
 
 	void	CollisionEnter();
-	void	OnCollisionStay();
-	void	OnCollisionExit();
+	void	CollisionStay();
+	void	CollisionExit();
 
+public:
+	ColData* Get_ColData() { return &m_ColData;};
 
 #ifdef _DEBUG
 public:

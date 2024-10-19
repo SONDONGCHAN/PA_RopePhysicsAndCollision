@@ -169,6 +169,12 @@
     <Filter Include="01.Utility\97.JsonParser">
       <UniqueIdentifier>{08a62c01-1f39-4244-aa13-13b62062818f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\03.Component\Collider\Collision_Manager">
+      <UniqueIdentifier>{96094179-cf0e-4e81-99e2-919681de7d84}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.Component\Collider\Collision_Manager\Collider_Layer">
+      <UniqueIdentifier>{491770cc-a20a-4f04-bde7-efe4905988e7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\public\Base.h">
@@ -339,6 +345,12 @@
     <ClInclude Include="..\Public\Json_Manager.h">
       <Filter>01.Utility\97.JsonParser</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Collision_Manager.h">
+      <Filter>01.Utility\03.Component\Collider\Collision_Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Collider_Layer.h">
+      <Filter>01.Utility\03.Component\Collider\Collision_Manager\Collider_Layer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\Base.cpp">
@@ -496,6 +508,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\Json_Manager.cpp">
       <Filter>01.Utility\97.JsonParser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Collision_Manager.cpp">
+      <Filter>01.Utility\03.Component\Collider\Collision_Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Collider_Layer.cpp">
+      <Filter>01.Utility\03.Component\Collider\Collision_Manager\Collider_Layer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
