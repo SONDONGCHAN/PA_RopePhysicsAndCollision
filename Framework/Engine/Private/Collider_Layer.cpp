@@ -12,7 +12,7 @@ HRESULT CCollider_Layer::Initialize()
 
 _bool CCollider_Layer::Add_Collider(CCollider* pCollider)
 {
-	if (nullptr == pCollider || (m_Colliders.find(pCollider) != m_Colliders.end()) )
+	if (m_Colliders.find(pCollider) != m_Colliders.end() )
 		return false;
 
 	m_Colliders.insert(pCollider);

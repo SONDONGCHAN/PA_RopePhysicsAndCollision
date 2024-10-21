@@ -1,5 +1,5 @@
 #include "..\Public\Bounding_Sphere.h"
-
+#include "Collider.h"
 
 CBounding_Sphere::CBounding_Sphere(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CBounding(pDevice, pContext)
@@ -10,7 +10,7 @@ CBounding_Sphere::CBounding_Sphere(ID3D11Device* pDevice, ID3D11DeviceContext* p
 HRESULT CBounding_Sphere::Initialize(void * pArg)
 {
 	/* 초기상태는 로컬상태 */
-	SPHERE_DESC*	pSphereDesc = (SPHERE_DESC*)pArg;
+	CCollider::SPHERE_DESC*	pSphereDesc = (CCollider::SPHERE_DESC*)pArg;
 
 	m_pOriginalSphere = new BoundingSphere(pSphereDesc->vCenter, pSphereDesc->fRadius);
 	m_pSphere = new BoundingSphere(*m_pOriginalSphere);

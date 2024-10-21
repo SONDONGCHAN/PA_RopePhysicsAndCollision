@@ -55,7 +55,7 @@ void CBody_Player::Late_Tick(_float fTimeDelta)
 {
 	XMStoreFloat4x4(&m_WorldMatrix, m_pTransformCom->Get_WorldMatrix() * m_pParentTransform->Get_WorldMatrix());
 
-	m_pColliderCom->Tick(XMLoadFloat4x4(&m_WorldMatrix));
+	//m_pColliderCom->Tick(XMLoadFloat4x4(&m_WorldMatrix));
 
 	if (FAILED(m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this)))
 		return;
@@ -63,7 +63,7 @@ void CBody_Player::Late_Tick(_float fTimeDelta)
 	//	return;
 
 #ifdef _DEBUG
-	m_pGameInstance->Add_DebugComponent(m_pColliderCom);
+	//m_pGameInstance->Add_DebugComponent(m_pColliderCom);
 #endif
 }
 
@@ -165,14 +165,14 @@ HRESULT CBody_Player::Add_Component()
 
 	
 	/* Com_Collider */
-	CBounding_Sphere::SPHERE_DESC		BoundingDesc{};
+	//CBounding_Sphere::SPHERE_DESC		BoundingDesc{};
 
-	BoundingDesc.fRadius = 0.5f;
-	BoundingDesc.vCenter = _float3(0.f, BoundingDesc.fRadius, 0.f);	
+	//BoundingDesc.fRadius = 0.5f;
+	//BoundingDesc.vCenter = _float3(0.f, BoundingDesc.fRadius, 0.f);	
 
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Collider_Sphere"),
-		TEXT("Com_Collider"), reinterpret_cast<CComponent**>(&m_pColliderCom), &BoundingDesc)))
-		return E_FAIL;
+	//if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Collider_Sphere"),
+	//	TEXT("Com_Collider"), reinterpret_cast<CComponent**>(&m_pColliderCom), &BoundingDesc)))
+	//	return E_FAIL;
 
 	return S_OK;
 }
@@ -231,7 +231,7 @@ void CBody_Player::Free()
 {
 	__super::Free();
 		
-	Safe_Release(m_pColliderCom);
+	//Safe_Release(m_pColliderCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pSkeletalShaderCom);
 	Safe_Release(m_pModelCom);

@@ -5,6 +5,7 @@
 
 namespace Engine
 {
+
 	typedef struct 
 	{	
 		HWND			hWnd;

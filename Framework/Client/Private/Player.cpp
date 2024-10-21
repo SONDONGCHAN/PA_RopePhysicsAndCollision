@@ -3,6 +3,7 @@
 
 #include "Body_Player.h"
 #include "Weapon.h"
+#include "Collider.h"
 
 CPlayer::CPlayer(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CLandObject(pDevice, pContext)
@@ -62,13 +63,14 @@ void CPlayer::Tick(_float fTimeDelta)
 		(Pair.second)->Tick(fTimeDelta);
 
 	Root_Transform();
+	m_pColliderCom->Tick(m_pTransformCom->Get_WorldMatrix());
 }
 
 void CPlayer::Late_Tick(_float fTimeDelta)
 {
 #ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponent(m_pNavigationCom);
-	//m_pGameInstance->Add_DebugComponent(m_pColliderCom);
+	m_pGameInstance->Add_DebugComponent(m_pColliderCom);
 #endif
 
 	for (auto& Pair : m_PlayerParts)
@@ -279,16 +281,31 @@ HRESULT CPlayer::Add_Components()
 		TEXT("Com_Navigation"), reinterpret_cast<CComponent**>(&m_pNavigationCom), &NaviDesc)))
 		return E_FAIL;
 
-	///* Com_Collider */
-	//CBounding_AABB::AABB_DESC		BoundingDesc{};
 
-	//BoundingDesc.vExtents = _float3(0.3f, 0.7f, 0.3f);
-	//BoundingDesc.vCenter = _float3(0.f, BoundingDesc.vExtents.y, 0.f);
-	//
+	/* Com_Collider */
 
-	//if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Collider_AABB"),
-	//	TEXT("Com_Collider"), reinterpret_cast<CComponent**>(&m_pColliderCom), &BoundingDesc)))
-	//	return E_FAIL;
+	CCollider::ColliderInitData	ColliderDesc {};
+
+	CGameObject::ColData ColData{};
+	ColData.pGameObject = this;
+	ColData.eMyColType = COL_PLAYER;
+	ColData.iTargetColType = COL_STATIC_OBJECT;
+	ColData.isDead = false;
+
+	
+	CCollider::SPHERE_DESC	BoundingDesc{};
+	BoundingDesc.fRadius = 0.6f;
+	BoundingDesc.vCenter = _float3(0.f, BoundingDesc.fRadius, 0.f);
+
+	ColliderDesc.ColData = ColData;
+	ColliderDesc.SphereDesc = BoundingDesc;
+
+
+	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Collider_Sphere"),
+		TEXT("Com_Collider"), reinterpret_cast<CComponent**>(&m_pColliderCom), &ColliderDesc)))
+		return E_FAIL;
+	
+
 
 	return S_OK;
 }

@@ -1,4 +1,5 @@
 #include "..\Public\Bounding_AABB.h"
+#include "Collider.h"
 
 
 CBounding_AABB::CBounding_AABB(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -10,7 +11,7 @@ CBounding_AABB::CBounding_AABB(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
 HRESULT CBounding_AABB::Initialize(void * pArg)
 {
 	/* 초기상태는 로컬상태 */
-	AABB_DESC*	pDesc = (AABB_DESC*)pArg;
+	CCollider::AABB_DESC*	pDesc = (CCollider::AABB_DESC*)pArg;
 
 	m_pOriginalAABB = new BoundingBox(pDesc->vCenter, pDesc->vExtents);
 	m_pAABB = new BoundingBox(*m_pOriginalAABB);

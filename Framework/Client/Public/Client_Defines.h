@@ -18,7 +18,6 @@ namespace Client
 	inline bool KEYINPUT(uint8_t key) { return (KEYDOWN(key) || KEYPRESSING(key)) ; }
 	inline bool KEYUP(uint8_t key) { return CGameInstance::GetInstance()->KeyUp(key); }
 
-
 }
 
 extern HWND				g_hWnd;

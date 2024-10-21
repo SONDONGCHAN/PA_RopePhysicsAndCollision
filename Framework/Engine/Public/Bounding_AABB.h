@@ -7,10 +7,10 @@ BEGIN(Engine)
 class CBounding_AABB final : public CBounding
 {
 public:
-	typedef struct : public CBounding::BOUNDING_DESC
-	{
-		_float3		vExtents;
-	}AABB_DESC;
+	//typedef struct : public CBounding::BOUNDING_DESC
+	//{
+	//	_float3		vExtents;
+	//}AABB_DESC;
 private:
 	CBounding_AABB(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual ~CBounding_AABB() = default;

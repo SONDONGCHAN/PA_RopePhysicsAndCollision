@@ -88,6 +88,24 @@
     <Filter Include="03. Manager\00. Camera Manager">
       <UniqueIdentifier>{5bad9d4d-287e-4709-87a7-cfee38d64e16}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Rope">
+      <UniqueIdentifier>{2eca1932-f614-481a-851d-95b515609f94}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Rope\Spring">
+      <UniqueIdentifier>{987a5b54-76ca-40ba-aefd-71af7e449907}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="96. Physical Simulations">
+      <UniqueIdentifier>{5afa522b-b944-42ca-bd47-7391f718118e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="96. Physical Simulations\Mass">
+      <UniqueIdentifier>{f5296523-73e3-4c08-9b61-c908414816d7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="96. Physical Simulations\Simulation">
+      <UniqueIdentifier>{e6065a83-a32d-42e6-bc32-49e3497317ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="96. Physical Simulations\Simulation\Rope_Simulation">
+      <UniqueIdentifier>{0d0835b4-e9b1-4016-9653-8ae1da251f30}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -168,6 +186,18 @@
     <ClInclude Include="..\public\PartObject.h">
       <Filter>02.GameObjects\LandObject\Player\PartObject</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Mass.h">
+      <Filter>96. Physical Simulations\Mass</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Simulation.h">
+      <Filter>96. Physical Simulations\Simulation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Spring.h">
+      <Filter>02.GameObjects\Rope\Spring</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Rope_Simulation.h">
+      <Filter>96. Physical Simulations\Simulation\Rope_Simulation</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -238,6 +268,18 @@
     </ClCompile>
     <ClCompile Include="..\Private\Camera_manager.cpp">
       <Filter>03. Manager\00. Camera Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Mass.cpp">
+      <Filter>96. Physical Simulations\Mass</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Simulation.cpp">
+      <Filter>96. Physical Simulations\Simulation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Spring.cpp">
+      <Filter>02.GameObjects\Rope\Spring</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Rope_Simulation.cpp">
+      <Filter>96. Physical Simulations\Simulation\Rope_Simulation</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

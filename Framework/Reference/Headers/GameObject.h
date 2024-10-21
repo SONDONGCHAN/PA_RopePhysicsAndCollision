@@ -14,6 +14,14 @@ public:
 		_uint		iGameObjectData = { 0 };
 	}GAMEOBJECT_DESC;
 
+	struct ColData
+	{
+		CGameObject* pGameObject = { nullptr };
+		COL_TYPE	eMyColType;
+		_uint		iTargetColType;
+		_bool		isDead = { false };
+	};
+
 protected:
 	CGameObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CGameObject(const CGameObject& rhs);
@@ -31,6 +39,11 @@ public:
 	virtual void Late_Tick(_float fTimeDelta);
 	virtual HRESULT Render();
 	virtual HRESULT Render_Shadow() { return S_OK; }
+
+public:
+	virtual void Event_CollisionEnter(ColData* _ColData) {};
+	virtual void Event_CollisionStay(ColData* _ColData) {};
+	virtual void Event_CollisionExit(ColData* _ColData) {};
 
 protected:
 	ID3D11Device*				m_pDevice = { nullptr };

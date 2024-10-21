@@ -15,11 +15,12 @@ public:
 	}OBB_COL_DESC;
 
 public:
-	typedef struct : public CBounding::BOUNDING_DESC
-	{
-		_float3		vExtents;
-		_float3		vRadians; /* x : x축 기준 회전 각도, y : y축 기준 회전 각도, z : z축 기준 회전 각도 */
-	}OBB_DESC;
+	//typedef struct : public CBounding::BOUNDING_DESC
+	//{
+	//	_float3		vExtents;
+	//	_float3		vRadians; /* x : x축 기준 회전 각도, y : y축 기준 회전 각도, z : z축 기준 회전 각도 */
+	//}OBB_DESC;
+
 private:
 	CBounding_OBB(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual ~CBounding_OBB() = default;

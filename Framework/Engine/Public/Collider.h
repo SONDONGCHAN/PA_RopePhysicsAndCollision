@@ -9,14 +9,39 @@ class ENGINE_DLL CCollider final : public CComponent
 {
 public:
 	enum TYPE { TYPE_SPHERE, TYPE_AABB, TYPE_OBB, TYPE_END };
-	enum COL_TYPE { COL_PLAYER, COL_STATIC_OBJECT, COL_PROJECTILE, COL_END };
 
-	struct ColData
+	struct BOUNDING_DESC
 	{
-		CGameObject* pGameObject = { nullptr };
-		COL_TYPE	eMyColType;
-		COL_TYPE	eTargetColType;
-		_bool		isDead = { false };
+		_float3		vCenter;
+	};
+
+	struct SPHERE_DESC : public BOUNDING_DESC
+	{
+		_float		fRadius;
+	};
+
+	 struct OBB_DESC : public BOUNDING_DESC
+	{
+		_float3		vExtents;
+		_float3		vRadians; /* x : x축 기준 회전 각도, y : y축 기준 회전 각도, z : z축 기준 회전 각도 */
+	};
+
+	struct AABB_DESC : public BOUNDING_DESC
+	{
+		_float3		vExtents;
+	};
+
+	struct ColliderInitData
+	{
+		CGameObject::ColData ColData;
+
+		// 각 타입별 초기화 데이터를 위한 유니온
+		union
+		{
+			AABB_DESC AABBDesc;
+			OBB_DESC OBBDesc;
+			SPHERE_DESC SphereDesc;
+		};
 	};
 
 private:
@@ -36,12 +61,12 @@ public:
 	_bool	Delete_CurrentCollision(CCollider* pTarget_Collider);
 	void	Clear_Collisions();
 
-	void	CollisionEnter();
-	void	CollisionStay();
-	void	CollisionExit();
+	void	CollisionEnter(CCollider* pTarget_Collider);
+	void	CollisionStay(CCollider* pTarget_Collider);
+	void	CollisionExit(CCollider* pTarget_Collider);
 
 public:
-	ColData* Get_ColData() { return &m_ColData;};
+	CGameObject::ColData* Get_ColData() { return &m_ColData;};
 
 #ifdef _DEBUG
 public:
@@ -68,7 +93,7 @@ private:
 	class CBounding* m_pBounding = { nullptr };
 
 	unordered_set<CCollider*> m_CurrentCollisions;
-	ColData m_ColData;
+	CGameObject:: ColData m_ColData;
 };
 
 END

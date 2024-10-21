@@ -45,23 +45,53 @@ void CCollision_Manager::Check_Collision()
 
 		for (auto&  pMy : (*pColliders) )
 		{
-			CCollider :: ColData* pData = pMy->Get_ColData();
+			CGameObject::ColData* pData = pMy->Get_ColData();
 			
 			if (pData->isDead)
 				continue;
 
-			if (m_ColliderLayers.find(pData->eTargetColType) == m_ColliderLayers.end())
-				continue;
-
-			unordered_set<CCollider*>* pTargetColliders = m_ColliderLayers[pData->eTargetColType]->Get_Colliders();
-
-			for (auto* pTarget : (*pTargetColliders))
+			_uint iTargetColType = pData->iTargetColType;
+			_uint iTemp = 1;
+			
+			for (_uint i = 0; i < 32; ++i)
 			{
-				if (pMy->Intersect(pTarget))
-				{
+				_uint eTargetColType = iTemp << i;
 
+				if ((iTargetColType & eTargetColType) != eTargetColType)
+					continue;
+
+				if (m_ColliderLayers.find(eTargetColType) == m_ColliderLayers.end())
+					continue;				
+
+				unordered_set<CCollider*>* pTargetColliders = m_ColliderLayers[eTargetColType]->Get_Colliders();
+
+				for (auto* pTarget : (*pTargetColliders))
+				{
+					if (pMy->Intersect(pTarget))
+					{
+						if (pMy->Find_CurrentCollision(pTarget))
+						{
+							pMy->CollisionStay(pTarget);
+						}
+						else
+						{
+							pMy->CollisionEnter(pTarget);
+						}
+					}
+					else
+					{
+						if (pMy->Find_CurrentCollision(pTarget))
+						{
+							pMy->CollisionExit(pTarget);
+						}
+						else
+						{
+
+						}
+					}
 				}
 			}
+
 		}	
 	}
 }

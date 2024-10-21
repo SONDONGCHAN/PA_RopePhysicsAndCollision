@@ -1,5 +1,5 @@
 #include "..\Public\Bounding_OBB.h"
-
+#include "Collider.h"
 
 CBounding_OBB::CBounding_OBB(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CBounding(pDevice, pContext)
@@ -10,7 +10,7 @@ CBounding_OBB::CBounding_OBB(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
 HRESULT CBounding_OBB::Initialize(void * pArg)
 {
 	/* 초기상태는 로컬상태 */
-	OBB_DESC*	pDesc = (OBB_DESC*)pArg;
+	CCollider::OBB_DESC*	pDesc = (CCollider::OBB_DESC*)pArg;
 
 	_float4		vRotation;
 	XMStoreFloat4(&vRotation, XMQuaternionRotationRollPitchYaw(pDesc->vRadians.x, pDesc->vRadians.y, pDesc->vRadians.z));

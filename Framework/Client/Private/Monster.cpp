@@ -112,28 +112,6 @@ HRESULT CMonster::Add_Component()
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 		return E_FAIL;	
 
-	/* Com_Collider */
-	CBounding_AABB::AABB_DESC		BoundingAABBDesc{};
-
-	BoundingAABBDesc.vExtents = _float3(0.3f, 0.7f, 0.3f);
-	BoundingAABBDesc.vCenter = _float3(0.f, BoundingAABBDesc.vExtents.y, 0.f);
-
-
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Collider_AABB"),
-		TEXT("Com_Collider_AABB"), reinterpret_cast<CComponent**>(&m_pColliderCom[TYPE_AABB]), &BoundingAABBDesc)))
-		return E_FAIL;
-
-	/* Com_Collider */
-	CBounding_OBB::OBB_DESC		BoundingOBBDesc{};
-
-	BoundingOBBDesc.vExtents = _float3(0.5f, 0.5f, 0.5f);
-	BoundingOBBDesc.vCenter = _float3(0.f, BoundingOBBDesc.vExtents.y, 0.f);
-	BoundingOBBDesc.vRadians = _float3(0.f, XMConvertToRadians(45.0f), 0.f);
-
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Collider_OBB"),
-		TEXT("Com_Collider_OBB"), reinterpret_cast<CComponent**>(&m_pColliderCom[TYPE_OBB]), &BoundingOBBDesc)))
-		return E_FAIL;
-
 	return S_OK;
 }
 

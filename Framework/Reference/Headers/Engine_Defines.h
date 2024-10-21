@@ -30,6 +30,7 @@ using namespace DirectX;
 #include <map>
 #include <string>
 #include <unordered_map>
+#include <unordered_set>
 #include <algorithm>
 using namespace std;
 
@@ -39,6 +40,16 @@ namespace Engine
 	enum MOUSEMOVESTATE { DIMS_X, DIMS_Y, DIMS_Z, DIMS_END };
 
 	const wstring		g_strTransformTag = TEXT("Com_Transform");
+
+	enum COL_TYPE
+	{
+		COL_NONE = 0,
+		COL_PLAYER = 1 << 0,
+		COL_STATIC_OBJECT = 1 << 1,
+		COL_PROJECTILE = 1 << 2,
+
+		COL_END = 1 << 31
+	};
 }
 
 

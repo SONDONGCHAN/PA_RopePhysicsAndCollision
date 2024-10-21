@@ -10,6 +10,7 @@
 #include "Target_Manager.h"
 #include "Frustum.h"
 #include "Json_Manager.h"
+#include "Collision_Manager.h"
 
 
 IMPLEMENT_SINGLETON(CGameInstance)
@@ -79,6 +80,10 @@ HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInst, _uint iNumLevels, cons
 	if (nullptr == m_pJson_Manager)
 		return E_FAIL;
 
+	m_pCollision_Manager = CCollision_Manager::Create();
+	if (nullptr == m_pCollision_Manager)
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -100,6 +105,8 @@ void CGameInstance::Tick_Engine(_float fTimeDelta)
 	m_pFrustum->Tick();
 	
 	m_pObject_Manager->Tick(fTimeDelta);
+
+	m_pCollision_Manager->Check_Collision();
 	
 	m_pObject_Manager->Late_Tick(fTimeDelta);
 }
@@ -405,6 +412,11 @@ Json::Value CGameInstance::ReadJson(const wstring& _strReadPath)
 	return m_pJson_Manager->ReadJson(_strReadPath);
 }
 
+_bool CGameInstance::Add_Collider(CCollider* _pCollider)
+{
+	return m_pCollision_Manager->Add_Collider(_pCollider);
+}
+
 #ifdef _DEBUG
 HRESULT CGameInstance::Ready_Debug(const wstring & strTargetTag, _float fX, _float fY, _float fSizeX, _float fSizeY)
 {
@@ -438,6 +450,7 @@ void CGameInstance::Release_Manager()
 	Safe_Release(m_pInput_Device);	
 	Safe_Release(m_pGraphic_Device);
 	Safe_Release(m_pJson_Manager);
+	Safe_Release(m_pCollision_Manager);
 }
 
 void CGameInstance::Free()

@@ -105,15 +105,15 @@ HRESULT CWeapon::Add_Component()
 
 
 	/* Com_Collider */
-	CBounding_OBB::OBB_DESC		BoundingDesc{};
+	//CBounding_OBB::OBB_DESC		BoundingDesc{};
 
-	BoundingDesc.vExtents = _float3(1.0f, 1.3f, 2.f);
-	BoundingDesc.vCenter = _float3(0.f, BoundingDesc.vExtents.y, 0.f);
-	BoundingDesc.vRadians = _float3(0.f, 0.f, 0.f);
+	//BoundingDesc.vExtents = _float3(1.0f, 1.3f, 2.f);
+	//BoundingDesc.vCenter = _float3(0.f, BoundingDesc.vExtents.y, 0.f);
+	//BoundingDesc.vRadians = _float3(0.f, 0.f, 0.f);
 
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Collider_OBB"),
-		TEXT("Com_Collider"), reinterpret_cast<CComponent**>(&m_pColliderCom), &BoundingDesc)))
-		return E_FAIL;
+	//if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Collider_OBB"),
+	//	TEXT("Com_Collider"), reinterpret_cast<CComponent**>(&m_pColliderCom), &BoundingDesc)))
+	//	return E_FAIL;
 
 
 	

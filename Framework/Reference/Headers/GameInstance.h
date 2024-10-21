@@ -98,6 +98,9 @@ public: /* For.Json_Manager */
 	void WriteJson(Json::Value _value, const wstring & _strSavePath);
 	Json::Value ReadJson(const wstring & _strReadPath);
 
+public: /* For.Collision_Manager */
+	_bool	Add_Collider(CCollider * _pCollider);
+
 public: /* etc */
 	int		Get_CurrentLevel() { return m_iCurrent_Level;}
 	void	Set_CurrentLevel(_int _iLevel) { m_iCurrent_Level = _iLevel; }
@@ -127,6 +130,7 @@ private:
 	class CTarget_Manager*			m_pTarget_Manager = { nullptr };
 	class CFrustum*					m_pFrustum = { nullptr };
 	class CJson_Manager*			m_pJson_Manager = { nullptr };
+	class CCollision_Manager*		m_pCollision_Manager = { nullptr };
 
 	
 	

@@ -48,18 +48,19 @@ HRESULT CCollider::Initialize_Prototype(TYPE eType)
 
 HRESULT CCollider::Initialize(void * pArg)
 {
-	m_ColData = *((ColData*)pArg);
-	
+	ColliderInitData* pInitData = ((ColliderInitData*)pArg);
+	m_ColData = pInitData->ColData;
+
 	switch (m_eType)
 	{
 	case TYPE_AABB:
-		m_pBounding = CBounding_AABB::Create(m_pDevice, m_pContext, pArg);
+		m_pBounding = CBounding_AABB::Create(m_pDevice, m_pContext, &pInitData->AABBDesc);
 		break;
 	case TYPE_OBB:
-		m_pBounding = CBounding_OBB::Create(m_pDevice, m_pContext, pArg);
+		m_pBounding = CBounding_OBB::Create(m_pDevice, m_pContext, &pInitData->OBBDesc);
 		break;
 	case TYPE_SPHERE:
-		m_pBounding = CBounding_Sphere::Create(m_pDevice, m_pContext, pArg);
+		m_pBounding = CBounding_Sphere::Create(m_pDevice, m_pContext, &pInitData->SphereDesc);
 		break;
 	}
 
@@ -74,11 +75,8 @@ void CCollider::Tick(_fmatrix WorldMatrix)
 _bool CCollider::Find_CurrentCollision(CCollider* pTarget_Collider)
 {
 	if (m_CurrentCollisions.find(pTarget_Collider) == m_CurrentCollisions.end())
-	{
-		m_CurrentCollisions.insert(pTarget_Collider);
-		Safe_AddRef(pTarget_Collider);
 		return false;
-	}
+
 	return true;
 }
 
@@ -101,19 +99,24 @@ void CCollider::Clear_Collisions()
 	m_CurrentCollisions.clear();
 }
 
-void CCollider::CollisionEnter()
+void CCollider::CollisionEnter(CCollider* pTarget_Collider)
 {
-	m_ColData.pGameObject->Event_CollisionEnter();
+	m_CurrentCollisions.insert(pTarget_Collider);
+	Safe_AddRef(pTarget_Collider);
+
+	m_ColData.pGameObject->Event_CollisionEnter(pTarget_Collider->Get_ColData());
 }
 
-void CCollider::CollisionStay()
+void CCollider::CollisionStay(CCollider* pTarget_Collider)
 {
-	m_ColData.pGameObject->Event_CollisionStay();
+	m_ColData.pGameObject->Event_CollisionStay(pTarget_Collider->Get_ColData());
 }
 
-void CCollider::CollisionExit()
+void CCollider::CollisionExit(CCollider* pTarget_Collider)
 {
-	m_ColData.pGameObject->Event_CollisionExit();
+	m_CurrentCollisions.erase(pTarget_Collider);
+	Safe_Release(pTarget_Collider);
+	m_ColData.pGameObject->Event_CollisionExit(pTarget_Collider->Get_ColData());
 }
 
 #ifdef _DEBUG
