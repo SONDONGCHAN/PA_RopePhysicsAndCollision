@@ -13,6 +13,7 @@
 #include "VIBuffer_Particle_Rect.h"
 #include "VIBuffer_Particle_Point.h"
 #include "VIBuffer_Skeletal.h"
+#include "VIBuffer_Point_Double.h"
 
 
 #pragma region FOR_COLLIDER

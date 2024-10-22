@@ -3,7 +3,7 @@
 
 CMass::CMass(_float _M)
 {
-	m_M = _M;
+	m_fM = _M;
 }
 
 CMass::~CMass()
@@ -12,18 +12,18 @@ CMass::~CMass()
 
 void CMass::ApplyForce(_vector force)
 {
-	m_Force += force;
+	m_vForce += force;
 }
 
 void CMass::InitForce()
 {
-	m_Force = { 0.f, 0.f, 0.f };
+	m_vForce = { 0.f, 0.f, 0.f };
 }
 
-void CMass::Simulate(_float _dt)
+void CMass::Simulate(_float fTimeDelta)
 {
-	m_Vel += (m_Force / m_M) * _dt;	// 속도의 변화.
-	m_Pos += m_Vel * _dt;			// 위치의 변화.
+	m_vVel += (m_vForce / m_fM) * fTimeDelta;	// 속도의 변화.
+	m_vPos += m_vVel * fTimeDelta;			// 위치의 변화.
 }
 
 void CMass::Free()

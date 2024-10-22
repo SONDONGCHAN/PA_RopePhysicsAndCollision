@@ -5,6 +5,7 @@
 #include "Weapon.h"
 #include "Collider.h"
 
+
 CPlayer::CPlayer(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CLandObject(pDevice, pContext)
 {
@@ -45,6 +46,9 @@ HRESULT CPlayer::Initialize(void * pArg)
 	if (FAILED(Add_PartObjects()))
 		return E_FAIL;
 
+	if (FAILED(Add_Simulation()))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -64,6 +68,8 @@ void CPlayer::Tick(_float fTimeDelta)
 
 	Root_Transform();
 	m_pColliderCom->Tick(m_pTransformCom->Get_WorldMatrix());
+
+	m_pRopeSimulation->Operate(fTimeDelta*1000);
 }
 
 void CPlayer::Late_Tick(_float fTimeDelta)
@@ -75,10 +81,21 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 
 	for (auto& Pair : m_PlayerParts)
 		(Pair.second)->Late_Tick(fTimeDelta);
+
+	if (FAILED(m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this)))
+		return;
 }
 
 HRESULT CPlayer::Render()
 {
+	m_pRopeSimulation->Render();
+
+	++iRend;
+
+	if (iRend > 2)
+	{
+		int a = 0;
+	}
 	return S_OK;
 }
 
@@ -338,6 +355,27 @@ HRESULT CPlayer::Add_PartObjects()
 	return S_OK;
 }
 
+HRESULT CPlayer::Add_Simulation()
+{
+	m_pRopeSimulation = new CRope_Simulation
+	(	80,
+		0.05f,
+		10000.f,
+		0.05f,
+		0.2f,
+		_vector{0.f, -9.81f, 0},
+		0.02f,
+		100.f,
+		0.2f,
+		2.f,
+		-1.5f);
+	
+	if (nullptr == m_pRopeSimulation)
+		return E_FAIL;
+
+	return S_OK;
+}
+
 CPlayer * CPlayer::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 {
 	CPlayer*		pInstance = new CPlayer(pDevice, pContext);
@@ -375,4 +413,7 @@ void CPlayer::Free()
 
 	Safe_Release(m_pNavigationCom);
 	Safe_Release(m_pColliderCom);
+
+	Safe_Release(m_pRopeSimulation);
+
 }

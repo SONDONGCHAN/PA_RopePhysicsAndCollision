@@ -2,6 +2,8 @@
 #include "Base.h"
 #include "Client_Defines.h"
 
+BEGIN(Client)
+
 class CMass final : public CBase
 {
 public:
@@ -11,19 +13,26 @@ public:
 public:
 	void ApplyForce(_vector force);
 	void InitForce();
-	void Simulate(_float _dt);
+	void Simulate(_float fTimeDelta);
 
 public:
-	_vector Get_Pos() { return m_Pos; }
-	_vector Get_Vel() { return m_Vel; }
+	_float	Get_M() { return m_fM; }
+	_vector Get_Pos() { return m_vPos; }
+	_vector Get_Vel() { return m_vVel; }
+
+	void Set_Pos(_vector _vPos) { m_vPos = _vPos; }
+	void Set_Vel(_vector _vVel) { m_vVel = _vVel; }
+	void Set_Force(_vector _vForce) { m_vForce = _vForce; }
+
 
 private:
-	_float	m_M		{ 0.f };			// 질량 값.
-	_vector	m_Pos	{ 0.f, 0.f, 0.f };  // 공간 내 위치.
-	_vector	m_Vel	{ 0.f, 0.f, 0.f };  // 속도.
-	_vector	m_Force { 0.f, 0.f, 0.f };  // 특정 시점에 적용된 힘.
+	_float	m_fM		{ 0.f };			// 질량 값.
+	_vector	m_vPos	{ 0.f, 0.f, 0.f };  // 공간 내 위치.
+	_vector	m_vVel	{ 0.f, 0.f, 0.f };  // 속도.
+	_vector	m_vForce { 0.f, 0.f, 0.f };  // 특정 시점에 적용된 힘.
 
 public:
 	virtual void Free() override;
 };
 
+END

@@ -2,26 +2,53 @@
 #include "Simulation.h"
 #include "Spring.h"
 
+BEGIN(Client)
+
 class CRope_Simulation : public CSimulation
 {
 public:
-	CRope_Simulation(_int _iNum_Masses, _float _M);
+	CRope_Simulation(
+		_int _iNum_Masses,
+		_float _fM,
+		_float _fSpringConstant,
+		_float _fSpringLength,
+		_float _fSpringFrictionConstant,
+		_vector _vGravitation,
+		_float _fAirFrictionConstant,
+		_float _fGroundRepulsionConstant,
+		_float _fGroundFrictionConstant,
+		_float _fGroundAbsorptionConstant,
+		_float _fGroundHeight
+		);
 	virtual ~CRope_Simulation();
+
+public:
+	virtual void Solve() override;
+	virtual void Simulate(_float fTimeDelta) override;
+	void Render() ;
+
+
+public:
+	void	Set_RopeConnection_Vel(_vector _vRopeConnection_Vel) {
+		m_vRopeConnection_Vel = _vRopeConnection_Vel ; }
 
 private:
 	vector<CSpring*> vecSprings;		// 스프링들
 
 private:
-	_vector m_Gravitation;				// 중력 가속도
-	_vector m_RopeConnection_Pos;		// 첫 번째 Mass의 위치
-	_vector m_RopeConnection_Vel;		// 첫 번째 Mass를 이동시키기 위한 변수
+	_vector m_vRopeConnection_Pos{ 0.f, 0.f, 0.f };		// 첫 번째 Mass의 위치
+	_vector m_vRopeConnection_Vel{ 0.f, 0.f, 0.f };		// 첫 번째 Mass를 이동시키기 위한 변수
 
-	_float	m_GroundRepulsionConstant;	// 지면 튕김 상수
-	_float	m_GroundFrictionConstant;	// 지면 마찰 상수
-	_float	m_GroundAbsorptionConstant;	// 지면 흡수 마찰 상수
-	_float	m_GroundHeight;				// 지면의 높이
+private:
+	_vector m_vGravitation;				// 중력 가속도
+	_float	m_fAirFrictionConstant;		// 공기 마찰 상수
+	_float	m_fGroundRepulsionConstant;	// 지면 튕김 상수
+	_float	m_fGroundFrictionConstant;	// 지면 마찰 상수
+	_float	m_fGroundAbsorptionConstant;	// 지면 흡수 마찰 상수
+	_float	m_fGroundHeight;				// 지면의 높이
 
 public:
 	virtual void Free() override;
 };
 
+END

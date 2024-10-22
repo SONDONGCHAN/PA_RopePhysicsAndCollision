@@ -88,12 +88,6 @@
     <Filter Include="03. Manager\00. Camera Manager">
       <UniqueIdentifier>{5bad9d4d-287e-4709-87a7-cfee38d64e16}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Rope">
-      <UniqueIdentifier>{2eca1932-f614-481a-851d-95b515609f94}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Rope\Spring">
-      <UniqueIdentifier>{987a5b54-76ca-40ba-aefd-71af7e449907}</UniqueIdentifier>
-    </Filter>
     <Filter Include="96. Physical Simulations">
       <UniqueIdentifier>{5afa522b-b944-42ca-bd47-7391f718118e}</UniqueIdentifier>
     </Filter>
@@ -105,6 +99,12 @@
     </Filter>
     <Filter Include="96. Physical Simulations\Simulation\Rope_Simulation">
       <UniqueIdentifier>{0d0835b4-e9b1-4016-9653-8ae1da251f30}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="96. Physical Simulations\Rope">
+      <UniqueIdentifier>{2eca1932-f614-481a-851d-95b515609f94}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="96. Physical Simulations\Rope\Spring">
+      <UniqueIdentifier>{987a5b54-76ca-40ba-aefd-71af7e449907}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -193,7 +193,7 @@
       <Filter>96. Physical Simulations\Simulation</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Spring.h">
-      <Filter>02.GameObjects\Rope\Spring</Filter>
+      <Filter>96. Physical Simulations\Rope\Spring</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Rope_Simulation.h">
       <Filter>96. Physical Simulations\Simulation\Rope_Simulation</Filter>
@@ -276,7 +276,7 @@
       <Filter>96. Physical Simulations\Simulation</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Spring.cpp">
-      <Filter>02.GameObjects\Rope\Spring</Filter>
+      <Filter>96. Physical Simulations\Rope\Spring</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Rope_Simulation.cpp">
       <Filter>96. Physical Simulations\Simulation\Rope_Simulation</Filter>
@@ -323,6 +323,9 @@
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimNonMesh.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPoint_Rope.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>

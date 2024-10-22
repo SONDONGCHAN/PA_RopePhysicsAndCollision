@@ -2,6 +2,7 @@
 
 #include "Client_Defines.h"
 #include "LandObject.h"
+#include "Rope_Simulation.h"
 
 BEGIN(Engine)
 
@@ -78,12 +79,14 @@ private:
 	PlayerState	m_eCurrentState = PlayerState :: STATE_IDLE;	// 현재 상태
 	PlayerState	m_eNextState	= PlayerState :: STATE_IDLE;	// 다음 상태
 	_float		m_fStateTimer	= 0.0f;						// 상태 유지 시간
-
+	PlayerAnim	m_iAnimation = { IDLE };
 
 private:
 	CNavigation*	m_pNavigationCom = { nullptr };
 	CCollider*		m_pColliderCom = { nullptr };
-	PlayerAnim		m_iAnimation = { IDLE };
+
+private:
+	CRope_Simulation* m_pRopeSimulation = { nullptr };
 
 private:
 	map<const wstring, class CPartObject*>		m_PlayerParts;
@@ -91,6 +94,9 @@ private:
 private:
 	HRESULT Add_Components();
 	HRESULT Add_PartObjects();
+	HRESULT Add_Simulation();
+
+	_int iRend = 0;
 
 public:
 	static CPlayer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
