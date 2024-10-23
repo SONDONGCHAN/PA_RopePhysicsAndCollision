@@ -13,6 +13,7 @@ void CPipeLine::Tick()
 	}
 
 	memcpy(&m_vCamPosition, &m_TransformMatrix_Inverse[D3DTS_VIEW].m[3][0], sizeof(_float4));	
+	memcpy(&m_vCamLook, &m_TransformMatrix_Inverse[D3DTS_VIEW].m[2][0], sizeof(_float4));
 }
 
 CPipeLine * CPipeLine::Create()

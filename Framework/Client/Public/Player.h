@@ -3,6 +3,7 @@
 #include "Client_Defines.h"
 #include "LandObject.h"
 #include "Rope_Simulation.h"
+#include "Projectile_Rope.h"
 
 BEGIN(Engine)
 
@@ -82,8 +83,9 @@ private:
 	PlayerAnim	m_iAnimation = { IDLE };
 
 private:
-	CNavigation*	m_pNavigationCom = { nullptr };
-	CCollider*		m_pColliderCom = { nullptr };
+	CNavigation*		m_pNavigationCom = { nullptr };
+	CCollider*			m_pColliderCom = { nullptr };
+	CProjectile_Rope*	m_pProjectile_Rope = { nullptr };
 
 private:
 	CRope_Simulation* m_pRopeSimulation = { nullptr };
@@ -95,8 +97,7 @@ private:
 	HRESULT Add_Components();
 	HRESULT Add_PartObjects();
 	HRESULT Add_Simulation();
-
-	_int iRend = 0;
+	HRESULT Add_Projectile();
 
 public:
 	static CPlayer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

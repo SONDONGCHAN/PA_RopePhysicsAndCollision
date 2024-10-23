@@ -72,6 +72,7 @@ public: /* For.PipeLine */
 	_float4x4 Get_Transform_Float4x4_Inverse(CPipeLine::D3DTRANSFORMSTATE eState);
 	_matrix Get_Transform_Matrix_Inverse(CPipeLine::D3DTRANSFORMSTATE eState);
 	_float4 Get_CamPosition();
+	_float4 Get_CamLook();
 
 public: /* For.Light_Manager */
 	HRESULT Add_Light(const LIGHT_DESC& LightDesc);

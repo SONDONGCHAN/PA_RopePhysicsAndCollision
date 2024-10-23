@@ -15,7 +15,7 @@ CSpring::CSpring(CMass* _pMass1, CMass* _pMass2, _float _fSpringConstant, _float
 	m_pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(m_pGameInstance);
 
-	m_vColor = { 1.f, 0.f, 0.f, 1.f };
+	m_vColor = { 0.f, 0.f, 0.f, 1.f };
 	m_fThickness = 0.05f;
 
 	Add_Component();
@@ -74,10 +74,8 @@ void CSpring::Render()
 void CSpring::Add_Component()
 {
 	m_pVIBufferCom = dynamic_cast<CVIBuffer_Point_Double*>(m_pGameInstance->Clone_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_VIBuffer_Point_Double")));
-	Safe_AddRef(m_pVIBufferCom);
 
 	m_pShaderCom = dynamic_cast<CShader*>(m_pGameInstance->Clone_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Shader_VtxPoint_Rope")));
-	Safe_AddRef(m_pShaderCom);
 }
 
 void CSpring::Free()

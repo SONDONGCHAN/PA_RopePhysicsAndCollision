@@ -24,7 +24,8 @@ private:
 	HRESULT Ready_LandObjects();
 	HRESULT Ready_Layer_Player(const wstring& strLayerTag, CLandObject::LANDOBJ_DESC& LandObjDesc);
 	HRESULT Ready_Layer_Static_Object(const wstring& strLayerTag, CLandObject::LANDOBJ_DESC& LandObjDesc);
-	
+	HRESULT Ready_Layer_Obstacle(const wstring& strLayerTag);
+
 
 public:
 	static CLevel_GamePlay* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

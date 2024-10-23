@@ -38,11 +38,11 @@ private:
 	_float			m_fMouseSensor = { 0.f };		// 마우스 감도
 
 	//_float			m_Target_radius = { 4.f };		// 구면 좌표 반지름 (Target)
-	_float			m_radius = { 4.f };				// 구면 좌표 반지름
+	_float			m_radius = { 3.5f };				// 구면 좌표 반지름
 	_float			m_degree_Horizontal = { 0.f };	// 구면 좌표 가로 각도
 	_float			m_degree_Vertical = { 0.f };	// 구면 좌표 세로 각도
 	_float			Column_Max = { 85.f };			// 세로 각도 최대
-	_float			Column_Min = { -10.f };			// 세로 각도 최소
+	_float			Column_Min = { -25.f };			// 세로 각도 최소
 
 	CTransform*		pTarget_Transform= { nullptr };
 

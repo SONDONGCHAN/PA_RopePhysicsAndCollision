@@ -20,6 +20,8 @@ public:
 protected:
 	_int				m_iNum_Masses { 0 };
 	vector<CMass*>		m_vecMasses { };
+	_float				m_fMaxPossible_dt = { 0.002f };
+	_bool				m_bSimulating = { true };
 
 public:
 	virtual void Free() override;

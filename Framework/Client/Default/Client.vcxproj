@@ -181,10 +181,13 @@
     <ClInclude Include="..\Public\Mass.h" />
     <ClInclude Include="..\Public\Monster.h" />
     <ClInclude Include="..\Public\Body_Player.h" />
+    <ClInclude Include="..\Public\Obstacle.h" />
     <ClInclude Include="..\Public\Particle_Point.h" />
     <ClInclude Include="..\Public\Particle_Rect.h" />
     <ClInclude Include="..\public\PartObject.h" />
     <ClInclude Include="..\public\Player.h" />
+    <ClInclude Include="..\Public\Projectile.h" />
+    <ClInclude Include="..\Public\Projectile_Rope.h" />
     <ClInclude Include="..\Public\Rope_Simulation.h" />
     <ClInclude Include="..\Public\Simulation.h" />
     <ClInclude Include="..\Public\Sky.h" />
@@ -212,10 +215,13 @@
     <ClCompile Include="..\Private\Mass.cpp" />
     <ClCompile Include="..\Private\Monster.cpp" />
     <ClCompile Include="..\Private\Body_Player.cpp" />
+    <ClCompile Include="..\Private\Obstacle.cpp" />
     <ClCompile Include="..\Private\Particle_Point.cpp" />
     <ClCompile Include="..\Private\Particle_Rect.cpp" />
     <ClCompile Include="..\private\PartObject.cpp" />
     <ClCompile Include="..\private\Player.cpp" />
+    <ClCompile Include="..\Private\Projectile.cpp" />
+    <ClCompile Include="..\Private\Projectile_Rope.cpp" />
     <ClCompile Include="..\Private\Rope_Simulation.cpp" />
     <ClCompile Include="..\Private\Simulation.cpp" />
     <ClCompile Include="..\Private\Sky.cpp" />

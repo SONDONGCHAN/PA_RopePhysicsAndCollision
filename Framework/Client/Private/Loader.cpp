@@ -15,6 +15,8 @@
 #include "Player.h"
 #include "Weapon.h"
 #include "Sky.h"
+#include "Projectile_Rope.h"
+#include "Obstacle.h"
 
 
 CLoader::CLoader(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
@@ -279,6 +281,16 @@ HRESULT CLoader::Loading_For_GamePlayLevel()
 	/* For.Prototype_GameObject_Sky */
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Sky"),
 		CSky::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Projectile_Rope */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Projectile_Rope"),
+		CProjectile_Rope::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Obstacle*/
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Obstacle"),
+		CObstacle::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 	
 	m_strLoadingText = TEXT("로딩이 완료되었습니다.");

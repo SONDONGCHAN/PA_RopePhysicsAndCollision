@@ -44,7 +44,7 @@ void CLayer::Priority_Tick(_float fTimeDelta)
 {
 	for (auto& pGameObject : m_GameObjects)
 	{
-		if(nullptr != pGameObject)
+		if(nullptr != pGameObject && pGameObject->Get_isEnable())
 			pGameObject->Priority_Tick(fTimeDelta);		
 	}
 }
@@ -53,7 +53,7 @@ void CLayer::Tick(_float fTimeDelta)
 {
 	for (auto& pGameObject : m_GameObjects)
 	{
-		if (nullptr != pGameObject)
+		if (nullptr != pGameObject && pGameObject->Get_isEnable())
 			pGameObject->Tick(fTimeDelta);
 	}
 }
@@ -62,7 +62,7 @@ void CLayer::Late_Tick(_float fTimeDelta)
 {
 	for (auto& pGameObject : m_GameObjects)
 	{
-		if (nullptr != pGameObject)
+		if (nullptr != pGameObject && pGameObject->Get_isEnable())
 			pGameObject->Late_Tick(fTimeDelta);
 	}
 }

@@ -23,8 +23,10 @@ public:
 	virtual ~CRope_Simulation();
 
 public:
+	virtual void Init() override;
 	virtual void Solve() override;
 	virtual void Simulate(_float fTimeDelta) override;
+	virtual void Operate(_float fTimeDelta) override;
 	void Render() ;
 
 
@@ -32,11 +34,15 @@ public:
 	void	Set_RopeConnection_Vel(_vector _vRopeConnection_Vel) {
 		m_vRopeConnection_Vel = _vRopeConnection_Vel ; }
 
+	void	Set_RopeConnection_Pos(_vector _vRopeConnection_Pos) {
+		m_vRopeConnection_Pos = _vRopeConnection_Pos;
+	}
+
 private:
 	vector<CSpring*> vecSprings;		// 스프링들
 
 private:
-	_vector m_vRopeConnection_Pos{ 0.f, 0.f, 0.f };		// 첫 번째 Mass의 위치
+	_vector m_vRopeConnection_Pos{ 1.f, 6.f, 4.f };		// 첫 번째 Mass의 위치
 	_vector m_vRopeConnection_Vel{ 0.f, 0.f, 0.f };		// 첫 번째 Mass를 이동시키기 위한 변수
 
 private:

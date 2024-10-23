@@ -106,6 +106,15 @@
     <Filter Include="96. Physical Simulations\Rope\Spring">
       <UniqueIdentifier>{987a5b54-76ca-40ba-aefd-71af7e449907}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Projectile">
+      <UniqueIdentifier>{dde9eda8-a786-40ae-8672-ae33436880c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Projectile\Projectile_Rope">
+      <UniqueIdentifier>{344ce723-b5ae-45e5-ba92-2086c7b23501}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Obstacle">
+      <UniqueIdentifier>{81cba26b-ca94-4af9-89d9-925cddbad83a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -198,6 +207,15 @@
     <ClInclude Include="..\Public\Rope_Simulation.h">
       <Filter>96. Physical Simulations\Simulation\Rope_Simulation</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Projectile.h">
+      <Filter>02.GameObjects\Projectile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Projectile_Rope.h">
+      <Filter>02.GameObjects\Projectile\Projectile_Rope</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Obstacle.h">
+      <Filter>02.GameObjects\Obstacle</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -280,6 +298,15 @@
     </ClCompile>
     <ClCompile Include="..\Private\Rope_Simulation.cpp">
       <Filter>96. Physical Simulations\Simulation\Rope_Simulation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Projectile.cpp">
+      <Filter>02.GameObjects\Projectile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Projectile_Rope.cpp">
+      <Filter>02.GameObjects\Projectile\Projectile_Rope</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Obstacle.cpp">
+      <Filter>02.GameObjects\Obstacle</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

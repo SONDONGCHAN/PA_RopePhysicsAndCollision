@@ -2,6 +2,7 @@
 #include "Level_GamePlay.h"
 
 #include "LandObject.h"
+#include "Obstacle.h"
 #include "Camera_manager.h"
 
 
@@ -24,6 +25,10 @@ HRESULT CLevel_GamePlay::Initialize()
 
 	if (FAILED(Ready_Layer_Camera(TEXT("Layer_Camera"))))
 		return E_FAIL;
+
+	if (FAILED(Ready_Layer_Obstacle(TEXT("Layer_Obstacle"))))
+		return E_FAIL;
+	
 
 	ShowCursor(FALSE);
 
@@ -111,10 +116,19 @@ HRESULT CLevel_GamePlay::Ready_Layer_Player(const wstring & strLayerTag, CLandOb
 	return S_OK;
 }
 
-HRESULT CLevel_GamePlay::Ready_Layer_Static_Object(const wstring & strLayerTag, CLandObject::LANDOBJ_DESC & LandObjDesc)
+HRESULT CLevel_GamePlay::Ready_Layer_Static_Object(const wstring & strLayerTag, CLandObject::LANDOBJ_DESC& LandObjDesc)
 {
-	//if (FAILED(m_pGameInstance->Add_CloneObject(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_ForkLift"), &LandObjDesc)))
-	//	return E_FAIL;
+	
+	return S_OK;
+}
+
+HRESULT CLevel_GamePlay::Ready_Layer_Obstacle(const wstring& strLayerTag)
+{
+	CObstacle::OBSTACLE_DESC  Obstacle_Desc{};
+	Obstacle_Desc.vStartpos = _float3(5.f, 6.f, 5.f);
+
+	if (FAILED(m_pGameInstance->Add_CloneObject(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Obstacle"), &Obstacle_Desc)))
+		return E_FAIL;
 
 	return S_OK;
 }

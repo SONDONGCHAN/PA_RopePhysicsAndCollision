@@ -39,14 +39,14 @@ struct GS_IN
 struct GS_OUT
 {
     float4 vPosition : SV_POSITION;
-    float2 vTexcoord : TEXCOORD0;
+    //float2 vTexcoord : TEXCOORD0;
 };
 
 
-[maxvertexcount(6)]
+[maxvertexcount(12)]
 void GS_MAIN(point GS_IN In[1], inout TriangleStream<GS_OUT> DataStream)
 {
-    GS_OUT Out[4];
+    GS_OUT Out[8];
 
     float3 vLook    = (In[0].vPosition1 - In[0].vPosition2).xyz;
     float3 vRight   = normalize(cross(float3(0.f, 1.f, 0.f), vLook)) ;
@@ -55,19 +55,35 @@ void GS_MAIN(point GS_IN In[1], inout TriangleStream<GS_OUT> DataStream)
 
     Out[0].vPosition = In[0].vPosition1 - float4(vRight * g_fThickness, 0.f);
     Out[0].vPosition = mul(Out[0].vPosition, matVP);
-    Out[0].vTexcoord = float2(0.f, 0.f);
+    //Out[0].vTexcoord = float2(0.f, 0.f);
 
     Out[1].vPosition = In[0].vPosition1 + float4(vRight * g_fThickness, 0.f);
     Out[1].vPosition = mul(Out[1].vPosition, matVP);
-    Out[1].vTexcoord = float2(1.f, 0.f);
+    //Out[1].vTexcoord = float2(1.f, 0.f);
 
     Out[2].vPosition = In[0].vPosition2 + float4(vRight * g_fThickness, 0.f);
     Out[2].vPosition = mul(Out[2].vPosition, matVP);
-    Out[2].vTexcoord = float2(1.f, 1.f);
+    //Out[2].vTexcoord = float2(1.f, 1.f);
 
     Out[3].vPosition = In[0].vPosition2 - float4(vRight * g_fThickness, 0.f);
     Out[3].vPosition = mul(Out[3].vPosition, matVP);
-    Out[3].vTexcoord = float2(0.f, 1.f);
+    //Out[3].vTexcoord = float2(0.f, 1.f);
+
+    Out[4].vPosition = In[0].vPosition1 - float4(vUp * g_fThickness, 0.f);
+    Out[4].vPosition = mul(Out[4].vPosition, matVP);
+    //Out[4].vTexcoord = float2(0.f, 0.f);
+
+    Out[5].vPosition = In[0].vPosition1 + float4(vUp * g_fThickness, 0.f);
+    Out[5].vPosition = mul(Out[5].vPosition, matVP);
+    //Out[5].vTexcoord = float2(1.f, 0.f);
+
+    Out[6].vPosition = In[0].vPosition2 + float4(vUp * g_fThickness, 0.f);
+    Out[6].vPosition = mul(Out[6].vPosition, matVP);
+    //Out[6].vTexcoord = float2(1.f, 1.f);
+
+    Out[7].vPosition = In[0].vPosition2 - float4(vUp * g_fThickness, 0.f);
+    Out[7].vPosition = mul(Out[7].vPosition, matVP);
+    //Out[7].vTexcoord = float2(0.f, 1.f);
 
     DataStream.Append(Out[0]);
     DataStream.Append(Out[1]);
@@ -77,13 +93,23 @@ void GS_MAIN(point GS_IN In[1], inout TriangleStream<GS_OUT> DataStream)
     DataStream.Append(Out[0]);
     DataStream.Append(Out[2]);
     DataStream.Append(Out[3]);
+    DataStream.RestartStrip();
+
+    DataStream.Append(Out[4]);
+    DataStream.Append(Out[5]);
+    DataStream.Append(Out[6]);
+    DataStream.RestartStrip();
+
+    DataStream.Append(Out[4]);
+    DataStream.Append(Out[6]);
+    DataStream.Append(Out[7]);
 }
 
 
 struct PS_IN
 {
     float4 vPosition : SV_POSITION;
-    float2 vTexcoord : TEXCOORD0;
+    //float2 vTexcoord : TEXCOORD0;
 };
 
 struct PS_OUT

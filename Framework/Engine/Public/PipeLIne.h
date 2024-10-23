@@ -40,6 +40,9 @@ public:
 	_float4 Get_CamPosition() {
 		return m_vCamPosition;
 	}
+	_float4 Get_CamLook() {
+		return m_vCamLook;
+	}
 
 public:
 	void Tick();
@@ -48,6 +51,7 @@ private:
 	_float4x4			m_TransformMatrix[D3DTS_END] = {};
 	_float4x4			m_TransformMatrix_Inverse[D3DTS_END] = {};
 	_float4				m_vCamPosition = {};
+	_float4				m_vCamLook = {};
 
 public:
 	static CPipeLine* Create();

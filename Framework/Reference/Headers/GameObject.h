@@ -45,6 +45,10 @@ public:
 	virtual void Event_CollisionStay(ColData* _ColData) {};
 	virtual void Event_CollisionExit(ColData* _ColData) {};
 
+public:
+	_bool	Get_isEnable() { return m_isEnable; }
+	void	Set_isEnable(_bool _isEnable) { m_isEnable = _isEnable; }
+
 protected:
 	ID3D11Device*				m_pDevice = { nullptr };
 	ID3D11DeviceContext*		m_pContext = { nullptr };
@@ -54,7 +58,10 @@ protected:
 
 protected:
 	map<const wstring, class CComponent*>		m_Components;
-	_uint				m_iGameObjectData = { 0 };
+	_uint	m_iGameObjectData = { 0 };
+
+protected:
+	_bool	m_isEnable{ true };
 
 protected:
 	HRESULT Add_Component(_uint iLevelIndex, const wstring& strPrototypeTag, const wstring& strComTag, CComponent** ppOut, void* pArg = nullptr);

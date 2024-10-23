@@ -9,7 +9,13 @@ CSimulation::CSimulation(_int _iNum_Masses, _float _fM)
 
 	for (_int i = 0; i < m_iNum_Masses; ++i)
 	{
-		CMass* pMass = new CMass(_fM);
+		CMass* pMass;
+
+		if (i == m_iNum_Masses - 1)
+			pMass = new CMass(_fM);
+		else
+			pMass = new CMass(_fM);
+
 		m_vecMasses.push_back(pMass);
 	}
 }
@@ -45,9 +51,29 @@ void CSimulation::Simulate(_float fTimeDelta)
 
 void CSimulation::Operate(_float fTimeDelta)
 {
-	Init();
-	Solve();
-	Simulate(fTimeDelta);
+	if (!m_bSimulating)
+		return;
+
+	if (fTimeDelta > m_fMaxPossible_dt)
+	{
+		_uint iRepeatCount = (fTimeDelta / m_fMaxPossible_dt) + 1;
+	
+		_float Subdivided_TimeDelta = fTimeDelta / iRepeatCount;
+	
+		for (_int j = 0; j < iRepeatCount; ++j)
+		{
+			Init();
+			Solve();
+			Simulate(Subdivided_TimeDelta);		
+		}
+	}
+	
+	else
+	{
+		Init();
+		Solve();
+		Simulate(fTimeDelta);	
+	}
 }
 
 void CSimulation::Free()

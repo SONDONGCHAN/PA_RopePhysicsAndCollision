@@ -4,6 +4,7 @@
 #include "Body_Player.h"
 #include "Weapon.h"
 #include "Collider.h"
+#include "Projectile_Rope.h"
 
 
 CPlayer::CPlayer(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
@@ -49,6 +50,9 @@ HRESULT CPlayer::Initialize(void * pArg)
 	if (FAILED(Add_Simulation()))
 		return E_FAIL;
 
+	if (FAILED(Add_Projectile()))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -69,7 +73,7 @@ void CPlayer::Tick(_float fTimeDelta)
 	Root_Transform();
 	m_pColliderCom->Tick(m_pTransformCom->Get_WorldMatrix());
 
-	m_pRopeSimulation->Operate(fTimeDelta*1000);
+	m_pRopeSimulation->Operate(fTimeDelta);
 }
 
 void CPlayer::Late_Tick(_float fTimeDelta)
@@ -89,13 +93,6 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 HRESULT CPlayer::Render()
 {
 	m_pRopeSimulation->Render();
-
-	++iRend;
-
-	if (iRend > 2)
-	{
-		int a = 0;
-	}
 	return S_OK;
 }
 
@@ -103,7 +100,12 @@ void CPlayer::KeyInput(_float fTimeDelta)
 {
 	Update_State(fTimeDelta);
 
-
+	if (m_pGameInstance->MouseDown(DIM_LB))
+	{
+		m_pProjectile_Rope->Enable_Projectile(
+			m_pTransformCom->Get_State(CTransform::STATE_POSITION),
+			XMLoadFloat4(&CGameInstance::GetInstance()->Get_CamLook()));
+	}
 }
 
 void CPlayer::Root_Transform()
@@ -317,13 +319,12 @@ HRESULT CPlayer::Add_Components()
 	ColliderDesc.ColData = ColData;
 	ColliderDesc.SphereDesc = BoundingDesc;
 
-
 	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Collider_Sphere"),
 		TEXT("Com_Collider"), reinterpret_cast<CComponent**>(&m_pColliderCom), &ColliderDesc)))
 		return E_FAIL;
+
+	CGameInstance::GetInstance()->Add_Collider(m_pColliderCom);
 	
-
-
 	return S_OK;
 }
 
@@ -358,19 +359,32 @@ HRESULT CPlayer::Add_PartObjects()
 HRESULT CPlayer::Add_Simulation()
 {
 	m_pRopeSimulation = new CRope_Simulation
-	(	80,
+	(	40,
 		0.05f,
 		10000.f,
-		0.05f,
+		0.1f,
 		0.2f,
 		_vector{0.f, -9.81f, 0},
 		0.02f,
 		100.f,
 		0.2f,
 		2.f,
-		-1.5f);
+		0.f);
 	
 	if (nullptr == m_pRopeSimulation)
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CPlayer::Add_Projectile()
+{
+	GAMEOBJECT_DESC Gameobject_Desc{};
+ 
+	m_pProjectile_Rope = dynamic_cast<CProjectile_Rope*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Projectile_Rope"), &Gameobject_Desc));
+	Safe_AddRef(m_pProjectile_Rope);
+
+	if (FAILED(m_pGameInstance->Add_GameObject(LEVEL_GAMEPLAY, TEXT("Layer_Projectile"), m_pProjectile_Rope)))
 		return E_FAIL;
 
 	return S_OK;
@@ -415,5 +429,5 @@ void CPlayer::Free()
 	Safe_Release(m_pColliderCom);
 
 	Safe_Release(m_pRopeSimulation);
-
+	Safe_Release(m_pProjectile_Rope);
 }

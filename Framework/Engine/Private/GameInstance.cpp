@@ -331,6 +331,11 @@ _float4 CGameInstance::Get_CamPosition()
 	return m_pPipeLine->Get_CamPosition();
 }
 
+_float4 CGameInstance::Get_CamLook()
+{
+	return m_pPipeLine->Get_CamLook();
+}
+
 HRESULT CGameInstance::Add_Light(const LIGHT_DESC & LightDesc)
 {
 	return m_pLight_Manager->Add_Light(LightDesc);

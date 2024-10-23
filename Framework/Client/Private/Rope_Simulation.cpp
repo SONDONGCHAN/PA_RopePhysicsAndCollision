@@ -26,7 +26,7 @@ CRope_Simulation::CRope_Simulation(
 
 	for (_int i = 0; i < _iNum_Masses; ++i)
 	{
-		m_vecMasses[i]->Set_Pos(_vector{ i * _fSpringLength, 0, 0 });
+		m_vecMasses[i]->Set_Pos(m_vRopeConnection_Pos + _vector{ i * _fSpringLength * 1.f, 0, 0 });
 	}
 
 	vecSprings.reserve(_iNum_Masses - 1);
@@ -35,13 +35,16 @@ CRope_Simulation::CRope_Simulation(
 		CSpring* pSpring = new CSpring(m_vecMasses[i], m_vecMasses[i + 1], _fSpringConstant, _fSpringLength, _fSpringFrictionConstant);
 		vecSprings.push_back(pSpring);
 	}
-
-	
 }
 
 CRope_Simulation::~CRope_Simulation()
 {
 
+}
+
+void CRope_Simulation::Init()
+{
+	__super::Init();
 }
 
 void CRope_Simulation::Solve()
@@ -91,6 +94,11 @@ void CRope_Simulation::Simulate(_float fTimeDelta)
 
 	m_vecMasses[0]->Set_Pos(m_vRopeConnection_Pos);
 	m_vecMasses[0]->Set_Vel(m_vRopeConnection_Vel);
+}
+
+void CRope_Simulation::Operate(_float fTimeDelta)
+{
+	__super::Operate(fTimeDelta);
 }
 
 void CRope_Simulation::Render()

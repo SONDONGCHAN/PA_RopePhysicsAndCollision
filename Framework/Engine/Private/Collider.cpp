@@ -180,6 +180,7 @@ void CCollider::Free()
 {
 	__super::Free();
 
+	Clear_Collisions();
 #ifdef _DEBUG
 
 	if (false == m_isCloned)
