@@ -45,4 +45,6 @@ HRESULT CProjectile::Render()
 void CProjectile::Free()
 {
 	__super::Free();
+
+	Safe_Release(m_pOwnerObject);
 }

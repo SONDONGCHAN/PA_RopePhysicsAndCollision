@@ -4,10 +4,7 @@
 #include "Mass.h"
 
 CRope_Simulation::CRope_Simulation(
-	_int _iNum_Masses,
-	_float _fM,
 	_float _fSpringConstant,
-	_float _fSpringLength,
 	_float _fSpringFrictionConstant,
 	_vector _vGravitation,
 	_float _fAirFrictionConstant,
@@ -15,26 +12,16 @@ CRope_Simulation::CRope_Simulation(
 	_float _fGroundFrictionConstant,
 	_float _fGroundAbsorptionConstant,
 	_float _fGroundHeight
-	) : CSimulation(_iNum_Masses, _fM)
+	) : CSimulation()
 {
+	m_fSpringConstant = _fSpringConstant;
+	m_fSpringFrictionConstant = _fSpringFrictionConstant;
 	m_vGravitation = _vGravitation;
 	m_fAirFrictionConstant = _fAirFrictionConstant;
 	m_fGroundRepulsionConstant = _fGroundRepulsionConstant;
 	m_fGroundFrictionConstant = _fGroundFrictionConstant;
 	m_fGroundAbsorptionConstant = _fGroundAbsorptionConstant;
 	m_fGroundHeight = _fGroundHeight;
-
-	for (_int i = 0; i < _iNum_Masses; ++i)
-	{
-		m_vecMasses[i]->Set_Pos(m_vRopeConnection_Pos + _vector{ i * _fSpringLength * 1.f, 0, 0 });
-	}
-
-	vecSprings.reserve(_iNum_Masses - 1);
-	for (_int i = 0; i < _iNum_Masses - 1; ++i)
-	{
-		CSpring* pSpring = new CSpring(m_vecMasses[i], m_vecMasses[i + 1], _fSpringConstant, _fSpringLength, _fSpringFrictionConstant);
-		vecSprings.push_back(pSpring);
-	}
 }
 
 CRope_Simulation::~CRope_Simulation()
@@ -45,6 +32,8 @@ CRope_Simulation::~CRope_Simulation()
 void CRope_Simulation::Init()
 {
 	__super::Init();
+
+	//Set_SpringLength();
 }
 
 void CRope_Simulation::Solve()
@@ -77,6 +66,11 @@ void CRope_Simulation::Solve()
 			_vector vForce = _vector{ 0.f, m_fGroundRepulsionConstant, 0 } * (m_fGroundHeight - m_vecMasses[i]->Get_Pos().m128_f32[1]);
 			m_vecMasses[i]->ApplyForce(vForce);
 		}
+
+		if (i == m_iNum_Masses - 1)
+		{
+			Accelerator(m_vecMasses[i]);
+		}
 	}
 }
 
@@ -99,14 +93,98 @@ void CRope_Simulation::Simulate(_float fTimeDelta)
 void CRope_Simulation::Operate(_float fTimeDelta)
 {
 	__super::Operate(fTimeDelta);
+	
+	m_fCurTime += fTimeDelta;
+
+	if (m_fCurTime > m_fDurTime)
+	{
+		m_fCurTime = m_fDurTime;
+	}
+
+	m_fRatio  =  1.f - ( (m_fCurTime / m_fDurTime) * (1.f - m_fMinRatio) ) ;
+}
+
+void CRope_Simulation::Start_Simulating(_vector _vDir, _vector _vPos, _float _fM, _float _fLastM)
+{
+	End_Simulating();
+
+	m_vRopeConnection_Pos = _vPos;
+
+	_float fTotalLength = XMVectorGetX(XMVector3Length(_vDir));
+
+	m_iNum_Masses = (fTotalLength / m_fMaxSpringLength) + 1;
+	m_fSpringLength = fTotalLength / m_iNum_Masses;
+
+	Make_Mass(_fM, _fLastM);
+	Make_Spring(XMVector3Normalize(_vDir));
+
+	m_fRatio = 1.f;
+	m_fCurTime = 0.f;
+
+	Set_Simulating(true);
+}
+
+void CRope_Simulation::End_Simulating()
+{
+	Clear_Springs();
+	Clear_Masses();
+
+	Set_Simulating(false);
+}
+
+void CRope_Simulation::Make_Spring(_vector _vDir)
+{
+	for (_int i = 0; i < m_iNum_Masses; ++i)
+	{
+		m_vecMasses[i]->Set_Pos(m_vRopeConnection_Pos + (i * _vDir * m_fSpringLength * 1.f ));
+	}
+
+	vecSprings.reserve(m_iNum_Masses - 1);
+	for (_int i = 0; i < m_iNum_Masses - 1; ++i)
+	{
+		CSpring* pSpring = new CSpring(m_vecMasses[i], m_vecMasses[i + 1], m_fSpringConstant, m_fSpringLength, m_fSpringFrictionConstant);
+		vecSprings.push_back(pSpring);
+	}
 }
 
 void CRope_Simulation::Render()
 {
+	if (!m_bSimulating)
+		return;
+
 	for (auto iter : vecSprings)
 		iter->Render();
 }
 
+void CRope_Simulation::Clear_Springs()
+{
+	for (auto iter : vecSprings)
+		Safe_Release(iter);
+
+	vecSprings.clear();
+}
+
+void CRope_Simulation::Accelerator(CMass* _pMass)
+{
+	if (!m_isAccelerating)
+		return;
+
+	_vector FinalMassPos = m_pFinalMass->Get_Pos();
+
+	_vector vDir = XMVector3Normalize(m_vRopeConnection_Pos - FinalMassPos);
+	_vector	vRight = XMVector3Normalize(XMVector3Cross(_vector{0.f, 1.f, 0.f}, vDir));
+	_vector	vLook = XMVector3Normalize(XMVector3Cross(vRight, vDir));
+
+
+	_pMass->ApplyForce(XMVector3Normalize(2*vLook- vDir) * m_fAccelerate_Force);
+}
+
+void CRope_Simulation::Set_SpringLength()
+{
+	for (auto iter : vecSprings)
+		iter->Set_SpringLength(m_fSpringLength * m_fRatio);
+}
+ 
 void CRope_Simulation::Free()
 {
 	__super::Free();

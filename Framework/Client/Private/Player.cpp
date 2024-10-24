@@ -92,8 +92,25 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 
 HRESULT CPlayer::Render()
 {
+	if (KEYINPUT(DIK_LSHIFT))
+	{
+		m_pGameInstance->Render_Font(TEXT("Font_Default"), TEXT("Accelerating"), _float2(g_iWinSizeX * 0.8f, g_iWinSizeY * 0.5f), XMVectorSet(1.f, 1.f, 1.f, 1.f), 0.f, _float2(0.f, 0.f), 1.f);
+	}
 	m_pRopeSimulation->Render();
 	return S_OK;
+}
+
+void CPlayer::Start_Simulating(_vector _vDir, _vector _vPos, _float _fM, _float _fLastM)
+{
+	if (nullptr == m_pRopeSimulation)
+		return;
+
+	m_pRopeSimulation->Start_Simulating(_vDir, _vPos, _fM, _fLastM);
+}
+
+void CPlayer::End_Simulating()
+{
+	m_pRopeSimulation->End_Simulating();
 }
 
 void CPlayer::KeyInput(_float fTimeDelta)
@@ -102,9 +119,21 @@ void CPlayer::KeyInput(_float fTimeDelta)
 
 	if (m_pGameInstance->MouseDown(DIM_LB))
 	{
+		//m_pProjectile_Rope->Enable_Projectile(
+		//	m_pTransformCom->Get_State(CTransform::STATE_POSITION),
+		//	XMLoadFloat4(&CGameInstance::GetInstance()->Get_CamLook()));
 		m_pProjectile_Rope->Enable_Projectile(
-			m_pTransformCom->Get_State(CTransform::STATE_POSITION),
-			XMLoadFloat4(&CGameInstance::GetInstance()->Get_CamLook()));
+			_vector{6.f, 1.f, 2.f},
+			XMVector3Normalize(_vector{0.f, 1.f, 1.f}));
+	}
+
+	if (KEYDOWN(DIK_LSHIFT))
+	{
+		m_pRopeSimulation->Set_Accelerating(true, 200.f);
+	}
+	else if (KEYUP(DIK_LSHIFT))
+	{
+		m_pRopeSimulation->Set_Accelerating(false);
 	}
 }
 
@@ -359,17 +388,14 @@ HRESULT CPlayer::Add_PartObjects()
 HRESULT CPlayer::Add_Simulation()
 {
 	m_pRopeSimulation = new CRope_Simulation
-	(	40,
-		0.05f,
-		10000.f,
-		0.1f,
+	(	100000.f,
 		0.2f,
 		_vector{0.f, -9.81f, 0},
 		0.02f,
 		100.f,
 		0.2f,
 		2.f,
-		0.f);
+		-5.f);
 	
 	if (nullptr == m_pRopeSimulation)
 		return E_FAIL;
@@ -379,9 +405,10 @@ HRESULT CPlayer::Add_Simulation()
 
 HRESULT CPlayer::Add_Projectile()
 {
-	GAMEOBJECT_DESC Gameobject_Desc{};
+	CProjectile::PROJECTILE_DESC Projectile_Desc{};
+	Projectile_Desc.pOwnerObject = this;
  
-	m_pProjectile_Rope = dynamic_cast<CProjectile_Rope*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Projectile_Rope"), &Gameobject_Desc));
+	m_pProjectile_Rope = dynamic_cast<CProjectile_Rope*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Projectile_Rope"), &Projectile_Desc));
 	Safe_AddRef(m_pProjectile_Rope);
 
 	if (FAILED(m_pGameInstance->Add_GameObject(LEVEL_GAMEPLAY, TEXT("Layer_Projectile"), m_pProjectile_Rope)))

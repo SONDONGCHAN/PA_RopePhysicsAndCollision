@@ -56,6 +56,10 @@ public:
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
+public:
+	void	Start_Simulating(_vector _vDir, _vector _vPos, _float _fM, _float _fLastM);
+	void	End_Simulating();
+	
 private:
 	void	KeyInput(_float fTimeDelta);
 	void	Root_Transform();

@@ -2,9 +2,18 @@
 #include "Simulation.h"
 #include "Mass.h"
 
-CSimulation::CSimulation(_int _iNum_Masses, _float _fM)
+CSimulation::CSimulation()
 {
-	m_iNum_Masses = _iNum_Masses;
+
+}
+
+CSimulation::~CSimulation()
+{
+
+}
+
+void CSimulation::Make_Mass(_float _fM, _float _fLastM)
+{
 	m_vecMasses.reserve(m_iNum_Masses);
 
 	for (_int i = 0; i < m_iNum_Masses; ++i)
@@ -12,17 +21,16 @@ CSimulation::CSimulation(_int _iNum_Masses, _float _fM)
 		CMass* pMass;
 
 		if (i == m_iNum_Masses - 1)
-			pMass = new CMass(_fM);
+		{
+			pMass = new CMass(_fLastM);
+			m_pFinalMass = pMass;
+			Safe_AddRef(pMass);
+		}
 		else
 			pMass = new CMass(_fM);
 
 		m_vecMasses.push_back(pMass);
 	}
-}
-
-CSimulation::~CSimulation()
-{
-
 }
 
 CMass* CSimulation::Get_Mass(_int _index)
@@ -76,10 +84,20 @@ void CSimulation::Operate(_float fTimeDelta)
 	}
 }
 
+void CSimulation::Clear_Masses()
+{
+	for (auto iter : m_vecMasses)
+		Safe_Release(iter);
+	
+	m_vecMasses.clear();
+}
+
 void CSimulation::Free()
 {
 	for (auto iter : m_vecMasses)
 		Safe_Release(iter);
 
 	m_vecMasses.clear();
+
+	Safe_Release(m_pFinalMass);
 }

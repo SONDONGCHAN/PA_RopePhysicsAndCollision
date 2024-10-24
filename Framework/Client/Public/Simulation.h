@@ -7,7 +7,7 @@ BEGIN(Client)
 class CSimulation : public CBase
 {
 public:
-	CSimulation(_int _iNum_Masses, _float _fM);
+	CSimulation();
 	virtual ~CSimulation();
 
 	class CMass* Get_Mass(_int _index);
@@ -18,10 +18,17 @@ public:
 	virtual void Operate(_float fTimeDelta);
 
 protected:
+	void	Make_Mass(_float _fM, _float _fLastM);
+	void	Clear_Masses();
+	void	Set_Simulating(_bool _isSimulating) { m_bSimulating = _isSimulating; }
+
+
+protected:
 	_int				m_iNum_Masses { 0 };
 	vector<CMass*>		m_vecMasses { };
+	CMass*				m_pFinalMass{ nullptr };
 	_float				m_fMaxPossible_dt = { 0.002f };
-	_bool				m_bSimulating = { true };
+	_bool				m_bSimulating = { false };
 
 public:
 	virtual void Free() override;

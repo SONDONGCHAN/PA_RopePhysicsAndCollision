@@ -19,6 +19,10 @@ public:
 	void	Solve();
 	void	Render();
 
+public:
+	void	Set_SpringLength(_float _fSpringLength) {
+		m_fSpringLength = _fSpringLength; }
+
 private:
 	void	Add_Component();
 

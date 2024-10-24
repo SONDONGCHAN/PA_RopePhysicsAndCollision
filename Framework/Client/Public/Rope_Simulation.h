@@ -8,10 +8,7 @@ class CRope_Simulation : public CSimulation
 {
 public:
 	CRope_Simulation(
-		_int _iNum_Masses,
-		_float _fM,
 		_float _fSpringConstant,
-		_float _fSpringLength,
 		_float _fSpringFrictionConstant,
 		_vector _vGravitation,
 		_float _fAirFrictionConstant,
@@ -27,7 +24,14 @@ public:
 	virtual void Solve() override;
 	virtual void Simulate(_float fTimeDelta) override;
 	virtual void Operate(_float fTimeDelta) override;
+
+	void Start_Simulating(_vector _vDir, _vector _vPos, _float _fM, _float _fLastM);
+	void End_Simulating();
+
+	void Make_Spring(_vector _vDir);
+
 	void Render() ;
+
 
 
 public:
@@ -37,21 +41,43 @@ public:
 	void	Set_RopeConnection_Pos(_vector _vRopeConnection_Pos) {
 		m_vRopeConnection_Pos = _vRopeConnection_Pos;
 	}
+	void	Set_Accelerating(_bool _isAccelerating, _float _fAccelerate_Force = 200.f) {
+		m_isAccelerating = _isAccelerating, m_fAccelerate_Force = _fAccelerate_Force;
+	}
+
+private: 
+	void	Clear_Springs();
+	void	Accelerator(class CMass* _pMass);
+	void	Set_SpringLength();
 
 private:
 	vector<CSpring*> vecSprings;		// 스프링들
 
 private:
-	_vector m_vRopeConnection_Pos{ 1.f, 6.f, 4.f };		// 첫 번째 Mass의 위치
+	_vector m_vRopeConnection_Pos{ };		// 첫 번째 Mass의 위치
 	_vector m_vRopeConnection_Vel{ 0.f, 0.f, 0.f };		// 첫 번째 Mass를 이동시키기 위한 변수
 
 private:
-	_vector m_vGravitation;				// 중력 가속도
-	_float	m_fAirFrictionConstant;		// 공기 마찰 상수
-	_float	m_fGroundRepulsionConstant;	// 지면 튕김 상수
-	_float	m_fGroundFrictionConstant;	// 지면 마찰 상수
-	_float	m_fGroundAbsorptionConstant;	// 지면 흡수 마찰 상수
+	_float  m_fSpringLength{ 0.2f };				// 스프링 길이
+	_float  m_fMaxSpringLength{ 0.2f };				// 스프링 길이 최대
+	_float	m_fRatio = { 1.f };
+	_float	m_fMinRatio = { 0.4f };
+	_float	m_fDurTime = { 0.5f };
+	_float	m_fCurTime = { 0.f };
+
+	_float	m_fSpringConstant;				// 스프링 계수
+	_float  m_fSpringFrictionConstant;		// 스프링 마찰 계수
+
+	_vector m_vGravitation;					// 중력 가속도
+	_float	m_fAirFrictionConstant;			// 공기 마찰 계수
+	_float	m_fGroundRepulsionConstant;		// 지면 튕김 계수
+	_float	m_fGroundFrictionConstant;		// 지면 마찰 계수
+	_float	m_fGroundAbsorptionConstant;	// 지면 흡수 마찰 계수
 	_float	m_fGroundHeight;				// 지면의 높이
+
+private:
+	_bool	m_isAccelerating{ false };		// 가속 중 여부
+	_float	m_fAccelerate_Force { 100.f };	// 가속 힘
 
 public:
 	virtual void Free() override;

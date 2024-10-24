@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Projectile_Rope.h"
 #include "GameInstance.h"
+#include "Player.h"
 
 CProjectile_Rope::CProjectile_Rope(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CProjectile(pDevice, pContext)
@@ -19,9 +20,10 @@ HRESULT CProjectile_Rope::Initialize_Prototype()
 
 HRESULT CProjectile_Rope::Initialize(void* pArg)
 {
-	GAMEOBJECT_DESC* pGameObjectDesc = (GAMEOBJECT_DESC*)pArg;
-	pGameObjectDesc->fSpeedPerSec = 20.f;
-
+	PROJECTILE_DESC* pProjectileDesc = (PROJECTILE_DESC*)pArg;
+	pProjectileDesc->fSpeedPerSec = 20.f;
+	m_pOwnerObject = pProjectileDesc->pOwnerObject;
+	
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
@@ -75,6 +77,15 @@ void CProjectile_Rope::Event_CollisionEnter(ColData* _ColData)
 	if (_ColData->eMyColType == COL_STATIC_OBJECT)
 	{
 		Disable_Projectile();
+		//_vector vOwnerPos = dynamic_cast<CPlayer*>(m_pOwnerObject)->Get_TranformCom()->Get_State(CTransform::STATE_POSITION);
+		//_vector vMyPos = m_pTransformCom->Get_State(CTransform::STATE_POSITION);
+		//_vector vDir = (vOwnerPos + _vector{ 0.f, 1.f, 0.f }) - vMyPos;
+
+		_vector vOwnerPos = _vector{ 6.f, 1.f, 2.f };
+		_vector vMyPos = m_pTransformCom->Get_State(CTransform::STATE_POSITION);
+		_vector vDir = vOwnerPos - vMyPos;
+
+		dynamic_cast<CPlayer*>(m_pOwnerObject)->Start_Simulating(vDir, vMyPos, 0.5f, 10.f);
 	}
 }
 

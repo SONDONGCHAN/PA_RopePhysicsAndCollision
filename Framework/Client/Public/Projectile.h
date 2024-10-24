@@ -7,6 +7,12 @@ BEGIN(Client)
 
 class CProjectile : public CGameObject
 {
+public:
+	struct PROJECTILE_DESC : public GAMEOBJECT_DESC
+	{
+		CGameObject* pOwnerObject;
+	};
+
 protected:
 	CProjectile(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CProjectile(const CProjectile& rhs);
@@ -25,8 +31,11 @@ public:
 	virtual void	Disable_Projectile() {};
 
 protected:
+	CGameObject* m_pOwnerObject{ nullptr };
+
 	_float	m_fMaxLifeTime = 1.f;
 	_float	m_fCurrentLifeTime = 0.f;
+
 
 public:
 	virtual CGameObject* Clone(void* pArg) = 0;
