@@ -23,7 +23,7 @@ void CMass::InitForce()
 void CMass::Simulate(_float fTimeDelta)
 {
 	m_vVel += (m_vForce / m_fM) * fTimeDelta;	// 속도의 변화.
-	m_vPos += m_vVel * fTimeDelta;			// 위치의 변화.
+	m_vPos += m_vVel * fTimeDelta;				// 위치의 변화.
 }
 
 void CMass::Free()

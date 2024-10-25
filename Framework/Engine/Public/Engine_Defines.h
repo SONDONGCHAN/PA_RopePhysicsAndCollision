@@ -43,12 +43,12 @@ namespace Engine
 
 	enum COL_TYPE
 	{
-		COL_NONE = 0,
-		COL_PLAYER = 1 << 0,
-		COL_STATIC_OBJECT = 1 << 1,
-		COL_PROJECTILE = 1 << 2,
+		COL_NONE			= 0,
+		COL_PLAYER			= 1 << 0,
+		COL_STATIC_OBJECT	= 1 << 1,
+		COL_PROJECTILE		= 1 << 2,
 
-		COL_END = 1 << 31
+		COL_END				= 1 << 31
 	};
 }
 

@@ -57,7 +57,8 @@ public:
 	virtual HRESULT Render() override;
 
 public:
-	void	Start_Simulating(_vector _vDir, _vector _vPos, _float _fM, _float _fLastM);
+	void	Start_Soft_Simulating(_vector _vDir, _vector _vPos, _float _fM, _float _fLastM);
+	void	Start_Stiff_Simulating(_vector _vDir, _vector _vPos, _float _fM, _float _fLastM);
 	void	End_Simulating();
 	
 private:

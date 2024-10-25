@@ -25,7 +25,8 @@ public:
 	virtual void Simulate(_float fTimeDelta) override;
 	virtual void Operate(_float fTimeDelta) override;
 
-	void Start_Simulating(_vector _vDir, _vector _vPos, _float _fM, _float _fLastM);
+	void Start_Soft_Simulating(_vector _vDir, _vector _vPos, _float _fM, _float _fLastM);
+	void Start_Stiff_Simulating(_vector _vDir, _vector _vPos, _float _fM, _float _fLastM);
 	void End_Simulating();
 
 	void Make_Spring(_vector _vDir);

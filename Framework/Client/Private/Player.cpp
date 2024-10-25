@@ -100,12 +100,20 @@ HRESULT CPlayer::Render()
 	return S_OK;
 }
 
-void CPlayer::Start_Simulating(_vector _vDir, _vector _vPos, _float _fM, _float _fLastM)
+void CPlayer::Start_Soft_Simulating(_vector _vDir, _vector _vPos, _float _fM, _float _fLastM)
 {
 	if (nullptr == m_pRopeSimulation)
 		return;
 
-	m_pRopeSimulation->Start_Simulating(_vDir, _vPos, _fM, _fLastM);
+	m_pRopeSimulation->Start_Soft_Simulating(_vDir, _vPos, _fM, _fLastM);
+}
+
+void CPlayer::Start_Stiff_Simulating(_vector _vDir, _vector _vPos, _float _fM, _float _fLastM)
+{
+	if (nullptr == m_pRopeSimulation)
+		return;
+
+	m_pRopeSimulation->Start_Stiff_Simulating(_vDir, _vPos, _fM, _fLastM);
 }
 
 void CPlayer::End_Simulating()
@@ -129,7 +137,7 @@ void CPlayer::KeyInput(_float fTimeDelta)
 
 	if (KEYDOWN(DIK_LSHIFT))
 	{
-		m_pRopeSimulation->Set_Accelerating(true, 200.f);
+		m_pRopeSimulation->Set_Accelerating(true, 100.f);
 	}
 	else if (KEYUP(DIK_LSHIFT))
 	{

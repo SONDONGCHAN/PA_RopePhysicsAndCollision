@@ -37,8 +37,9 @@ private:
 	CMass* m_pMass1{ nullptr };
 	CMass* m_pMass2{ nullptr };
 
-	_float m_fSpringConstant;             
-	_float m_fSpringLength;               
+	_float m_fSpringLength;
+
+	_float m_fSpringConstant;                     
 	_float m_fFrictionConstant;
 
 private:
