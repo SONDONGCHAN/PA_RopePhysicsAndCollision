@@ -125,10 +125,43 @@ HRESULT CLevel_GamePlay::Ready_Layer_Static_Object(const wstring & strLayerTag, 
 HRESULT CLevel_GamePlay::Ready_Layer_Obstacle(const wstring& strLayerTag)
 {
 	CObstacle::OBSTACLE_DESC  Obstacle_Desc{};
-	Obstacle_Desc.vStartpos = _float3(5.f, 6.f, 8.f);
 
+	Obstacle_Desc.vStartpos = _float3(5.f, 6.f, 5.f);
 	if (FAILED(m_pGameInstance->Add_CloneObject(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Obstacle"), &Obstacle_Desc)))
 		return E_FAIL;
+
+	Obstacle_Desc.vStartpos = _float3(5.f, 6.f, 15.f);
+	if (FAILED(m_pGameInstance->Add_CloneObject(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Obstacle"), &Obstacle_Desc)))
+		return E_FAIL;
+
+	Obstacle_Desc.vStartpos = _float3(5.f, 6.f, 25.f);
+	if (FAILED(m_pGameInstance->Add_CloneObject(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Obstacle"), &Obstacle_Desc)))
+		return E_FAIL;
+
+	Obstacle_Desc.vStartpos = _float3(15.f, 6.f, 5.f);
+	if (FAILED(m_pGameInstance->Add_CloneObject(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Obstacle"), &Obstacle_Desc)))
+		return E_FAIL;
+
+	Obstacle_Desc.vStartpos = _float3(15.f, 6.f, 15.f);
+	if (FAILED(m_pGameInstance->Add_CloneObject(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Obstacle"), &Obstacle_Desc)))
+		return E_FAIL;
+
+	Obstacle_Desc.vStartpos = _float3(15.f, 6.f, 25.f);
+	if (FAILED(m_pGameInstance->Add_CloneObject(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Obstacle"), &Obstacle_Desc)))
+		return E_FAIL;
+
+	Obstacle_Desc.vStartpos = _float3(25.f, 6.f, 5.f);
+	if (FAILED(m_pGameInstance->Add_CloneObject(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Obstacle"), &Obstacle_Desc)))
+		return E_FAIL;
+
+	Obstacle_Desc.vStartpos = _float3(25.f, 6.f, 15.f);
+	if (FAILED(m_pGameInstance->Add_CloneObject(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Obstacle"), &Obstacle_Desc)))
+		return E_FAIL;
+
+	Obstacle_Desc.vStartpos = _float3(25.f, 6.f, 25.f);
+	if (FAILED(m_pGameInstance->Add_CloneObject(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Obstacle"), &Obstacle_Desc)))
+		return E_FAIL;
+
 
 	return S_OK;
 }

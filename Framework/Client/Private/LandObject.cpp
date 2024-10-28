@@ -67,6 +67,19 @@ HRESULT CLandObject::SetUp_OnTerrain(CTransform * pTargetTransform)
 	return S_OK;
 }
 
+_float CLandObject::Get_Height(CTransform* pTargetTransform)
+{
+	_vector		vTargetPos = pTargetTransform->Get_State(CTransform::STATE_POSITION);
+
+	vTargetPos = XMVector3TransformCoord(vTargetPos, m_pTerrainTransform->Get_WorldMatrix_Inverse());
+
+	vTargetPos = XMVectorSetY(vTargetPos, m_pTerrainVIBuffer->Compute_Height(vTargetPos));
+
+	_vector vWorldPos = XMVector3TransformCoord(vTargetPos, m_pTerrainTransform->Get_WorldMatrix());
+
+	return XMVectorGetY(vWorldPos);
+}
+
 void CLandObject::Free()
 {
 	__super::Free();

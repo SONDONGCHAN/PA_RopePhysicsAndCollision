@@ -37,6 +37,7 @@ protected:
 
 protected:
 	HRESULT SetUp_OnTerrain(class CTransform* pTargetTransform);
+	_float Get_Height(class CTransform* pTargetTransform);
 
 public:
 	virtual CGameObject* Clone(void* pArg) = 0;

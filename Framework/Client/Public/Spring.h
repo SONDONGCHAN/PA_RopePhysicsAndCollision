@@ -20,8 +20,7 @@ public:
 	void	Render();
 
 public:
-	void	Set_SpringLength(_float _fSpringLength) {
-		m_fSpringLength = _fSpringLength; }
+	void	Set_SpringLength(_float _fSpringLength);
 
 private:
 	void	Add_Component();
@@ -43,6 +42,8 @@ private:
 	_float m_fFrictionConstant;
 
 private:
+	_float	m_fCurrentLength;
+	_vector	m_vCurrentDir;
 	_float4 m_vColor{};
 	_float	m_fThickness{};
 

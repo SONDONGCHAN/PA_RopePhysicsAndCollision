@@ -26,6 +26,7 @@ public:
 	virtual void Operate(_float fTimeDelta) override;
 
 	void Start_Soft_Simulating(_vector _vDir, _vector _vPos, _float _fM, _float _fLastM);
+	void Switch_Soft_Simulating();
 	void Start_Stiff_Simulating(_vector _vDir, _vector _vPos, _float _fM, _float _fLastM);
 	void End_Simulating();
 
@@ -59,12 +60,14 @@ private:
 	_vector m_vRopeConnection_Vel{ 0.f, 0.f, 0.f };		// 첫 번째 Mass를 이동시키기 위한 변수
 
 private:
-	_float  m_fSpringLength{ 0.2f };				// 스프링 길이
-	_float  m_fMaxSpringLength{ 0.2f };				// 스프링 길이 최대
-	_float	m_fRatio = { 1.f };
-	_float	m_fMinRatio = { 0.4f };
-	_float	m_fDurTime = { 0.5f };
-	_float	m_fCurTime = { 0.f };
+	_float			m_fSpringLength{ 0.2f };		// 스프링 길이
+	const _float	m_fMaxSpringLength{ 0.2f };		// 스프링 길이 최대
+	_float			m_fRatio{ 1.f };
+	const _float	m_fMinRatio{ 0.6f };
+	_float			m_fCurTime{ 0.f };
+	const _float	m_fDurTime{ 0.4f };
+
+	const _float	m_fEpsilon{ 0.001f };
 
 	_float	m_fSpringConstant;				// 스프링 계수
 	_float  m_fSpringFrictionConstant;		// 스프링 마찰 계수

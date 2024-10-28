@@ -23,8 +23,16 @@ public:
 		STATE_IDLE,           // 대기 상태
 		STATE_MOVE,           // 이동
 		STATE_ATTACK,         // 공격
-		STATE_JUMP,           // 점프
 	};
+
+	enum class JumpState
+	{
+		ONGROUND,		// 지형 위
+		JUMPING,		// 점프 중
+		FALLING,		// 낙하 중
+	};
+
+
 	enum PlayerAnim
 	{
 		IDLE			= 0,	// 대기
@@ -75,17 +83,22 @@ private:
 	void	Handle_IdleState(_float fTimeDelta);
 	void	Handle_MoveState(_float fTimeDelta);
 	void	Handle_AttackState(_float fTimeDelta);
-	void	Handle_JumpState(_float fTimeDelta);
+
+	//
+	void	Handle_Jump(_float fTimeDelta);
 
 private:
 	void	Set_Dir_From_Cam(_float fTimeDelta, Direction _DIRType);
 
+private:
+	void	Start_Jump();
 
 private:
 	PlayerState	m_eCurrentState = PlayerState :: STATE_IDLE;	// 현재 상태
 	PlayerState	m_eNextState	= PlayerState :: STATE_IDLE;	// 다음 상태
-	_float		m_fStateTimer	= 0.0f;						// 상태 유지 시간
-	PlayerAnim	m_iAnimation = { IDLE };
+	_float		m_fStateTimer	= 0.0f;							// 상태 유지 시간
+	PlayerAnim	m_iAnimation	= { IDLE };						// 현재 애니메이션
+	JumpState	m_eJumpState	= JumpState::ONGROUND;			// 점프 관련 상태
 
 private:
 	CNavigation*		m_pNavigationCom = { nullptr };
@@ -94,6 +107,13 @@ private:
 
 private:
 	CRope_Simulation* m_pRopeSimulation = { nullptr };
+
+private:
+	const	_float m_fGravity{ -9.81f };	// 중력 가속도
+	const	_float m_fJumpforce{ 10.f };	// 초기 점프 속도
+
+private:
+	_vector	m_vVelocity{0.f, 0.f, 0.f, 0.f};// 플레이어 속도
 
 private:
 	map<const wstring, class CPartObject*>		m_PlayerParts;

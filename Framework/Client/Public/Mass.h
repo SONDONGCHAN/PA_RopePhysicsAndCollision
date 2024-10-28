@@ -20,10 +20,13 @@ public:
 	_vector Get_Pos() { return m_vPos; }
 	_vector Get_Vel() { return m_vVel; }
 
+
+	void Set_M(_float _fM) { m_fM = _fM; }
 	void Set_Pos(_vector _vPos) { m_vPos = _vPos; }
 	void Set_Vel(_vector _vVel) { m_vVel = _vVel; }
 	void Set_Force(_vector _vForce) { m_vForce = _vForce; }
 
+	void Add_Pos(_vector _vDir) { m_vPos += _vDir;}
 
 private:
 	_float	m_fM		{ 0.f };			// Áú·® °ª.

@@ -71,6 +71,20 @@ void CSpring::Render()
 	m_pVIBufferCom->Render();
 }
 
+void CSpring::Set_SpringLength(_float _fSpringLength)
+{
+	_vector vSpringVector = m_pMass1->Get_Pos() - m_pMass2->Get_Pos();
+	_float fLength = XMVectorGetX(XMVector3Length(vSpringVector));
+	_float fStretchRatio = fLength / m_fSpringLength;
+
+	if (fStretchRatio <= 1.f)
+		return;
+
+	m_pMass2->Add_Pos ((vSpringVector / fLength)* fStretchRatio * (m_fSpringLength - _fSpringLength));
+
+	m_fSpringLength = _fSpringLength;
+}
+
 void CSpring::Add_Component()
 {
 	m_pVIBufferCom = dynamic_cast<CVIBuffer_Point_Double*>(m_pGameInstance->Clone_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_VIBuffer_Point_Double")));

@@ -65,7 +65,8 @@ void CPlayer::Priority_Tick(_float fTimeDelta)
 void CPlayer::Tick(_float fTimeDelta)
 {
 	KeyInput(fTimeDelta);
-	SetUp_OnTerrain(m_pTransformCom);
+
+	Handle_Jump(fTimeDelta);
 
 	for (auto& Pair : m_PlayerParts)
 		(Pair.second)->Tick(fTimeDelta);
@@ -123,8 +124,14 @@ void CPlayer::End_Simulating()
 
 void CPlayer::KeyInput(_float fTimeDelta)
 {
+	// 점프
+	if (KEYDOWN(DIK_SPACE))
+		Start_Jump();
+
+	// 상태
 	Update_State(fTimeDelta);
 
+	// 로프
 	if (m_pGameInstance->MouseDown(DIM_LB))
 	{
 		//m_pProjectile_Rope->Enable_Projectile(
@@ -134,7 +141,6 @@ void CPlayer::KeyInput(_float fTimeDelta)
 			_vector{6.f, 1.f, 2.f},
 			XMVector3Normalize(_vector{0.f, 1.f, 1.f}));
 	}
-
 	if (KEYDOWN(DIK_LSHIFT))
 	{
 		m_pRopeSimulation->Set_Accelerating(true, 100.f);
@@ -142,6 +148,11 @@ void CPlayer::KeyInput(_float fTimeDelta)
 	else if (KEYUP(DIK_LSHIFT))
 	{
 		m_pRopeSimulation->Set_Accelerating(false);
+	}
+
+	if (KEYDOWN(DIK_Q))
+	{
+		m_pRopeSimulation->Switch_Soft_Simulating();
 	}
 }
 
@@ -179,9 +190,6 @@ void CPlayer::Update_State(_float fTimeDelta)
 		Handle_AttackState(fTimeDelta);
 		break;
 
-	case PlayerState::STATE_JUMP:
-		Handle_JumpState(fTimeDelta);
-		break;
 	}
 
 	// 상태 전환이 발생했을 경우, 다음 상태로 변경
@@ -259,8 +267,30 @@ void CPlayer::Handle_AttackState(_float fTimeDelta)
 
 }
 
-void CPlayer::Handle_JumpState(_float fTimeDelta)
+void CPlayer::Handle_Jump(_float fTimeDelta)
 {
+	_vector vPos = m_pTransformCom->Get_State(CTransform::STATE_POSITION);
+
+	if (m_eJumpState == JumpState::JUMPING || m_eJumpState == JumpState::FALLING)
+	{
+		m_vVelocity = XMVectorSetY(m_vVelocity, XMVectorGetY(m_vVelocity) + (m_fGravity * fTimeDelta));
+		vPos = XMVectorAdd(vPos, m_vVelocity * fTimeDelta);
+
+		_float fTerrainHeight = Get_Height(m_pTransformCom);
+
+		if (vPos.m128_f32[1] <= fTerrainHeight)
+		{
+			vPos = XMVectorSetY(vPos, fTerrainHeight);
+			m_vVelocity = XMVectorSet(0.f, 0.f, 0.f, 0.f);
+			m_eJumpState = JumpState::ONGROUND;
+		}
+		
+		m_pTransformCom->Set_State(CTransform::STATE_POSITION, vPos);
+	}
+	else
+	{
+		SetUp_OnTerrain(m_pTransformCom);
+	}
 }
 
 void CPlayer::Set_Dir_From_Cam(_float fTimeDelta, Direction _DIRType)
@@ -324,6 +354,15 @@ void CPlayer::Set_Dir_From_Cam(_float fTimeDelta, Direction _DIRType)
 						 XMMatrixTranslationFromVector(vTranslation);
 
 	m_pTransformCom->Set_WorldMatrix(mNewWorld);
+}
+
+void CPlayer::Start_Jump()
+{
+	if (m_eJumpState == JumpState::ONGROUND) 
+	{
+		m_vVelocity = XMVectorSetY(m_vVelocity, m_fJumpforce); // 초기 점프 속도 설정
+		m_eJumpState = JumpState::JUMPING;
+	}
 }
 
 HRESULT CPlayer::Add_Components()
