@@ -22,6 +22,8 @@ protected:
 	void	Clear_Masses();
 	void	Set_Simulating(_bool _isSimulating) { m_bSimulating = _isSimulating; }
 
+public:
+	class CMass*	Get_FinalMass() { return m_pFinalMass; }
 
 protected:
 	_int				m_iNum_Masses { 0 };

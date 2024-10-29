@@ -41,24 +41,27 @@ HRESULT CBounding_AABB::Render(PrimitiveBatch<VertexPositionColor>* pBatch)
 
 _bool CBounding_AABB::Intersect(CCollider::TYPE eType, CBounding * pBounding)
 {
-	m_isColl = false;
+	_bool isColl = false;
 
 	void*		pTargetBounding = pBounding->Get_Bounding();
 
 	switch (eType)
 	{
 	case CCollider::TYPE_AABB:
-		m_isColl = /*m_pAABB->Intersects(*(BoundingBox*)pTargetBounding);*/Intersect((BoundingBox*)pTargetBounding);
+		isColl = m_pAABB->Intersects(*(BoundingBox*)pTargetBounding);/*Intersect((BoundingBox*)pTargetBounding);*/
 		break;
 	case CCollider::TYPE_OBB:
-		m_isColl = m_pAABB->Intersects(*(BoundingOrientedBox*)pTargetBounding);
+		isColl = m_pAABB->Intersects(*(BoundingOrientedBox*)pTargetBounding);
 		break;
 	case CCollider::TYPE_SPHERE:
-		m_isColl = m_pAABB->Intersects(*(BoundingSphere*)pTargetBounding);
+		isColl = m_pAABB->Intersects(*(BoundingSphere*)pTargetBounding);
 		break;
 	}
 
-	return m_isColl;
+	if (isColl && (!m_isColl))
+		m_isColl = true;
+
+	return isColl;
 }
 
 _bool CBounding_AABB::Intersect(BoundingBox * pTargetAABB)

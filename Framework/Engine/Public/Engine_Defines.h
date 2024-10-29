@@ -30,6 +30,7 @@ using namespace DirectX;
 #include <map>
 #include <string>
 #include <unordered_map>
+#include <set>
 #include <unordered_set>
 #include <algorithm>
 using namespace std;

@@ -29,6 +29,7 @@ public:
 	{
 		ONGROUND,		// 지형 위
 		JUMPING,		// 점프 중
+		SWINGING,		// 스윙 중
 		FALLING,		// 낙하 중
 	};
 
@@ -86,12 +87,14 @@ private:
 
 	//
 	void	Handle_Jump(_float fTimeDelta);
+	void	Handle_Swing(_float fTimeDelta);
 
 private:
 	void	Set_Dir_From_Cam(_float fTimeDelta, Direction _DIRType);
 
 private:
 	void	Start_Jump();
+	void	Start_Swing();
 
 private:
 	PlayerState	m_eCurrentState = PlayerState :: STATE_IDLE;	// 현재 상태
@@ -110,8 +113,8 @@ private:
 
 private:
 	const	_float m_fGravity{ -9.81f };	// 중력 가속도
-	const	_float m_fJumpforce{ 10.f };	// 초기 점프 속도
-
+	const	_float m_fJumpforce{ 7.f };		// 초기 점프 속도
+	const	_float m_fTerminalVelocity = -25.f;  // 최대 낙하 속도
 private:
 	_vector	m_vVelocity{0.f, 0.f, 0.f, 0.f};// 플레이어 속도
 

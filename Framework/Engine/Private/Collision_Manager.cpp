@@ -41,6 +41,16 @@ void CCollision_Manager::Check_Collision()
 {
 	for (auto& pair : m_ColliderLayers)
 	{
+		unordered_set<CCollider*>* pColliders = pair.second->Get_Colliders();
+
+		for (auto& pMy : (*pColliders))
+		{
+			pMy->Reset_Iscoll();
+		}
+	}
+
+	for (auto& pair : m_ColliderLayers)
+	{
 		unordered_set<CCollider*>*	pColliders = pair.second->Get_Colliders();
 
 		for (auto&  pMy : (*pColliders) )
@@ -65,7 +75,8 @@ void CCollision_Manager::Check_Collision()
 
 				unordered_set<CCollider*>* pTargetColliders = m_ColliderLayers[eTargetColType]->Get_Colliders();
 
-				for (auto* pTarget : (*pTargetColliders))
+				int count = 0;
+				for (auto pTarget : (*pTargetColliders))
 				{
 					if (pMy->Intersect(pTarget))
 					{
@@ -89,6 +100,7 @@ void CCollision_Manager::Check_Collision()
 
 						}
 					}
+					++count;
 				}
 			}
 

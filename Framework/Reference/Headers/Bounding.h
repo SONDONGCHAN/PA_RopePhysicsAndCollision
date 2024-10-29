@@ -27,6 +27,8 @@ public:
 	virtual HRESULT Render(PrimitiveBatch<VertexPositionColor>* pBatch) = 0;
 	virtual _bool Intersect(CCollider::TYPE eType, CBounding* pBounding) = 0;
 
+public:
+	void	Reset_Iscoll() { m_isColl = false; }
 
 protected:
 	ID3D11Device*				m_pDevice = { nullptr };

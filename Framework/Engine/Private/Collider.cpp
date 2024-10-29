@@ -195,3 +195,8 @@ void CCollider::Free()
 
 	Safe_Release(m_pBounding);
 }
+
+void CCollider::Reset_Iscoll()
+{
+	m_pBounding->Reset_Iscoll();
+}

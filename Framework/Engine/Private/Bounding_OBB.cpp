@@ -35,24 +35,27 @@ HRESULT CBounding_OBB::Render(PrimitiveBatch<VertexPositionColor>* pBatch)
 
 _bool CBounding_OBB::Intersect(CCollider::TYPE eType, CBounding * pBounding)
 {
-	m_isColl = false;
+	_bool isColl = false;
 
 	void*		pTargetBounding = pBounding->Get_Bounding();
 
 	switch (eType)
 	{
 	case CCollider::TYPE_AABB:
-		m_isColl = m_pOBB->Intersects(*(BoundingBox*)pTargetBounding);
+		isColl = m_pOBB->Intersects(*(BoundingBox*)pTargetBounding);
 		break;
 	case CCollider::TYPE_OBB:
-		m_isColl = /*m_pOBB->Intersects(*(BoundingOrientedBox*)pTargetBounding)*/Intersect((CBounding_OBB*)pBounding);
+		isColl = m_pOBB->Intersects(*(BoundingOrientedBox*)pTargetBounding); /* Intersect((CBounding_OBB*)pBounding);*/
 		break;
 	case CCollider::TYPE_SPHERE:
-		m_isColl = m_pOBB->Intersects(*(BoundingSphere*)pTargetBounding);
+		isColl = m_pOBB->Intersects(*(BoundingSphere*)pTargetBounding);
 		break;
 	}
 
-	return m_isColl;
+	if (isColl && (!m_isColl))
+		m_isColl = true;
+
+	return isColl;
 }
 
 CBounding_OBB::OBB_COL_DESC CBounding_OBB::Compute_OBBColDesc()

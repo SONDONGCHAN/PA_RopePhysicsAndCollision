@@ -32,24 +32,27 @@ HRESULT CBounding_Sphere::Render(PrimitiveBatch<VertexPositionColor>* pBatch)
 
 _bool CBounding_Sphere::Intersect(CCollider::TYPE eType, CBounding * pBounding)
 {
-	m_isColl = false;
-
+	_bool isColl = false;
+	
 	void*		pTargetBounding = pBounding->Get_Bounding();
 
 	switch (eType)
 	{
 	case CCollider::TYPE_AABB:
-		m_isColl = m_pSphere->Intersects(*(BoundingBox*)pTargetBounding);
+		isColl = m_pSphere->Intersects(*(BoundingBox*)pTargetBounding);
 		break;
 	case CCollider::TYPE_OBB:
-		m_isColl = m_pSphere->Intersects(*(BoundingOrientedBox*)pTargetBounding);
+		isColl = m_pSphere->Intersects(*(BoundingOrientedBox*)pTargetBounding);
 		break;
 	case CCollider::TYPE_SPHERE:
-		m_isColl = m_pSphere->Intersects(*(BoundingSphere*)pTargetBounding);
+		isColl = m_pSphere->Intersects(*(BoundingSphere*)pTargetBounding);
 		break;
 	}
 
-	return m_isColl;
+	if (isColl && (!m_isColl))
+		m_isColl = true;
+
+	return isColl;
 }
 
 CBounding_Sphere * CBounding_Sphere::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, void * pArg)

@@ -98,6 +98,7 @@ void CRope_Simulation::Simulate(_float fTimeDelta)
 	//}
 	//m_fRatio = 1.f - ((m_fCurTime / m_fDurTime) * (1.f - m_fMinRatio));
 
+	//Áö¼ö °¨¼è
 	_float fAlpha = 1 - exp(-fTimeDelta / m_fDurTime);
 
 	if (m_fEpsilon < abs(m_fRatio - m_fMinRatio))
@@ -198,6 +199,18 @@ void CRope_Simulation::Render()
 		iter->Render();
 }
 
+void CRope_Simulation::Set_Accelerating(_bool _isAccelerating, _float _fAccelerate_Force)
+{
+	m_isAccelerating = _isAccelerating;
+
+	if (m_isAccelerating)
+	{
+		m_fAccelerate_Force = _fAccelerate_Force;
+		_vector FinalMassPos = m_pFinalMass->Get_Pos();
+		m_vbaseDir = XMVector3Normalize(m_vRopeConnection_Pos - FinalMassPos);
+	}
+}
+
 void CRope_Simulation::Clear_Springs()
 {
 	for (auto iter : vecSprings)
@@ -210,15 +223,22 @@ void CRope_Simulation::Accelerator(CMass* _pMass)
 {
 	if (!m_isAccelerating)
 		return;
-
+	
 	_vector FinalMassPos = m_pFinalMass->Get_Pos();
 
 	_vector vDir = XMVector3Normalize(m_vRopeConnection_Pos - FinalMassPos);
-	_vector	vRight = XMVector3Normalize(XMVector3Cross(_vector{0.f, 1.f, 0.f}, vDir));
+	_vector	vRight = XMVector3Normalize(XMVector3Cross(_vector{ 0.f, 1.f, 0.f }, m_vbaseDir));
 	_vector	vLook = XMVector3Normalize(XMVector3Cross(vRight, vDir));
 
 	_pMass->ApplyForce(XMVector3Normalize(2 * vLook - vDir) * m_fAccelerate_Force);
-	//_pMass->ApplyForce(XMVector3Normalize(vLook) * m_fAccelerate_Force);
+
+	//_vector FinalMassPos = m_pFinalMass->Get_Pos();
+
+	//_vector vDir = XMVector3Normalize(m_vRopeConnection_Pos - FinalMassPos);
+	//_vector	vRight = XMVector3Normalize(XMVector3Cross(_vector{0.f, 1.f, 0.f}, vDir));
+	//_vector	vLook = XMVector3Normalize(XMVector3Cross(vRight, vDir));
+
+	//_pMass->ApplyForce(XMVector3Normalize(2 * vLook - vDir) * m_fAccelerate_Force);
 }
 
 void CRope_Simulation::Set_SpringLength()

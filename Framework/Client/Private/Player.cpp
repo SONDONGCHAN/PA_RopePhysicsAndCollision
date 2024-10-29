@@ -5,6 +5,7 @@
 #include "Weapon.h"
 #include "Collider.h"
 #include "Projectile_Rope.h"
+#include "Mass.h"
 
 
 CPlayer::CPlayer(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
@@ -52,6 +53,8 @@ HRESULT CPlayer::Initialize(void * pArg)
 
 	if (FAILED(Add_Projectile()))
 		return E_FAIL;
+
+	m_pTransformCom->Set_State(CTransform::STATE_POSITION, _vector{ 75.f, 0.f, 75.f});
 
 	return S_OK;
 }
@@ -115,6 +118,7 @@ void CPlayer::Start_Stiff_Simulating(_vector _vDir, _vector _vPos, _float _fM, _
 		return;
 
 	m_pRopeSimulation->Start_Stiff_Simulating(_vDir, _vPos, _fM, _fLastM);
+	Start_Swing();
 }
 
 void CPlayer::End_Simulating()
@@ -128,32 +132,40 @@ void CPlayer::KeyInput(_float fTimeDelta)
 	if (KEYDOWN(DIK_SPACE))
 		Start_Jump();
 
-	// 상태
-	Update_State(fTimeDelta);
+	if (KEYDOWN(DIK_Q))
+	{
+		_vector vVel = m_pRopeSimulation->Get_FinalMass()->Get_Vel();
+		m_vVelocity = vVel;
+		m_pRopeSimulation->Switch_Soft_Simulating();
+		m_pRopeSimulation->Get_FinalMass()->Set_Vel(vVel);
 
-	// 로프
+		if (m_eJumpState == JumpState::SWINGING)
+			m_eJumpState = JumpState::FALLING;
+	}
+
+	// 로프	
 	if (m_pGameInstance->MouseDown(DIM_LB))
 	{
-		//m_pProjectile_Rope->Enable_Projectile(
-		//	m_pTransformCom->Get_State(CTransform::STATE_POSITION),
-		//	XMLoadFloat4(&CGameInstance::GetInstance()->Get_CamLook()));
 		m_pProjectile_Rope->Enable_Projectile(
-			_vector{6.f, 1.f, 2.f},
-			XMVector3Normalize(_vector{0.f, 1.f, 1.f}));
+			m_pTransformCom->Get_State(CTransform::STATE_POSITION),
+			XMLoadFloat4(&CGameInstance::GetInstance()->Get_CamLook()));
+
+		//m_pProjectile_Rope->Enable_Projectile(
+		//	_vector{6.f, 1.f, 2.f},
+		//	XMVector3Normalize(_vector{0.f, 1.f, 1.f}));
 	}
 	if (KEYDOWN(DIK_LSHIFT))
 	{
-		m_pRopeSimulation->Set_Accelerating(true, 100.f);
+		if (m_eJumpState == JumpState::SWINGING)
+			m_pRopeSimulation->Set_Accelerating(true, 40.f);
 	}
 	else if (KEYUP(DIK_LSHIFT))
 	{
 		m_pRopeSimulation->Set_Accelerating(false);
 	}
 
-	if (KEYDOWN(DIK_Q))
-	{
-		m_pRopeSimulation->Switch_Soft_Simulating();
-	}
+	// 상태
+	Update_State(fTimeDelta);
 }
 
 void CPlayer::Root_Transform()
@@ -211,6 +223,9 @@ void CPlayer::Handle_IdleState(_float fTimeDelta)
 {
 	Change_Anim(IDLE);
 
+	if (m_eJumpState == JumpState::SWINGING)
+		return;
+
 	if (KEYINPUT(DIK_W) || KEYINPUT(DIK_A) || KEYINPUT(DIK_S) || KEYINPUT(DIK_D))
 	{	
 		Change_State(PlayerState::STATE_MOVE);
@@ -219,6 +234,9 @@ void CPlayer::Handle_IdleState(_float fTimeDelta)
 
 void CPlayer::Handle_MoveState(_float fTimeDelta)
 {
+	if (m_eJumpState == JumpState::SWINGING)
+		return;
+
 	if (KEYPRESSING(DIK_W) || KEYPRESSING(DIK_A) || KEYPRESSING(DIK_S) || KEYPRESSING(DIK_D))
 	{
 		Change_Anim(RUN_CYCLE);
@@ -269,11 +287,17 @@ void CPlayer::Handle_AttackState(_float fTimeDelta)
 
 void CPlayer::Handle_Jump(_float fTimeDelta)
 {
-	_vector vPos = m_pTransformCom->Get_State(CTransform::STATE_POSITION);
-
 	if (m_eJumpState == JumpState::JUMPING || m_eJumpState == JumpState::FALLING)
 	{
+		_vector vPos = m_pTransformCom->Get_State(CTransform::STATE_POSITION);
+
 		m_vVelocity = XMVectorSetY(m_vVelocity, XMVectorGetY(m_vVelocity) + (m_fGravity * fTimeDelta));
+
+		if (XMVectorGetY(m_vVelocity) < m_fTerminalVelocity)
+		{
+			XMVectorSetY(m_vVelocity, m_fTerminalVelocity);
+		}
+
 		vPos = XMVectorAdd(vPos, m_vVelocity * fTimeDelta);
 
 		_float fTerrainHeight = Get_Height(m_pTransformCom);
@@ -287,10 +311,21 @@ void CPlayer::Handle_Jump(_float fTimeDelta)
 		
 		m_pTransformCom->Set_State(CTransform::STATE_POSITION, vPos);
 	}
-	else
+	else if(m_eJumpState == JumpState::ONGROUND)
 	{
 		SetUp_OnTerrain(m_pTransformCom);
 	}
+	else if (m_eJumpState == JumpState::SWINGING)
+	{
+		Handle_Swing(fTimeDelta);
+	}
+}
+
+void CPlayer::Handle_Swing(_float fTimeDelta)
+{
+	_vector vPos = m_pRopeSimulation->Get_FinalMass()->Get_Pos();
+	
+	m_pTransformCom->Set_State(CTransform::STATE_POSITION, vPos + _vector{ 0.f, -1.f, 0.f });
 }
 
 void CPlayer::Set_Dir_From_Cam(_float fTimeDelta, Direction _DIRType)
@@ -365,6 +400,18 @@ void CPlayer::Start_Jump()
 	}
 }
 
+void CPlayer::Start_Swing()
+{
+	if (m_eJumpState != JumpState::SWINGING)
+	{
+		m_eJumpState	= JumpState::SWINGING;
+		m_eCurrentState = PlayerState::STATE_IDLE;
+		m_eNextState	= PlayerState::STATE_IDLE;
+
+		m_vVelocity = XMVectorSet(0.f, 0.f, 0.f, 0.f);
+	}
+}
+
 HRESULT CPlayer::Add_Components()
 {
 	/* Com_Navigation */
@@ -380,7 +427,7 @@ HRESULT CPlayer::Add_Components()
 	/* Com_Collider */
 
 	CCollider::ColliderInitData	ColliderDesc {};
-
+	 
 	CGameObject::ColData ColData{};
 	ColData.pGameObject = this;
 	ColData.eMyColType = COL_PLAYER;
@@ -389,7 +436,7 @@ HRESULT CPlayer::Add_Components()
 
 	
 	CCollider::SPHERE_DESC	BoundingDesc{};
-	BoundingDesc.fRadius = 0.6f;
+	BoundingDesc.fRadius = 0.5f;
 	BoundingDesc.vCenter = _float3(0.f, BoundingDesc.fRadius, 0.f);
 
 	ColliderDesc.ColData = ColData;

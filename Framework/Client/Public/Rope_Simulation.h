@@ -43,9 +43,7 @@ public:
 	void	Set_RopeConnection_Pos(_vector _vRopeConnection_Pos) {
 		m_vRopeConnection_Pos = _vRopeConnection_Pos;
 	}
-	void	Set_Accelerating(_bool _isAccelerating, _float _fAccelerate_Force = 200.f) {
-		m_isAccelerating = _isAccelerating, m_fAccelerate_Force = _fAccelerate_Force;
-	}
+	void	Set_Accelerating(_bool _isAccelerating, _float _fAccelerate_Force = 200.f);
 
 private: 
 	void	Clear_Springs();
@@ -63,7 +61,7 @@ private:
 	_float			m_fSpringLength{ 0.2f };		// 스프링 길이
 	const _float	m_fMaxSpringLength{ 0.2f };		// 스프링 길이 최대
 	_float			m_fRatio{ 1.f };
-	const _float	m_fMinRatio{ 0.6f };
+	const _float	m_fMinRatio{ 0.5f };
 	_float			m_fCurTime{ 0.f };
 	const _float	m_fDurTime{ 0.4f };
 
@@ -81,7 +79,8 @@ private:
 
 private:
 	_bool	m_isAccelerating{ false };		// 가속 중 여부
-	_float	m_fAccelerate_Force { 100.f };	// 가속 힘
+	_float	m_fAccelerate_Force { 1.f };	// 가속 힘
+	_vector m_vbaseDir{ 0.f, 1.f, 0.f };	// 가속 기준 벡터
 
 public:
 	virtual void Free() override;

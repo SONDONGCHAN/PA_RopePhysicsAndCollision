@@ -88,6 +88,9 @@ public:
 	virtual CComponent* Clone(void* pArg) override;
 	virtual void Free() override;
 
+public:
+	void	Reset_Iscoll();
+
 private:
 	TYPE			m_eType = { TYPE_END };
 	class CBounding* m_pBounding = { nullptr };

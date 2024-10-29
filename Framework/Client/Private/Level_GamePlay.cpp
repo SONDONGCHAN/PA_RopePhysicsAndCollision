@@ -126,42 +126,21 @@ HRESULT CLevel_GamePlay::Ready_Layer_Obstacle(const wstring& strLayerTag)
 {
 	CObstacle::OBSTACLE_DESC  Obstacle_Desc{};
 
-	Obstacle_Desc.vStartpos = _float3(5.f, 6.f, 5.f);
-	if (FAILED(m_pGameInstance->Add_CloneObject(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Obstacle"), &Obstacle_Desc)))
-		return E_FAIL;
-
-	Obstacle_Desc.vStartpos = _float3(5.f, 6.f, 15.f);
-	if (FAILED(m_pGameInstance->Add_CloneObject(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Obstacle"), &Obstacle_Desc)))
-		return E_FAIL;
-
-	Obstacle_Desc.vStartpos = _float3(5.f, 6.f, 25.f);
-	if (FAILED(m_pGameInstance->Add_CloneObject(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Obstacle"), &Obstacle_Desc)))
-		return E_FAIL;
-
-	Obstacle_Desc.vStartpos = _float3(15.f, 6.f, 5.f);
-	if (FAILED(m_pGameInstance->Add_CloneObject(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Obstacle"), &Obstacle_Desc)))
-		return E_FAIL;
-
-	Obstacle_Desc.vStartpos = _float3(15.f, 6.f, 15.f);
-	if (FAILED(m_pGameInstance->Add_CloneObject(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Obstacle"), &Obstacle_Desc)))
-		return E_FAIL;
-
-	Obstacle_Desc.vStartpos = _float3(15.f, 6.f, 25.f);
-	if (FAILED(m_pGameInstance->Add_CloneObject(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Obstacle"), &Obstacle_Desc)))
-		return E_FAIL;
-
-	Obstacle_Desc.vStartpos = _float3(25.f, 6.f, 5.f);
-	if (FAILED(m_pGameInstance->Add_CloneObject(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Obstacle"), &Obstacle_Desc)))
-		return E_FAIL;
-
-	Obstacle_Desc.vStartpos = _float3(25.f, 6.f, 15.f);
-	if (FAILED(m_pGameInstance->Add_CloneObject(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Obstacle"), &Obstacle_Desc)))
-		return E_FAIL;
-
-	Obstacle_Desc.vStartpos = _float3(25.f, 6.f, 25.f);
-	if (FAILED(m_pGameInstance->Add_CloneObject(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Obstacle"), &Obstacle_Desc)))
-		return E_FAIL;
-
+	_float	fTemp = 10.f;
+	_float	fHeight = 4.f;
+	_int	iHeightCount = 0;
+	for (_int i = 0; i < 15; ++i)
+	{
+		for (_int j = 0; j < 15; ++j)
+		{
+			Obstacle_Desc.vStartpos = _float3(5.f + fTemp * i, 6.f + fHeight* iHeightCount, 5.f + fTemp * j);
+			if (FAILED(m_pGameInstance->Add_CloneObject(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Obstacle"), &Obstacle_Desc)))
+				return E_FAIL;
+			++iHeightCount;
+			if (iHeightCount >= 6)
+				iHeightCount = 0;
+		}
+	}
 
 	return S_OK;
 }
