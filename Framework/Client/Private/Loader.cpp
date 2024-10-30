@@ -135,7 +135,7 @@ HRESULT CLoader::Loading_For_GamePlayLevel()
 		return E_FAIL;
 
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_VIBuffer_Terrain_Basic"),
-		CVIBuffer_Terrain_Basic::Create(m_pDevice, m_pContext, 129, 129))))
+		CVIBuffer_Terrain_Basic::Create(m_pDevice, m_pContext, 513, 513))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_VIBuffer_Cube */

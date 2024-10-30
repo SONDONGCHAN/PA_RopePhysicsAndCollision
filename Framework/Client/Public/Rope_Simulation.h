@@ -26,8 +26,8 @@ public:
 	virtual void Operate(_float fTimeDelta) override;
 
 	void Start_Soft_Simulating(_vector _vDir, _vector _vPos, _float _fM, _float _fLastM);
-	void Switch_Soft_Simulating();
-	void Start_Stiff_Simulating(_vector _vDir, _vector _vPos, _float _fM, _float _fLastM);
+	void Switch_Soft_Simulating(_vector _vVel);
+	void Start_Stiff_Simulating(_vector _vDir, _vector _vPos, _float _fM, _float _fLastM, _vector _vStartVel);
 	void End_Simulating();
 
 	void Make_Spring(_vector _vDir);
@@ -63,7 +63,7 @@ private:
 	_float			m_fRatio{ 1.f };
 	const _float	m_fMinRatio{ 0.5f };
 	_float			m_fCurTime{ 0.f };
-	const _float	m_fDurTime{ 0.4f };
+	const _float	m_fDurTime{ 0.6f };
 
 	const _float	m_fEpsilon{ 0.001f };
 

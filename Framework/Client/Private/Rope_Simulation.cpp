@@ -36,7 +36,7 @@ void CRope_Simulation::Init()
 
 void CRope_Simulation::Solve()
 {
-	Set_SpringLength();
+	//Set_SpringLength();
 
 	for (_int i = 0; i < m_iNum_Masses - 1; ++i)
 	{
@@ -130,7 +130,7 @@ void CRope_Simulation::Start_Soft_Simulating(_vector _vDir, _vector _vPos, _floa
 	Set_Simulating(true);
 }
 
-void CRope_Simulation::Switch_Soft_Simulating()
+void CRope_Simulation::Switch_Soft_Simulating(_vector _vVel)
 {
 	_float fM = m_vecMasses[0]->Get_M();
 	_vector vDir = m_vecMasses[1]->Get_Pos() - m_vecMasses[0]->Get_Pos();
@@ -147,10 +147,17 @@ void CRope_Simulation::Switch_Soft_Simulating()
 
 	m_fSpringLength *= (1.f / m_fRatio);
 
+	// 속도 전달
+	for (_int i = 0; i < m_iNum_Masses; ++i)
+	{
+		_vector vVel = _vVel * (i / static_cast<float>(m_iNum_Masses - 1));
+		m_vecMasses[i]->Set_Vel(vVel);
+	}
+
 	Set_Simulating(true);
 }
 
-void CRope_Simulation::Start_Stiff_Simulating(_vector _vDir, _vector _vPos, _float _fM, _float _fLastM)
+void CRope_Simulation::Start_Stiff_Simulating(_vector _vDir, _vector _vPos, _float _fM, _float _fLastM, _vector _vStartVel)
 {
 	End_Simulating();
 
@@ -160,6 +167,8 @@ void CRope_Simulation::Start_Stiff_Simulating(_vector _vDir, _vector _vPos, _flo
 
 	Make_Mass(_fM, _fLastM);
 	Make_Spring(XMVector3Normalize(_vDir));
+
+	m_pFinalMass->Set_Vel(_vStartVel);
 
 	m_fRatio = 1.f;
 	m_fCurTime = 0.f;

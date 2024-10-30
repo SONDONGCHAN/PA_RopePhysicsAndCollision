@@ -21,7 +21,7 @@ HRESULT CProjectile_Rope::Initialize_Prototype()
 HRESULT CProjectile_Rope::Initialize(void* pArg)
 {
 	PROJECTILE_DESC* pProjectileDesc = (PROJECTILE_DESC*)pArg;
-	pProjectileDesc->fSpeedPerSec = 50.f;
+	pProjectileDesc->fSpeedPerSec = 100.f;
 	m_pOwnerObject = pProjectileDesc->pOwnerObject;
 	
 	if (FAILED(__super::Initialize(pArg)))
@@ -77,11 +77,13 @@ void CProjectile_Rope::Event_CollisionEnter(ColData* _ColData)
 	if (_ColData->eMyColType == COL_STATIC_OBJECT)
 	{
 		Disable_Projectile();
+
 		_vector vOwnerPos = dynamic_cast<CPlayer*>(m_pOwnerObject)->Get_TranformCom()->Get_State(CTransform::STATE_POSITION);
 		_vector vMyPos = m_pTransformCom->Get_State(CTransform::STATE_POSITION);
 		_vector vDir = (vOwnerPos + _vector{ 0.f, 1.f, 0.f }) - vMyPos;
 
-		//_vector vOwnerPos = _vector{ 6.f, 1.f, 2.f };
+		//µð¹ö±ë
+		//_vector vOwnerPos = _vector{ 6.f, 2.f, 2.f };
 		//_vector vMyPos = m_pTransformCom->Get_State(CTransform::STATE_POSITION);
 		//_vector vDir = vOwnerPos - vMyPos;
 

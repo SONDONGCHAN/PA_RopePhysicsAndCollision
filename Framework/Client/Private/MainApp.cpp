@@ -95,31 +95,31 @@ HRESULT CMainApp::Ready_ETC()
 		return E_FAIL;
 
 	_ulong		dwByte = { 0 };
-	HANDLE		hFile = CreateFile(TEXT("../Bin/DataFiles/Navigation.dat"), GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
-	if (0 == hFile)
-		return E_FAIL;
+	//HANDLE		hFile = CreateFile(TEXT("../Bin/DataFiles/Navigation.dat"), GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
+	//if (0 == hFile)
+	//	return E_FAIL;
 
-	_float3			vPoints[3];
+	//_float3			vPoints[3];
 
-	_uint CellSize = 10.f;
+	//_uint CellSize = 10.f;
 
-	for (int i = 0; i < 15; ++i)
-	{
-		for (int j = 0; j < 15; ++j)
-		{
-			vPoints[0] = _float3(i * CellSize,		 0.f, j * CellSize);
-			vPoints[1] = _float3(i * CellSize,		 0.f, (j + 1) * CellSize);
-			vPoints[2] = _float3((i + 1) * CellSize, 0.f, j * CellSize);
-			WriteFile(hFile, vPoints, sizeof(_float3) * 3, &dwByte, nullptr);
-			
-			vPoints[0] = _float3(i * CellSize, 0.f, (j + 1) * CellSize);
-			vPoints[1] = _float3((i + 1) * CellSize, 0.f, (j + 1) * CellSize);
-			vPoints[2] = _float3((i + 1) * CellSize, 0.f, j * CellSize);
-			WriteFile(hFile, vPoints, sizeof(_float3) * 3, &dwByte, nullptr);
-		}
-	}
+	//for (int i = 0; i < 51; ++i)
+	//{
+	//	for (int j = 0; j < 51; ++j)
+	//	{
+	//		vPoints[0] = _float3(i * CellSize,		 0.f, j * CellSize);
+	//		vPoints[1] = _float3(i * CellSize,		 0.f, (j + 1) * CellSize);
+	//		vPoints[2] = _float3((i + 1) * CellSize, 0.f, j * CellSize);
+	//		WriteFile(hFile, vPoints, sizeof(_float3) * 3, &dwByte, nullptr);
+	//		
+	//		vPoints[0] = _float3(i * CellSize, 0.f, (j + 1) * CellSize);
+	//		vPoints[1] = _float3((i + 1) * CellSize, 0.f, (j + 1) * CellSize);
+	//		vPoints[2] = _float3((i + 1) * CellSize, 0.f, j * CellSize);
+	//		WriteFile(hFile, vPoints, sizeof(_float3) * 3, &dwByte, nullptr);
+	//	}
+	//}
 
-	CloseHandle(hFile);
+	//CloseHandle(hFile);
 
 	ID3D11Texture2D*			pTexture2D = { nullptr };
 

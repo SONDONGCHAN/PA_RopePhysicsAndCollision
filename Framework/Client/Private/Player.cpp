@@ -54,7 +54,7 @@ HRESULT CPlayer::Initialize(void * pArg)
 	if (FAILED(Add_Projectile()))
 		return E_FAIL;
 
-	m_pTransformCom->Set_State(CTransform::STATE_POSITION, _vector{ 75.f, 0.f, 75.f});
+	m_pTransformCom->Set_State(CTransform::STATE_POSITION, _vector{ 250.f, 0.f, 250.f});
 
 	return S_OK;
 }
@@ -117,8 +117,9 @@ void CPlayer::Start_Stiff_Simulating(_vector _vDir, _vector _vPos, _float _fM, _
 	if (nullptr == m_pRopeSimulation)
 		return;
 
-	m_pRopeSimulation->Start_Stiff_Simulating(_vDir, _vPos, _fM, _fLastM);
+	m_pRopeSimulation->Start_Stiff_Simulating(_vDir, _vPos, _fM, _fLastM, m_vVelocity);
 	Start_Swing();
+
 }
 
 void CPlayer::End_Simulating()
@@ -136,8 +137,7 @@ void CPlayer::KeyInput(_float fTimeDelta)
 	{
 		_vector vVel = m_pRopeSimulation->Get_FinalMass()->Get_Vel();
 		m_vVelocity = vVel;
-		m_pRopeSimulation->Switch_Soft_Simulating();
-		m_pRopeSimulation->Get_FinalMass()->Set_Vel(vVel);
+		m_pRopeSimulation->Switch_Soft_Simulating(vVel);
 
 		if (m_eJumpState == JumpState::SWINGING)
 			m_eJumpState = JumpState::FALLING;
@@ -145,19 +145,20 @@ void CPlayer::KeyInput(_float fTimeDelta)
 
 	// ·ÎÇÁ	
 	if (m_pGameInstance->MouseDown(DIM_LB))
-	{
+	{	
 		m_pProjectile_Rope->Enable_Projectile(
 			m_pTransformCom->Get_State(CTransform::STATE_POSITION),
 			XMLoadFloat4(&CGameInstance::GetInstance()->Get_CamLook()));
 
+		//µð¹ö±ë
 		//m_pProjectile_Rope->Enable_Projectile(
 		//	_vector{6.f, 1.f, 2.f},
 		//	XMVector3Normalize(_vector{0.f, 1.f, 1.f}));
 	}
 	if (KEYDOWN(DIK_LSHIFT))
 	{
-		if (m_eJumpState == JumpState::SWINGING)
-			m_pRopeSimulation->Set_Accelerating(true, 40.f);
+		//if (m_eJumpState == JumpState::SWINGING)
+			m_pRopeSimulation->Set_Accelerating(true, 50.f);
 	}
 	else if (KEYUP(DIK_LSHIFT))
 	{
@@ -292,6 +293,8 @@ void CPlayer::Handle_Jump(_float fTimeDelta)
 		_vector vPos = m_pTransformCom->Get_State(CTransform::STATE_POSITION);
 
 		m_vVelocity = XMVectorSetY(m_vVelocity, XMVectorGetY(m_vVelocity) + (m_fGravity * fTimeDelta));
+		_vector vDragForce = m_fDragCoefficient * m_vVelocity * fTimeDelta;
+		m_vVelocity -= vDragForce;
 
 		if (XMVectorGetY(m_vVelocity) < m_fTerminalVelocity)
 		{
@@ -482,14 +485,14 @@ HRESULT CPlayer::Add_PartObjects()
 HRESULT CPlayer::Add_Simulation()
 {
 	m_pRopeSimulation = new CRope_Simulation
-	(	100000.f,
-		0.2f,
+	(	10000.f,
+		1.f,
 		_vector{0.f, -9.81f, 0},
 		0.02f,
 		100.f,
 		0.2f,
 		2.f,
-		-5.f);
+		-50.f);
 	
 	if (nullptr == m_pRopeSimulation)
 		return E_FAIL;

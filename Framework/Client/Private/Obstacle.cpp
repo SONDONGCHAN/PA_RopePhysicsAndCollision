@@ -73,12 +73,11 @@ HRESULT CObstacle::Add_Component()
 	ColData.iTargetColType = COL_NONE;
 	ColData.isDead = false;
 
-
 	CCollider::OBB_DESC	BoundingDesc{};
 	_float3		vExtents;
 	_float3		vRadians;
 
-	BoundingDesc.vExtents = _float3{3.f, 1.f, 3.f};
+	BoundingDesc.vExtents = _float3{4.f, 2.f, 4.f};
 	BoundingDesc.vRadians = _float3(0.f, 0.f, 0.f);;
 	BoundingDesc.vCenter = _float3(0.f, BoundingDesc.vExtents.y, 0.f);
 

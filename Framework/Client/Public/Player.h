@@ -112,11 +112,14 @@ private:
 	CRope_Simulation* m_pRopeSimulation = { nullptr };
 
 private:
-	const	_float m_fGravity{ -9.81f };	// 중력 가속도
-	const	_float m_fJumpforce{ 7.f };		// 초기 점프 속도
-	const	_float m_fTerminalVelocity = -25.f;  // 최대 낙하 속도
+	const	_float m_fGravity{ -9.81f };		// 중력 가속도
+	const	_float m_fJumpforce{ 13.f };		// 초기 점프 속도
+	const	_float m_fTerminalVelocity = -25.f; // 최대 낙하 속도
+	const	_float m_fDragCoefficient = 0.1f;	// 공기 저항 계수
+
 private:
 	_vector	m_vVelocity{0.f, 0.f, 0.f, 0.f};// 플레이어 속도
+
 
 private:
 	map<const wstring, class CPartObject*>		m_PlayerParts;
