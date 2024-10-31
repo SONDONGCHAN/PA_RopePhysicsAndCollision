@@ -28,11 +28,16 @@ public:
 
 	void Add_Pos(_vector _vDir) { m_vPos += _vDir;}
 
+	void	Set_Root() { m_isRoot = true; }
+	_bool	Get_IsRoot() { return m_isRoot; }
+
 private:
 	_float	m_fM		{ 0.f };			// 질량 값.
 	_vector	m_vPos	{ 0.f, 0.f, 0.f };  // 공간 내 위치.
 	_vector	m_vVel	{ 0.f, 0.f, 0.f };  // 속도.
 	_vector	m_vForce { 0.f, 0.f, 0.f };  // 특정 시점에 적용된 힘.
+
+	_bool	m_isRoot{ false };
 
 public:
 	virtual void Free() override;

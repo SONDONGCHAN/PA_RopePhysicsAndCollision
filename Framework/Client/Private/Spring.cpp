@@ -3,6 +3,7 @@
 #include "Mass.h"
 #include "GameInstance.h"
 
+
 CSpring::CSpring(CMass* _pMass1, CMass* _pMass2, _float _fSpringConstant, _float _fSpringLength, _float _fFrictionConstant)
 {
 	m_pMass1 = _pMass1;
@@ -25,23 +26,69 @@ CSpring::~CSpring()
 {
 }
 
-void CSpring::Solve()
+void CSpring::Solve(CRope_Simulation::SimulateMode _eSimulateMode)
 {
 	_vector vSpringVector = m_pMass1->Get_Pos() - m_pMass2->Get_Pos();
-	
+
 	_float fLength = XMVectorGetX(XMVector3Length(vSpringVector));
 
-	_vector vForce {0.f, 0.f, 0.f};
+	_vector vForce{ 0.f, 0.f, 0.f };
 
-	if (fLength > 0)
+
+	if (_eSimulateMode == CRope_Simulation::SimulateMode::MODE_SOFT)
 	{
-		vForce += -(vSpringVector / fLength) * (fLength - m_fSpringLength) * m_fSpringConstant;
+		// 양방향 탄성
+		if (fLength > 0)
+		{
+			vForce += -(vSpringVector / fLength) * (fLength - m_fSpringLength) * m_fSpringConstant;
+		}
+
+		vForce += -(m_pMass1->Get_Vel() - m_pMass2->Get_Vel()) * m_fFrictionConstant;
+
+		m_pMass1->ApplyForce(vForce);
+		m_pMass2->ApplyForce(-vForce);
 	}
 
-	vForce += -(m_pMass1->Get_Vel() - m_pMass2->Get_Vel()) * m_fFrictionConstant;
+	else if (_eSimulateMode == CRope_Simulation::SimulateMode::MODE_STIFF)
+	{
+		// 단방향 탄성
+		if (fLength == m_fSpringLength)
+			return;
 
-	m_pMass1->ApplyForce(vForce);
-	m_pMass2->ApplyForce(-vForce);
+		else if (fLength > m_fSpringLength)
+		{
+			vForce += -(vSpringVector / fLength) * (fLength - m_fSpringLength) * m_fSpringConstant;
+			vForce += -(m_pMass1->Get_Vel() - m_pMass2->Get_Vel()) * m_fFrictionConstant;
+
+			m_pMass1->ApplyForce(vForce);
+			m_pMass2->ApplyForce(-vForce);
+
+			// 강제 조정
+			//_float fRatio = fLength / m_fSpringLength;dw w
+			//fRatio = fRatio - 1;
+			//if (m_pMass1->Get_IsRoot())
+			//	m_pMass2->Add_Pos((vSpringVector / fLength) * fRatio);
+			//else
+			//{
+			//	m_pMass1->Add_Pos(((vSpringVector / fLength)) * fRatio * 0.5f);
+			//	m_pMass2->Add_Pos((-(vSpringVector / fLength)) * fRatio * 0.5f);
+			//}
+		}
+
+		else if (fLength < m_fSpringLength)
+		{
+			// 강제 조정
+			_float fRatio = fLength / m_fSpringLength;
+			fRatio = 1 - fRatio;
+			if (m_pMass1->Get_IsRoot())
+				m_pMass2->Add_Pos((-(vSpringVector / fLength)) * fRatio);
+			else
+			{
+				m_pMass1->Add_Pos(((vSpringVector / fLength)) * fRatio * 0.5f);
+				m_pMass2->Add_Pos((-(vSpringVector / fLength)) * fRatio * 0.5f);
+			}
+		}
+	}
 }
 
 void CSpring::Render()
@@ -83,6 +130,27 @@ void CSpring::Set_SpringLength(_float _fSpringLength)
 	m_pMass2->Add_Pos ((vSpringVector / fLength)* fStretchRatio * (m_fSpringLength - _fSpringLength));
 
 	m_fSpringLength = _fSpringLength;
+}
+
+void CSpring::MainTain_Length()
+{
+	_vector vSpringVector = m_pMass1->Get_Pos() - m_pMass2->Get_Pos();
+	
+	_float fLength = XMVectorGetX(XMVector3Length(vSpringVector));
+	
+	if (fLength < m_fSpringLength)
+	{
+		// 강제 조정
+		_float fRatio = fLength / m_fSpringLength;
+		fRatio = 1 - fRatio;
+		if (m_pMass1->Get_IsRoot())
+			m_pMass2->Add_Pos((-(vSpringVector / fLength)) * fRatio);
+		else
+		{
+			m_pMass1->Add_Pos(((vSpringVector / fLength)) * fRatio * 0.5f);
+			m_pMass2->Add_Pos((-(vSpringVector / fLength)) * fRatio * 0.5f);
+		}
+	}
 }
 
 void CSpring::Add_Component()

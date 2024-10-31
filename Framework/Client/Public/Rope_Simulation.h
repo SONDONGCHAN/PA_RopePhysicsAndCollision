@@ -1,11 +1,18 @@
 #pragma once
 #include "Simulation.h"
-#include "Spring.h"
 
 BEGIN(Client)
 
 class CRope_Simulation : public CSimulation
 {
+public:
+	enum class SimulateMode
+	{
+		MODE_STIFF,
+		MODE_SOFT,
+		MODE_END
+	};
+
 public:
 	CRope_Simulation(
 		_float _fSpringConstant,
@@ -51,7 +58,7 @@ private:
 	void	Set_SpringLength();
 
 private:
-	vector<CSpring*> vecSprings;		// 스프링들
+	vector<class CSpring*> vecSprings;		// 스프링들
 
 private:
 	_vector m_vRopeConnection_Pos{ };		// 첫 번째 Mass의 위치
@@ -81,6 +88,9 @@ private:
 	_bool	m_isAccelerating{ false };		// 가속 중 여부
 	_float	m_fAccelerate_Force { 1.f };	// 가속 힘
 	_vector m_vbaseDir{ 0.f, 1.f, 0.f };	// 가속 기준 벡터
+
+private:
+	SimulateMode m_eSimulateMode{ SimulateMode:: MODE_STIFF };
 
 public:
 	virtual void Free() override;

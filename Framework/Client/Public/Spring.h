@@ -1,6 +1,7 @@
 #pragma once
 #include "Base.h"
 #include "Client_Defines.h"
+#include "Rope_Simulation.h"
 
 BEGIN(Engine)
 class CShader;
@@ -16,11 +17,13 @@ public:
 	virtual ~CSpring();
 
 public:
-	void	Solve();
+	void	Solve(CRope_Simulation::SimulateMode _eSimulateMode);
 	void	Render();
 
 public:
 	void	Set_SpringLength(_float _fSpringLength);
+	void	MainTain_Length();
+
 
 private:
 	void	Add_Component();

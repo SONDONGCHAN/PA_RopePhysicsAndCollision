@@ -87,7 +87,7 @@ void CProjectile_Rope::Event_CollisionEnter(ColData* _ColData)
 		//_vector vMyPos = m_pTransformCom->Get_State(CTransform::STATE_POSITION);
 		//_vector vDir = vOwnerPos - vMyPos;
 
-		dynamic_cast<CPlayer*>(m_pOwnerObject)->Start_Stiff_Simulating(vDir, vMyPos, 0.5f, 5.f);
+		dynamic_cast<CPlayer*>(m_pOwnerObject)->Start_Stiff_Simulating(vDir, vMyPos, 0.5f, 20.f);
 	}
 }
 

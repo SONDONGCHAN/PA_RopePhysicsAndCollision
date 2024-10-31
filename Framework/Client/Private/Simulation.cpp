@@ -20,7 +20,12 @@ void CSimulation::Make_Mass(_float _fM, _float _fLastM)
 	{
 		CMass* pMass;
 
-		if (i == m_iNum_Masses - 1)
+		if (i == 0)
+		{
+			pMass = new CMass(_fM);
+			pMass->Set_Root();
+		}
+		else if (i == m_iNum_Masses - 1)
 		{
 			pMass = new CMass(_fLastM);
 			m_pFinalMass = pMass;

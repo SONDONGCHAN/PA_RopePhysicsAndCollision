@@ -98,7 +98,8 @@ HRESULT CPlayer::Render()
 {
 	if (KEYINPUT(DIK_LSHIFT))
 	{
-		m_pGameInstance->Render_Font(TEXT("Font_Default"), TEXT("Accelerating"), _float2(g_iWinSizeX * 0.8f, g_iWinSizeY * 0.5f), XMVectorSet(1.f, 1.f, 1.f, 1.f), 0.f, _float2(0.f, 0.f), 1.f);
+		if (m_eJumpState == JumpState::SWINGING)
+			m_pGameInstance->Render_Font(TEXT("Font_Default"), TEXT("Accelerating"), _float2(g_iWinSizeX * 0.8f, g_iWinSizeY * 0.5f), XMVectorSet(1.f, 1.f, 1.f, 1.f), 0.f, _float2(0.f, 0.f), 1.f);
 	}
 	m_pRopeSimulation->Render();
 	return S_OK;
@@ -136,7 +137,7 @@ void CPlayer::KeyInput(_float fTimeDelta)
 	if (KEYDOWN(DIK_Q))
 	{
 		_vector vVel = m_pRopeSimulation->Get_FinalMass()->Get_Vel();
-		m_vVelocity = vVel;
+		m_vVelocity = vVel * 1.3f;
 		m_pRopeSimulation->Switch_Soft_Simulating(vVel);
 
 		if (m_eJumpState == JumpState::SWINGING)
@@ -157,7 +158,7 @@ void CPlayer::KeyInput(_float fTimeDelta)
 	}
 	if (KEYDOWN(DIK_LSHIFT))
 	{
-		//if (m_eJumpState == JumpState::SWINGING)
+		if (m_eJumpState == JumpState::SWINGING)
 			m_pRopeSimulation->Set_Accelerating(true, 50.f);
 	}
 	else if (KEYUP(DIK_LSHIFT))
@@ -485,7 +486,7 @@ HRESULT CPlayer::Add_PartObjects()
 HRESULT CPlayer::Add_Simulation()
 {
 	m_pRopeSimulation = new CRope_Simulation
-	(	10000.f,
+	(	100000.f,
 		1.f,
 		_vector{0.f, -9.81f, 0},
 		0.02f,

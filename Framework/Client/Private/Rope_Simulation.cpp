@@ -2,6 +2,8 @@
 #include "Rope_Simulation.h"
 #include "Simulation.h"
 #include "Mass.h"
+#include "Spring.h"
+
 
 CRope_Simulation::CRope_Simulation(
 	_float _fSpringConstant,
@@ -40,7 +42,7 @@ void CRope_Simulation::Solve()
 
 	for (_int i = 0; i < m_iNum_Masses - 1; ++i)
 	{
-		vecSprings[i]->Solve();
+		vecSprings[i]->Solve(m_eSimulateMode);
 	}
 
 	for (_int i = 0; i < m_iNum_Masses; ++i)
@@ -89,6 +91,8 @@ void CRope_Simulation::Simulate(_float fTimeDelta)
 	m_vecMasses[0]->Set_Pos(m_vRopeConnection_Pos);
 	m_vecMasses[0]->Set_Vel(m_vRopeConnection_Vel);
 
+
+
 	//¼±Çü °¨¼è
 	//m_fCurTime += fTimeDelta;
 
@@ -99,10 +103,10 @@ void CRope_Simulation::Simulate(_float fTimeDelta)
 	//m_fRatio = 1.f - ((m_fCurTime / m_fDurTime) * (1.f - m_fMinRatio));
 
 	//Áö¼ö °¨¼è
-	_float fAlpha = 1 - exp(-fTimeDelta / m_fDurTime);
+	//_float fAlpha = 1 - exp(-fTimeDelta / m_fDurTime);
 
-	if (m_fEpsilon < abs(m_fRatio - m_fMinRatio))
-		m_fRatio = ((1.f - fAlpha) * m_fRatio) + (fAlpha * m_fMinRatio);
+	//if (m_fEpsilon < abs(m_fRatio - m_fMinRatio))
+	//	m_fRatio = ((1.f - fAlpha) * m_fRatio) + (fAlpha * m_fMinRatio);
 }
 
 void CRope_Simulation::Operate(_float fTimeDelta)
@@ -113,6 +117,7 @@ void CRope_Simulation::Operate(_float fTimeDelta)
 void CRope_Simulation::Start_Soft_Simulating(_vector _vDir, _vector _vPos, _float _fM, _float _fLastM)
 {
 	End_Simulating();
+	m_eSimulateMode = SimulateMode::MODE_SOFT;
 
 	m_vRopeConnection_Pos = _vPos;
 
@@ -136,6 +141,7 @@ void CRope_Simulation::Switch_Soft_Simulating(_vector _vVel)
 	_vector vDir = m_vecMasses[1]->Get_Pos() - m_vecMasses[0]->Get_Pos();
 
 	End_Simulating();
+	m_eSimulateMode = SimulateMode::MODE_SOFT;
 
 	_float fTotalLength = XMVectorGetX(XMVector3Length(vDir));
 
@@ -160,10 +166,11 @@ void CRope_Simulation::Switch_Soft_Simulating(_vector _vVel)
 void CRope_Simulation::Start_Stiff_Simulating(_vector _vDir, _vector _vPos, _float _fM, _float _fLastM, _vector _vStartVel)
 {
 	End_Simulating();
+	m_eSimulateMode = SimulateMode::MODE_STIFF;
 
 	m_vRopeConnection_Pos = _vPos;
 	m_iNum_Masses = 2;
-	m_fSpringLength = XMVectorGetX(XMVector3Length(_vDir));
+	m_fSpringLength = XMVectorGetX(XMVector3Length(_vDir)); 
 
 	Make_Mass(_fM, _fLastM);
 	Make_Spring(XMVector3Normalize(_vDir));
@@ -239,7 +246,9 @@ void CRope_Simulation::Accelerator(CMass* _pMass)
 	_vector	vRight = XMVector3Normalize(XMVector3Cross(_vector{ 0.f, 1.f, 0.f }, m_vbaseDir));
 	_vector	vLook = XMVector3Normalize(XMVector3Cross(vRight, vDir));
 
-	_pMass->ApplyForce(XMVector3Normalize(2 * vLook - vDir) * m_fAccelerate_Force);
+	//_pMass->ApplyForce(XMVector3Normalize(2 * vLook - vDir) * m_fAccelerate_Force);
+
+	_pMass->ApplyForce(XMVector3Normalize(vLook) * m_fAccelerate_Force);
 
 	//_vector FinalMassPos = m_pFinalMass->Get_Pos();
 
