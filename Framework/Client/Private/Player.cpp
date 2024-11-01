@@ -486,7 +486,7 @@ HRESULT CPlayer::Add_PartObjects()
 HRESULT CPlayer::Add_Simulation()
 {
 	m_pRopeSimulation = new CRope_Simulation
-	(	100000.f,
+	(	10000.f,
 		1.f,
 		_vector{0.f, -9.81f, 0},
 		0.02f,

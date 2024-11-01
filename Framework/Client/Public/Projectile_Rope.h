@@ -37,6 +37,14 @@ private:
 private:
 	CCollider* m_pColliderCom = { nullptr };
 
+private:
+	CShader* m_pShaderCom = { nullptr };
+	CVIBuffer_Point_Double* m_pVIBufferCom = { nullptr };
+
+private:
+	_float4 m_vColor{};
+	_float	m_fThickness{};
+
 public:
 	static CProjectile_Rope* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;

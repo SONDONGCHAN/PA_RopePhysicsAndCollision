@@ -100,8 +100,6 @@ void CGameInstance::Tick_Engine(_float fTimeDelta)
 	
 	m_pObject_Manager->Priority_Tick(fTimeDelta);
 	
-	m_pPipeLine->Tick();
-	
 	m_pFrustum->Tick();
 	
 	m_pObject_Manager->Tick(fTimeDelta);
@@ -109,6 +107,8 @@ void CGameInstance::Tick_Engine(_float fTimeDelta)
 	m_pCollision_Manager->Check_Collision();
 	
 	m_pObject_Manager->Late_Tick(fTimeDelta);
+
+	m_pPipeLine->Tick();
 }
 
 HRESULT CGameInstance::Begin_Draw(const _float4 & vClearColor)

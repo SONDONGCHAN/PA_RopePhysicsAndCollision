@@ -45,13 +45,15 @@ void CCamera_ThirdPerson::Tick(_float fTimeDelta)
 
 void CCamera_ThirdPerson::Late_Tick(_float fTimeDelta)
 {
-
 	if (m_isRecording && m_isFixed)
 	{
 		KeyInput(fTimeDelta);
 		CamMove(fTimeDelta);
 	}
+
 	__super::Late_Tick(fTimeDelta);
+
+
 }
 
 HRESULT CCamera_ThirdPerson::Render()

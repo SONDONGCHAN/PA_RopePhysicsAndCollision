@@ -32,6 +32,9 @@ HRESULT CProjectile_Rope::Initialize(void* pArg)
 
 	m_isEnable = false;
 
+	m_vColor = { 0.f, 0.f, 0.f, 1.f };
+	m_fThickness = 0.05f;
+
 	return S_OK;
 }
 
@@ -51,11 +54,39 @@ void CProjectile_Rope::Tick(_float fTimeDelta)
 void CProjectile_Rope::Late_Tick(_float fTimeDelta)
 {
 	m_pGameInstance->Add_DebugComponent(m_pColliderCom);
+
+	if (FAILED(m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this)))
+		return;
 }
 
 HRESULT CProjectile_Rope::Render()
 {
+	_float4x4	ViewMatrix = m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTRANSFORMSTATE::D3DTS_VIEW);
+	_float4x4	ProjMatrix = m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTRANSFORMSTATE::D3DTS_PROJ);
 
+	_float4x4	WorldMatrix1;
+	_float4x4	WorldMatrix2;
+
+	XMStoreFloat4x4(&WorldMatrix1, XMMatrixTranslationFromVector(m_pTransformCom->Get_State(CTransform::STATE_POSITION)));
+
+	_vector vOwnerPos = dynamic_cast<CPlayer*>(m_pOwnerObject)->Get_TranformCom()->Get_State(CTransform::STATE_POSITION);
+	vOwnerPos += _vector{ 0.f, 1.f, 0.f };
+	XMStoreFloat4x4(&WorldMatrix2, XMMatrixTranslationFromVector(vOwnerPos));
+
+	m_pShaderCom->Bind_Matrix("g_WorldMatrix1", &WorldMatrix1);
+	m_pShaderCom->Bind_Matrix("g_WorldMatrix2", &WorldMatrix2);
+	m_pShaderCom->Bind_Matrix("g_ViewMatrix", &ViewMatrix);
+	m_pShaderCom->Bind_Matrix("g_ProjMatrix", &ProjMatrix);
+
+	m_pShaderCom->Bind_RawValue("g_vColor", &m_vColor, sizeof(_float4));
+
+	m_pShaderCom->Bind_RawValue("g_fThickness", &m_fThickness, sizeof(_float));
+
+	m_pShaderCom->Begin(0);
+
+	m_pVIBufferCom->Bind_Buffers();
+
+	m_pVIBufferCom->Render();
 	return S_OK;
 }
 
@@ -87,7 +118,7 @@ void CProjectile_Rope::Event_CollisionEnter(ColData* _ColData)
 		//_vector vMyPos = m_pTransformCom->Get_State(CTransform::STATE_POSITION);
 		//_vector vDir = vOwnerPos - vMyPos;
 
-		dynamic_cast<CPlayer*>(m_pOwnerObject)->Start_Stiff_Simulating(vDir, vMyPos, 0.5f, 20.f);
+		dynamic_cast<CPlayer*>(m_pOwnerObject)->Start_Stiff_Simulating(vDir, vMyPos, 0.5f, 10.f);
 	}
 }
 
@@ -125,6 +156,11 @@ HRESULT CProjectile_Rope::Add_Component()
 
 	CGameInstance::GetInstance()->Add_Collider(m_pColliderCom);
 
+
+	m_pVIBufferCom = dynamic_cast<CVIBuffer_Point_Double*>(m_pGameInstance->Clone_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_VIBuffer_Point_Double")));
+
+	m_pShaderCom = dynamic_cast<CShader*>(m_pGameInstance->Clone_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Shader_VtxPoint_Rope")));
+
 	return S_OK;
 }
 
@@ -159,4 +195,7 @@ void CProjectile_Rope::Free()
 	__super::Free();
 
 	Safe_Release(m_pColliderCom);
+
+	Safe_Release(m_pVIBufferCom);
+	Safe_Release(m_pShaderCom);
 }
