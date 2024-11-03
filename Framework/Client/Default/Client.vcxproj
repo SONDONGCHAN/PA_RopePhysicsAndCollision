@@ -41,7 +41,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -190,6 +190,7 @@
     <ClInclude Include="..\Public\Projectile_Rope.h" />
     <ClInclude Include="..\Public\Rope_Simulation.h" />
     <ClInclude Include="..\Public\Simulation.h" />
+    <ClInclude Include="..\Public\Simulation_Pool.h" />
     <ClInclude Include="..\Public\Sky.h" />
     <ClInclude Include="..\Public\Spring.h" />
     <ClInclude Include="..\Public\Terrain.h" />
@@ -224,6 +225,7 @@
     <ClCompile Include="..\Private\Projectile_Rope.cpp" />
     <ClCompile Include="..\Private\Rope_Simulation.cpp" />
     <ClCompile Include="..\Private\Simulation.cpp" />
+    <ClCompile Include="..\Private\Simulation_Pool.cpp" />
     <ClCompile Include="..\Private\Sky.cpp" />
     <ClCompile Include="..\Private\Spring.cpp" />
     <ClCompile Include="..\Private\Terrain.cpp" />

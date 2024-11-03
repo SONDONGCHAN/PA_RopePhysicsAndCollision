@@ -55,9 +55,6 @@
     <Filter Include="02.GameObjects\LandObject\Player\PartObject">
       <UniqueIdentifier>{5e082101-bb69-4305-aab5-e9b122e12582}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\LandObject\Player\PartObject\Body">
-      <UniqueIdentifier>{fc752584-f36f-4c3f-a996-f0095894b499}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\LandObject\Player\PartObject\Weapon">
       <UniqueIdentifier>{2e947334-eeb6-458e-a947-ffb9319fd4d5}</UniqueIdentifier>
     </Filter>
@@ -94,12 +91,6 @@
     <Filter Include="96. Physical Simulations\Mass">
       <UniqueIdentifier>{f5296523-73e3-4c08-9b61-c908414816d7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="96. Physical Simulations\Simulation">
-      <UniqueIdentifier>{e6065a83-a32d-42e6-bc32-49e3497317ff}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="96. Physical Simulations\Simulation\Rope_Simulation">
-      <UniqueIdentifier>{0d0835b4-e9b1-4016-9653-8ae1da251f30}</UniqueIdentifier>
-    </Filter>
     <Filter Include="96. Physical Simulations\Rope">
       <UniqueIdentifier>{2eca1932-f614-481a-851d-95b515609f94}</UniqueIdentifier>
     </Filter>
@@ -114,6 +105,18 @@
     </Filter>
     <Filter Include="02.GameObjects\Obstacle">
       <UniqueIdentifier>{81cba26b-ca94-4af9-89d9-925cddbad83a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\LandObject\Player\PartObject\Body">
+      <UniqueIdentifier>{fc752584-f36f-4c3f-a996-f0095894b499}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="96. Physical Simulations\Simulation Pool">
+      <UniqueIdentifier>{fafa620c-2fb0-4f67-a1de-e1dd07f471cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="96. Physical Simulations\Simulation">
+      <UniqueIdentifier>{e6065a83-a32d-42e6-bc32-49e3497317ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="96. Physical Simulations\Simulation\Rope_Simulation">
+      <UniqueIdentifier>{0d0835b4-e9b1-4016-9653-8ae1da251f30}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -216,6 +219,9 @@
     <ClInclude Include="..\Public\Obstacle.h">
       <Filter>02.GameObjects\Obstacle</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Simulation_Pool.h">
+      <Filter>96. Physical Simulations\Simulation Pool</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -307,6 +313,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Obstacle.cpp">
       <Filter>02.GameObjects\Obstacle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Simulation_Pool.cpp">
+      <Filter>96. Physical Simulations\Simulation Pool</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

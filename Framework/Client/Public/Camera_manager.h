@@ -4,7 +4,7 @@
 #include "Camera.h"
 #include "Camera_Free.h"
 #include "Camera_ThirdPerson.h"
-#include "C:\Users\dhqks6\Desktop\Task_ProJect\Task\Framework\Reference\Headers\GameObject.h"
+#include "GameObject.h"
 
 BEGIN(Client)
 

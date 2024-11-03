@@ -20,7 +20,11 @@ public:
 protected:
 	void	Make_Mass(_float _fM, _float _fLastM);
 	void	Clear_Masses();
+
+public:
 	void	Set_Simulating(_bool _isSimulating) { m_bSimulating = _isSimulating; }
+	_bool	Get_Simulating() {return  m_bSimulating ; }
+
 
 public:
 	class CMass*	Get_FinalMass() { return m_pFinalMass; }
