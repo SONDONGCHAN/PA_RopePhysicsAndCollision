@@ -57,22 +57,22 @@ void CSpring::Solve(CRope_Simulation::SimulateMode _eSimulateMode)
 
 		else if (fLength > m_fSpringLength)
 		{
+			// 강제 조정
+			_float fRatio = fLength / m_fSpringLength;
+			fRatio = fRatio - 1;
+			if (m_pMass1->Get_IsRoot())
+				m_pMass2->Add_Pos((vSpringVector / fLength) * fRatio);
+			else
+			{
+				m_pMass1->Add_Pos(((vSpringVector / fLength)) * fRatio * 0.5f);
+				m_pMass2->Add_Pos((-(vSpringVector / fLength)) * fRatio * 0.5f);
+			}
+
 			vForce += -(vSpringVector / fLength) * (fLength - m_fSpringLength) * m_fSpringConstant;
 			vForce += -(m_pMass1->Get_Vel() - m_pMass2->Get_Vel()) * m_fFrictionConstant;
 
 			m_pMass1->ApplyForce(vForce);
 			m_pMass2->ApplyForce(-vForce);
-
-			// 강제 조정
-			//_float fRatio = fLength / m_fSpringLength;dw w
-			//fRatio = fRatio - 1;
-			//if (m_pMass1->Get_IsRoot())
-			//	m_pMass2->Add_Pos((vSpringVector / fLength) * fRatio);
-			//else
-			//{
-			//	m_pMass1->Add_Pos(((vSpringVector / fLength)) * fRatio * 0.5f);
-			//	m_pMass2->Add_Pos((-(vSpringVector / fLength)) * fRatio * 0.5f);
-			//}
 		}
 
 		else if (fLength < m_fSpringLength)

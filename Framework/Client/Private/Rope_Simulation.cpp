@@ -16,14 +16,14 @@ CRope_Simulation::CRope_Simulation(
 	_float _fGroundHeight
 	) : CSimulation()
 {
-	m_fSpringConstant = _fSpringConstant;
-	m_fSpringFrictionConstant = _fSpringFrictionConstant;
-	m_vGravitation = _vGravitation;
-	m_fAirFrictionConstant = _fAirFrictionConstant;
-	m_fGroundRepulsionConstant = _fGroundRepulsionConstant;
-	m_fGroundFrictionConstant = _fGroundFrictionConstant;
+	m_fSpringConstant			= _fSpringConstant;
+	m_fSpringFrictionConstant	= _fSpringFrictionConstant;
+	m_vGravitation				= _vGravitation;
+	m_fAirFrictionConstant		= _fAirFrictionConstant;
+	m_fGroundRepulsionConstant	= _fGroundRepulsionConstant;
+	m_fGroundFrictionConstant	= _fGroundFrictionConstant;
 	m_fGroundAbsorptionConstant = _fGroundAbsorptionConstant;
-	m_fGroundHeight = _fGroundHeight;
+	m_fGroundHeight				= _fGroundHeight;
 }
 
 CRope_Simulation::~CRope_Simulation()
@@ -112,22 +112,33 @@ void CRope_Simulation::Simulate(_float fTimeDelta)
 void CRope_Simulation::Operate(_float fTimeDelta)
 {
 	__super::Operate(fTimeDelta);
+
+	if (m_isHolding)
+	{
+		m_fHoldingCurrentTime -= fTimeDelta;
+		if (m_fHoldingCurrentTime < 0.f)
+		{
+			m_isHolding = false;
+			m_bSimulating = false;
+		}
+	}
 }
 
-void CRope_Simulation::Start_Soft_Simulating(_vector _vDir, _vector _vPos, _float _fM, _float _fLastM)
+void CRope_Simulation::Start_Simulating(void* _Datas)
 {
+	Rope_Simulation_Data* pData = (Rope_Simulation_Data*)_Datas;
+
 	End_Simulating();
-	m_eSimulateMode = SimulateMode::MODE_SOFT;
+	m_eSimulateMode = SimulateMode::MODE_STIFF;
 
-	m_vRopeConnection_Pos = _vPos;
+	m_vRopeConnection_Pos = pData->vPos;
+	m_iNum_Masses = 2;
+	m_fSpringLength = XMVectorGetX(XMVector3Length(pData->vDir));
 
-	_float fTotalLength = XMVectorGetX(XMVector3Length(_vDir));
+	Make_Mass(pData->fM, pData->fLastM);
+	Make_Spring(XMVector3Normalize(pData->vDir));
 
-	m_iNum_Masses = (fTotalLength / m_fMaxSpringLength) + 2;
-	m_fSpringLength = fTotalLength / (m_iNum_Masses - 1);
-
-	Make_Mass(_fM, _fLastM);
-	Make_Spring(XMVector3Normalize(_vDir));
+	m_pFinalMass->Set_Vel(pData->vStartVel);
 
 	m_fRatio = 1.f;
 	m_fCurTime = 0.f;
@@ -161,26 +172,9 @@ void CRope_Simulation::Switch_Soft_Simulating(_vector _vVel)
 	}
 
 	Set_Simulating(true);
-}
 
-void CRope_Simulation::Start_Stiff_Simulating(_vector _vDir, _vector _vPos, _float _fM, _float _fLastM, _vector _vStartVel)
-{
-	End_Simulating();
-	m_eSimulateMode = SimulateMode::MODE_STIFF;
-
-	m_vRopeConnection_Pos = _vPos;
-	m_iNum_Masses = 2;
-	m_fSpringLength = XMVectorGetX(XMVector3Length(_vDir)); 
-
-	Make_Mass(_fM, _fLastM);
-	Make_Spring(XMVector3Normalize(_vDir));
-
-	m_pFinalMass->Set_Vel(_vStartVel);
-
-	m_fRatio = 1.f;
-	m_fCurTime = 0.f;
-
-	Set_Simulating(true);
+	m_isHolding = true;
+	m_fHoldingCurrentTime = m_fHoldingTime;
 }
 
 void CRope_Simulation::End_Simulating()

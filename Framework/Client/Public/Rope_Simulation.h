@@ -5,12 +5,22 @@ BEGIN(Client)
 
 class CRope_Simulation : public CSimulation
 {
+
 public:
 	enum class SimulateMode
 	{
 		MODE_STIFF,
 		MODE_SOFT,
 		MODE_END
+	};
+
+	struct Rope_Simulation_Data
+	{
+		_vector			vDir;
+		_vector			vPos;
+		_float			fM;
+		_float			fLastM;
+		_vector			vStartVel{0.f, 0.f, 0.f, 0.f};
 	};
 
 public:
@@ -32,14 +42,15 @@ public:
 	virtual void Simulate(_float fTimeDelta) override;
 	virtual void Operate(_float fTimeDelta) override;
 
-	void Start_Soft_Simulating(_vector _vDir, _vector _vPos, _float _fM, _float _fLastM);
+	virtual void	Start_Simulating(void* _Datas) override;
+
+public:
 	void Switch_Soft_Simulating(_vector _vVel);
-	void Start_Stiff_Simulating(_vector _vDir, _vector _vPos, _float _fM, _float _fLastM, _vector _vStartVel);
 	void End_Simulating();
 
 	void Make_Spring(_vector _vDir);
 
-	void Render() ;
+	virtual void Render() override;
 
 
 
@@ -73,6 +84,11 @@ private:
 	const _float	m_fDurTime{ 0.6f };
 
 	const _float	m_fEpsilon{ 0.001f };
+
+private:
+	_float	m_fHoldingTime{ 30.f };
+	_float	m_fHoldingCurrentTime{ 0.f };
+	_bool	m_isHolding{ false };
 
 	_float	m_fSpringConstant;				// 스프링 계수
 	_float  m_fSpringFrictionConstant;		// 스프링 마찰 계수

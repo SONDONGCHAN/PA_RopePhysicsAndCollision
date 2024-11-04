@@ -7,13 +7,7 @@ BEGIN(Client)
 
 class CSimulation_Pool : public CBase
 {
-public:
-	enum Simulation_Type
-	{
-		SIMULATION_ROPE,
 
-		SIMULATION_END
-	};
 
 public:
 	CSimulation_Pool();
@@ -21,13 +15,14 @@ public:
 
 public:
 	void	Tick(_float fTimeDelta);
+	void	Render();
 	
 public:
-	void	Awake_Simulation(Simulation_Type _eSimulationType);
+	CSimulation*	Awake_Simulation(CSimulation::Simulation_Type _eSimulationType, void* _Datas = nullptr);
 
 private:
-	vector<class CSimulation*> m_pSimulations[Simulation_Type::SIMULATION_END];
-	_uint	m_iSimulationNum[Simulation_Type::SIMULATION_END];
+	vector<CSimulation*> m_pSimulations[static_cast<_uint>(CSimulation::Simulation_Type::SIMULATION_END)];
+	_uint	m_iSimulationNum[static_cast<_uint>(CSimulation::Simulation_Type::SIMULATION_END)];
 
 
 public:

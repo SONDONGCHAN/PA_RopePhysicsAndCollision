@@ -97,6 +97,7 @@ void CSimulation::Clear_Masses()
 	m_vecMasses.clear();
 }
 
+
 void CSimulation::Free()
 {
 	for (auto iter : m_vecMasses)

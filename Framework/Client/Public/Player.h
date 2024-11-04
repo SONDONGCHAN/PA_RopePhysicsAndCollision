@@ -2,8 +2,9 @@
 
 #include "Client_Defines.h"
 #include "LandObject.h"
-#include "Rope_Simulation.h"
 #include "Projectile_Rope.h"
+#include "Rope_Simulation.h"
+#include "Simulation_Pool.h"
 
 BEGIN(Engine)
 
@@ -66,7 +67,6 @@ public:
 	virtual HRESULT Render() override;
 
 public:
-	void	Start_Soft_Simulating(_vector _vDir, _vector _vPos, _float _fM, _float _fLastM);
 	void	Start_Stiff_Simulating(_vector _vDir, _vector _vPos, _float _fM, _float _fLastM);
 	void	End_Simulating();
 	
@@ -109,7 +109,8 @@ private:
 	CProjectile_Rope*	m_pProjectile_Rope = { nullptr };
 
 private:
-	CRope_Simulation* m_pRopeSimulation = { nullptr };
+	CSimulation*	m_pCurrentSimulation = { nullptr };
+	CSimulation_Pool*	m_pSimulationPool = { nullptr };
 
 private:
 	const	_float m_fGravity{ -9.81f };		// 중력 가속도

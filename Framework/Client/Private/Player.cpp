@@ -5,6 +5,9 @@
 #include "Weapon.h"
 #include "Collider.h"
 #include "Projectile_Rope.h"
+#include "Simulation_Pool.h"
+#include "Simulation.h"
+
 #include "Mass.h"
 
 
@@ -77,7 +80,8 @@ void CPlayer::Tick(_float fTimeDelta)
 	Root_Transform();
 	m_pColliderCom->Tick(m_pTransformCom->Get_WorldMatrix());
 
-	m_pRopeSimulation->Operate(fTimeDelta);
+	m_pSimulationPool->Tick(fTimeDelta);
+	//m_pRopeSimulation->Operate(fTimeDelta);
 }
 
 void CPlayer::Late_Tick(_float fTimeDelta)
@@ -101,31 +105,39 @@ HRESULT CPlayer::Render()
 		if (m_eJumpState == JumpState::SWINGING)
 			m_pGameInstance->Render_Font(TEXT("Font_Default"), TEXT("Accelerating"), _float2(g_iWinSizeX * 0.8f, g_iWinSizeY * 0.5f), XMVectorSet(1.f, 1.f, 1.f, 1.f), 0.f, _float2(0.f, 0.f), 1.f);
 	}
-	m_pRopeSimulation->Render();
+
+	m_pSimulationPool->Render();
+	//m_pRopeSimulation->Render();
+	
 	return S_OK;
 }
 
-void CPlayer::Start_Soft_Simulating(_vector _vDir, _vector _vPos, _float _fM, _float _fLastM)
-{
-	if (nullptr == m_pRopeSimulation)
-		return;
-
-	m_pRopeSimulation->Start_Soft_Simulating(_vDir, _vPos, _fM, _fLastM);
-}
 
 void CPlayer::Start_Stiff_Simulating(_vector _vDir, _vector _vPos, _float _fM, _float _fLastM)
 {
-	if (nullptr == m_pRopeSimulation)
+	if (nullptr == m_pSimulationPool)
 		return;
 
-	m_pRopeSimulation->Start_Stiff_Simulating(_vDir, _vPos, _fM, _fLastM, m_vVelocity);
+	CRope_Simulation::Rope_Simulation_Data pData;
+	
+	pData.vDir		= _vDir;
+	pData.vPos		= _vPos;
+	pData.fM		= _fM;
+	pData.fLastM	= _fLastM;
+	pData.vStartVel = m_vVelocity;
+
+	m_pCurrentSimulation = m_pSimulationPool->Awake_Simulation(CSimulation::Simulation_Type::SIMULATION_ROPE, &pData);
+
+	if (nullptr == m_pCurrentSimulation)
+		return;
+
 	Start_Swing();
 
 }
 
 void CPlayer::End_Simulating()
 {
-	m_pRopeSimulation->End_Simulating();
+	dynamic_cast<CRope_Simulation*>(m_pCurrentSimulation)->End_Simulating();
 }
 
 void CPlayer::KeyInput(_float fTimeDelta)
@@ -136,9 +148,9 @@ void CPlayer::KeyInput(_float fTimeDelta)
 
 	if (KEYDOWN(DIK_Q))
 	{
-		_vector vVel = m_pRopeSimulation->Get_FinalMass()->Get_Vel();
+		_vector vVel = m_pCurrentSimulation->Get_FinalMass()->Get_Vel();
 		m_vVelocity = vVel * 1.3f;
-		m_pRopeSimulation->Switch_Soft_Simulating(vVel);
+		dynamic_cast<CRope_Simulation*>(m_pCurrentSimulation)->Switch_Soft_Simulating(vVel);
 
 		if (m_eJumpState == JumpState::SWINGING)
 			m_eJumpState = JumpState::FALLING;
@@ -159,11 +171,11 @@ void CPlayer::KeyInput(_float fTimeDelta)
 	if (KEYDOWN(DIK_LSHIFT))
 	{
 		if (m_eJumpState == JumpState::SWINGING)
-			m_pRopeSimulation->Set_Accelerating(true, 50.f);
+			dynamic_cast<CRope_Simulation*>(m_pCurrentSimulation)->Set_Accelerating(true, 50.f);
 	}
 	else if (KEYUP(DIK_LSHIFT))
 	{
-		m_pRopeSimulation->Set_Accelerating(false);
+		dynamic_cast<CRope_Simulation*>(m_pCurrentSimulation)->Set_Accelerating(false);
 	}
 
 	// ป๓ลย
@@ -327,7 +339,7 @@ void CPlayer::Handle_Jump(_float fTimeDelta)
 
 void CPlayer::Handle_Swing(_float fTimeDelta)
 {
-	_vector vPos = m_pRopeSimulation->Get_FinalMass()->Get_Pos();
+	_vector vPos = dynamic_cast<CRope_Simulation*>(m_pCurrentSimulation)->Get_FinalMass()->Get_Pos();
 	
 	m_pTransformCom->Set_State(CTransform::STATE_POSITION, vPos + _vector{ 0.f, -1.f, 0.f });
 }
@@ -485,17 +497,8 @@ HRESULT CPlayer::Add_PartObjects()
 
 HRESULT CPlayer::Add_Simulation()
 {
-	m_pRopeSimulation = new CRope_Simulation
-	(	10000.f,
-		1.f,
-		_vector{0.f, -9.81f, 0},
-		0.02f,
-		100.f,
-		0.2f,
-		2.f,
-		-50.f);
-	
-	if (nullptr == m_pRopeSimulation)
+	m_pSimulationPool = new CSimulation_Pool();
+	if (nullptr == m_pSimulationPool)
 		return E_FAIL;
 
 	return S_OK;
@@ -553,6 +556,7 @@ void CPlayer::Free()
 	Safe_Release(m_pNavigationCom);
 	Safe_Release(m_pColliderCom);
 
-	Safe_Release(m_pRopeSimulation);
+	Safe_Release(m_pCurrentSimulation);
+	Safe_Release(m_pSimulationPool);
 	Safe_Release(m_pProjectile_Rope);
 }

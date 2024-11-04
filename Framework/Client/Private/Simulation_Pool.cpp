@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "Simulation_Pool.h"
 #include "Simulation.h"
 #include "Rope_Simulation.h"
@@ -5,18 +6,20 @@
 
 CSimulation_Pool::CSimulation_Pool()
 {
-	m_iSimulationNum[Simulation_Type::SIMULATION_ROPE] = 10;
+	m_iSimulationNum[static_cast<_uint>(CSimulation::Simulation_Type::SIMULATION_ROPE)] = 10;
 
-	for (_uint i = Simulation_Type::SIMULATION_ROPE; i < Simulation_Type::SIMULATION_END; ++i)
+
+	for (_uint i = 0; i < static_cast<_uint>(CSimulation::Simulation_Type::SIMULATION_END); ++i)
 	{
 		for (_uint j = 0; j < m_iSimulationNum[i]; ++j)
 		{
-			CSimulation* pSimulation;
+			CSimulation* pSimulation = nullptr;
+
 			switch (i)
 			{
-			case SIMULATION_ROPE:
+			case static_cast<_uint>(CSimulation::Simulation_Type::SIMULATION_ROPE):
 				pSimulation = new CRope_Simulation
-				(10000.f,
+				(100'000.f,
 					1.f,
 					_vector{ 0.f, -9.81f, 0 },
 					0.02f,
@@ -27,26 +30,25 @@ CSimulation_Pool::CSimulation_Pool()
 
 				break;
 
-			case SIMULATION_END:
+			case static_cast<_uint>(CSimulation::Simulation_Type::SIMULATION_END):
 				break;
 
 			default:
 				break;
-
 			}
 
-			if (pSimulation)
-			{
-				m_pSimulations[i].push_back(pSimulation);
-			}
+			if (pSimulation == nullptr)
+				continue;
+
+			pSimulation->Set_Type(i);
+			m_pSimulations[i].push_back(pSimulation);		
 		}
 	}
 }
 
 void CSimulation_Pool::Tick(_float fTimeDelta)
 {
-
-	for (int i = 0; i < Simulation_Type::SIMULATION_END; ++i)
+	for (int i = 0; i < static_cast<_uint>(CSimulation::Simulation_Type::SIMULATION_END); ++i)
 	{
 		for (auto& iter : m_pSimulations[i])
 		{
@@ -55,21 +57,33 @@ void CSimulation_Pool::Tick(_float fTimeDelta)
 	}
 }
 
-void CSimulation_Pool::Awake_Simulation(Simulation_Type _eSimulationType)
+void CSimulation_Pool::Render()
 {
-	for (auto pSimulation : m_pSimulations[_eSimulationType])
+	for (int i = 0; i < static_cast<_uint>(CSimulation::Simulation_Type::SIMULATION_END); ++i)
 	{
-		if (!pSimulation->Get_Simulating())
+		for (auto& iter : m_pSimulations[i])
 		{
-			pSimulation->Set_Simulating(true);
-			break;
+			iter->Render();
 		}
 	}
 }
 
+CSimulation* CSimulation_Pool::Awake_Simulation(CSimulation::Simulation_Type _eSimulationType, void* _Datas)
+{
+	for (auto pSimulation : m_pSimulations[static_cast<_uint>(_eSimulationType)])
+	{
+		if (!pSimulation->Get_Simulating())
+		{
+			pSimulation->Start_Simulating(_Datas);
+			return pSimulation;
+		}
+	}
+	return nullptr;
+}
+
 void CSimulation_Pool::Free()
 {
-	for (int i = 0; i < Simulation_Type::SIMULATION_END; ++i)
+	for (int i = 0; i < static_cast<_uint>(CSimulation::Simulation_Type::SIMULATION_END); ++i)
 	{
 		for (auto& iter : m_pSimulations[i])
 		{
