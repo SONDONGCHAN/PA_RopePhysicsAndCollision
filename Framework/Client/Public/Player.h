@@ -5,6 +5,7 @@
 #include "Projectile_Rope.h"
 #include "Rope_Simulation.h"
 #include "Simulation_Pool.h"
+#include "CrossHair.h"
 
 BEGIN(Engine)
 
@@ -23,6 +24,7 @@ public:
 	{
 		STATE_IDLE,           // 대기 상태
 		STATE_MOVE,           // 이동
+		STATE_FALLING,   // 공중 이동
 		STATE_ATTACK,         // 공격
 	};
 
@@ -48,6 +50,8 @@ public:
 		SPRINT_CYCLE	= 9,	// 질주 반복
 		SPRINT_STOP		= 10,	// 질주 중지
 		SPRINT_TO_RUN	= 11,	// 질주 -> 달리기
+
+		FLY_NORMAL		= 32,	// 체공 반복	
 	};
 
 private:
@@ -83,6 +87,7 @@ private:
 	// 상태별 처리 함수들
 	void	Handle_IdleState(_float fTimeDelta);
 	void	Handle_MoveState(_float fTimeDelta);
+	void	Handle_FallingState(_float fTimeDelta);
 	void	Handle_AttackState(_float fTimeDelta);
 
 	//
@@ -91,6 +96,7 @@ private:
 
 private:
 	void	Set_Dir_From_Cam(_float fTimeDelta, Direction _DIRType);
+	void	Set_Dir_From_Velocity(_float fTimeDelta);
 
 private:
 	void	Start_Jump();
@@ -107,6 +113,7 @@ private:
 	CNavigation*		m_pNavigationCom = { nullptr };
 	CCollider*			m_pColliderCom = { nullptr };
 	CProjectile_Rope*	m_pProjectile_Rope = { nullptr };
+	CCrossHair*			m_pCrossHair = { nullptr };
 
 private:
 	CSimulation*	m_pCurrentSimulation = { nullptr };
@@ -114,7 +121,7 @@ private:
 
 private:
 	const	_float m_fGravity{ -9.81f };		// 중력 가속도
-	const	_float m_fJumpforce{ 13.f };		// 초기 점프 속도
+	const	_float m_fJumpforce{ 20.f };		// 초기 점프 속도
 	const	_float m_fTerminalVelocity = -25.f; // 최대 낙하 속도
 	const	_float m_fDragCoefficient = 0.1f;	// 공기 저항 계수
 
@@ -130,6 +137,7 @@ private:
 	HRESULT Add_PartObjects();
 	HRESULT Add_Simulation();
 	HRESULT Add_Projectile();
+	HRESULT Add_CrossHair();
 
 public:
 	static CPlayer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

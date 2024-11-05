@@ -41,8 +41,8 @@ void CTerrain_Basic::Late_Tick(_float fTimeDelta)
 {
 	//m_pVIBufferCom->Culling(m_pTransformCom);
 
-	if (FAILED(m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this)))
-		return;
+	//if (FAILED(m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this)))
+		//return;
 
 #ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponent(m_pNavigationCom);

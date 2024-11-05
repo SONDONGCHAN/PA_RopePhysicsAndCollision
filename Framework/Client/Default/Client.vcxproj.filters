@@ -118,6 +118,9 @@
     <Filter Include="96. Physical Simulations\Simulation\Rope_Simulation">
       <UniqueIdentifier>{0d0835b4-e9b1-4016-9653-8ae1da251f30}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\CrossHair">
+      <UniqueIdentifier>{3a67c99e-5e25-47d1-b5fe-3383bb8ad3dc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -222,6 +225,9 @@
     <ClInclude Include="..\Public\Simulation_Pool.h">
       <Filter>96. Physical Simulations\Simulation Pool</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\CrossHair.h">
+      <Filter>02.GameObjects\CrossHair</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -317,6 +323,9 @@
     <ClCompile Include="..\Private\Simulation_Pool.cpp">
       <Filter>96. Physical Simulations\Simulation Pool</Filter>
     </ClCompile>
+    <ClCompile Include="CrossHair.cpp">
+      <Filter>02.GameObjects\CrossHair</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -362,6 +371,9 @@
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPoint_Rope.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPoint_CrossHair.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>

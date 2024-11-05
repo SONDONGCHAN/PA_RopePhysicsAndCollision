@@ -69,7 +69,7 @@ void CSpring::Solve(CRope_Simulation::SimulateMode _eSimulateMode)
 			}
 
 			vForce += -(vSpringVector / fLength) * (fLength - m_fSpringLength) * m_fSpringConstant;
-			vForce += -(m_pMass1->Get_Vel() - m_pMass2->Get_Vel()) * m_fFrictionConstant;
+			//vForce += -(m_pMass1->Get_Vel() - m_pMass2->Get_Vel()) * m_fFrictionConstant;
 
 			m_pMass1->ApplyForce(vForce);
 			m_pMass2->ApplyForce(-vForce);

@@ -17,6 +17,7 @@
 #include "Sky.h"
 #include "Projectile_Rope.h"
 #include "Obstacle.h"
+#include "CrossHair.h"
 
 
 CLoader::CLoader(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
@@ -143,7 +144,12 @@ HRESULT CLoader::Loading_For_GamePlayLevel()
 		CVIBuffer_Cube::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-	/* For.Prototype_Component_VIBuffer_Cube */
+	/* For.Prototype_Component_VIBuffer_Point */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_VIBuffer_Point"),
+		CVIBuffer_Point::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_VIBuffer_Point_Double*/
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_VIBuffer_Point_Double"),
 		CVIBuffer_Point_Double::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
@@ -216,6 +222,11 @@ HRESULT CLoader::Loading_For_GamePlayLevel()
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxAnimNonMesh.hlsl"), VTXANIMNONMESH::Elements, VTXANIMNONMESH::iNumElements))))
 		return E_FAIL;
 
+	/* For.Prototype_Component_Shader_VtxPoint_CrossHair */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Shader_VtxPoint_CrossHair"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxPoint_CrossHair.hlsl"), VTXPOS::Elements, VTXPOS::iNumElements))))
+		return E_FAIL;
+
 	/* For.Prototype_Component_Shader_VtxPoint_Rope */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Shader_VtxPoint_Rope"),
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxPoint_Rope.hlsl"), VTXPOSDOUBLE::Elements, VTXPOSDOUBLE::iNumElements))))
@@ -253,7 +264,7 @@ HRESULT CLoader::Loading_For_GamePlayLevel()
 		CCamera_Free::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-	/* For.Prototype_GameObject_Camera_Free */
+	/* For.Prototype_GameObject_Camera_ThirdPerson */
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Camera_ThirdPerson"),
 		CCamera_ThirdPerson::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
@@ -291,6 +302,11 @@ HRESULT CLoader::Loading_For_GamePlayLevel()
 	/* For.Prototype_GameObject_Obstacle*/
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Obstacle"),
 		CObstacle::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_CrossHair*/
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_CrossHair"),
+		CCrossHair::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 	
 	m_strLoadingText = TEXT("로딩이 완료되었습니다.");

@@ -20,7 +20,6 @@ HRESULT CParticle_Point::Initialize_Prototype()
 
 HRESULT CParticle_Point::Initialize(void * pArg)
 {
-	
 	CGameObject::GAMEOBJECT_DESC			GameObjectDesc = {};
 
 	GameObjectDesc.iGameObjectData = 10;

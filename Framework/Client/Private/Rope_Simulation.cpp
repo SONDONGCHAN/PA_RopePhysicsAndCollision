@@ -136,6 +136,7 @@ void CRope_Simulation::Start_Simulating(void* _Datas)
 	m_fSpringLength = XMVectorGetX(XMVector3Length(pData->vDir));
 
 	Make_Mass(pData->fM, pData->fLastM);
+	m_fSpringConstant = 10'000.f;
 	Make_Spring(XMVector3Normalize(pData->vDir));
 
 	m_pFinalMass->Set_Vel(pData->vStartVel);
@@ -160,6 +161,7 @@ void CRope_Simulation::Switch_Soft_Simulating(_vector _vVel)
 	m_fSpringLength = fTotalLength / (m_iNum_Masses - 1);
 
 	Make_Mass(fM, fM);
+	m_fSpringConstant = 100'000.f;
 	Make_Spring(XMVector3Normalize(vDir));
 
 	m_fSpringLength *= (1.f / m_fRatio);

@@ -57,6 +57,9 @@ HRESULT CPlayer::Initialize(void * pArg)
 	if (FAILED(Add_Projectile()))
 		return E_FAIL;
 
+	if(FAILED(Add_CrossHair()))
+		return E_FAIL;
+
 	m_pTransformCom->Set_State(CTransform::STATE_POSITION, _vector{ 250.f, 0.f, 250.f});
 
 	return S_OK;
@@ -153,7 +156,11 @@ void CPlayer::KeyInput(_float fTimeDelta)
 		dynamic_cast<CRope_Simulation*>(m_pCurrentSimulation)->Switch_Soft_Simulating(vVel);
 
 		if (m_eJumpState == JumpState::SWINGING)
+		{
 			m_eJumpState = JumpState::FALLING;
+			m_eCurrentState = PlayerState::STATE_FALLING;
+			m_eNextState = PlayerState::STATE_FALLING;
+		}
 	}
 
 	// 로프	
@@ -212,6 +219,10 @@ void CPlayer::Update_State(_float fTimeDelta)
 		Handle_MoveState(fTimeDelta);
 		break;
 
+	case PlayerState::STATE_FALLING:
+		Handle_FallingState(fTimeDelta);
+		break;
+
 	case PlayerState::STATE_ATTACK:
 		Handle_AttackState(fTimeDelta);
 		break;
@@ -242,7 +253,10 @@ void CPlayer::Handle_IdleState(_float fTimeDelta)
 
 	if (KEYINPUT(DIK_W) || KEYINPUT(DIK_A) || KEYINPUT(DIK_S) || KEYINPUT(DIK_D))
 	{	
-		Change_State(PlayerState::STATE_MOVE);
+		if(m_eJumpState == JumpState::ONGROUND)
+			Change_State(PlayerState::STATE_MOVE);
+		else
+			Change_State(PlayerState::STATE_FALLING);
 	}
 }
 
@@ -294,6 +308,61 @@ void CPlayer::Handle_MoveState(_float fTimeDelta)
 	}
 }
 
+void CPlayer::Handle_FallingState(_float fTimeDelta)
+{
+	if (m_eJumpState == JumpState::SWINGING)
+		return;
+
+	Change_Anim(FLY_NORMAL);
+
+	if (KEYPRESSING(DIK_W) || KEYPRESSING(DIK_A) || KEYPRESSING(DIK_S) || KEYPRESSING(DIK_D))
+	{
+		_vector vLook = m_pTransformCom->Get_State(CTransform::STATE_POSITION) - XMLoadFloat4(&CGameInstance::GetInstance()->Get_CamPosition());
+		vLook = XMVector4Normalize(XMVectorSetY(vLook, 0.f));
+		_vector vRight = XMVector4Normalize(XMVector3Cross(XMVectorSet(0.f, 1.f, 0.f, 0.f), vLook));
+		_vector vMyLook = m_pTransformCom->Get_State(CTransform::STATE_LOOK);
+		_vector vTargetDir;
+
+		if (KEYPRESSING(DIK_W))
+		{
+			if (KEYPRESSING(DIK_A))
+			{ 
+			}
+			else if (KEYPRESSING(DIK_D))
+			{
+			}
+			else
+			{
+			}
+		}
+		else if (KEYPRESSING(DIK_S))
+		{
+			if (KEYPRESSING(DIK_A))
+			{
+			}
+			else if (KEYPRESSING(DIK_D))
+			{
+			}
+			else
+			{
+			}
+		}
+		else if (KEYPRESSING(DIK_A))
+		{
+			{ }
+		}
+		else if (KEYPRESSING(DIK_D))
+		{
+			{ }
+		}
+	}
+	Set_Dir_From_Velocity(fTimeDelta);
+	//else
+	//{
+	//	Change_State(PlayerState::STATE_IDLE);
+	//}
+}
+
 void CPlayer::Handle_AttackState(_float fTimeDelta)
 {
 
@@ -323,6 +392,8 @@ void CPlayer::Handle_Jump(_float fTimeDelta)
 			vPos = XMVectorSetY(vPos, fTerrainHeight);
 			m_vVelocity = XMVectorSet(0.f, 0.f, 0.f, 0.f);
 			m_eJumpState = JumpState::ONGROUND;
+			m_eCurrentState = PlayerState::STATE_IDLE;
+			m_eNextState = PlayerState::STATE_IDLE;
 		}
 		
 		m_pTransformCom->Set_State(CTransform::STATE_POSITION, vPos);
@@ -407,12 +478,23 @@ void CPlayer::Set_Dir_From_Cam(_float fTimeDelta, Direction _DIRType)
 	m_pTransformCom->Set_WorldMatrix(mNewWorld);
 }
 
+void CPlayer::Set_Dir_From_Velocity(_float fTimeDelta)
+{
+	_vector vDir = XMVector3Normalize(m_vVelocity);
+	vDir.m128_f32[1] = 0.f;
+	if (XMVectorGetX(XMVector3Length(vDir)) == 0.f)
+		return;
+	m_pTransformCom->Set_Look_ForLandObject(vDir);
+}
+
 void CPlayer::Start_Jump()
 {
 	if (m_eJumpState == JumpState::ONGROUND) 
 	{
 		m_vVelocity = XMVectorSetY(m_vVelocity, m_fJumpforce); // 초기 점프 속도 설정
 		m_eJumpState = JumpState::JUMPING;
+		m_eCurrentState = PlayerState::STATE_FALLING;
+		m_eNextState = PlayerState::STATE_FALLING;
 	}
 }
 
@@ -518,6 +600,17 @@ HRESULT CPlayer::Add_Projectile()
 	return S_OK;
 }
 
+HRESULT CPlayer::Add_CrossHair()
+{
+	m_pCrossHair = dynamic_cast<CCrossHair*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_CrossHair")));
+	Safe_AddRef(m_pCrossHair);
+
+	if (FAILED(m_pGameInstance->Add_GameObject(LEVEL_GAMEPLAY, TEXT("Layer_CrossHair"), m_pCrossHair)))
+		return E_FAIL;
+
+	return S_OK;
+}
+
 CPlayer * CPlayer::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 {
 	CPlayer*		pInstance = new CPlayer(pDevice, pContext);
@@ -559,4 +652,5 @@ void CPlayer::Free()
 	Safe_Release(m_pCurrentSimulation);
 	Safe_Release(m_pSimulationPool);
 	Safe_Release(m_pProjectile_Rope);
+	Safe_Release(m_pCrossHair);
 }

@@ -19,8 +19,8 @@ CSimulation_Pool::CSimulation_Pool()
 			{
 			case static_cast<_uint>(CSimulation::Simulation_Type::SIMULATION_ROPE):
 				pSimulation = new CRope_Simulation
-				(100'000.f,
-					1.f,
+				(10000.f,
+					10.f,
 					_vector{ 0.f, -9.81f, 0 },
 					0.02f,
 					100.f,

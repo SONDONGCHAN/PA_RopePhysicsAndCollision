@@ -40,6 +40,11 @@ public:
 
 		return XMLoadFloat4x4(&m_WorldMatrix);
 	}
+
+	_float4x4 Get_WorldMatrix4x4() const {
+
+		return m_WorldMatrix;
+	}
 	void Set_WorldMatrix(const _float4x4& _matrix) { m_WorldMatrix = _matrix; }
 	void Set_WorldMatrix(const XMMATRIX& _matrix) { XMStoreFloat4x4(&m_WorldMatrix, _matrix);}
 
