@@ -22,10 +22,10 @@ class CPlayer final : public CLandObject
 public:
 	enum class PlayerState 
 	{
-		STATE_IDLE,           // 대기 상태
-		STATE_MOVE,           // 이동
-		STATE_FALLING,   // 공중 이동
-		STATE_ATTACK,         // 공격
+		STATE_IDLE,		// 대기 상태
+		STATE_MOVE,		// 이동
+		STATE_FALLING,	// 공중 이동
+		STATE_ATTACK,	// 공격
 	};
 
 	enum class JumpState
@@ -71,6 +71,11 @@ public:
 	virtual HRESULT Render() override;
 
 public:
+	virtual void Event_CollisionEnter(ColData* _ColData) override;
+	virtual void Event_CollisionStay(ColData* _ColData) override;
+	virtual void Event_CollisionExit(ColData* _ColData) override;
+
+public:
 	void	Start_Stiff_Simulating(_vector _vDir, _vector _vPos, _float _fM, _float _fLastM);
 	void	End_Simulating();
 	
@@ -96,11 +101,14 @@ private:
 
 private:
 	void	Set_Dir_From_Cam(_float fTimeDelta, Direction _DIRType);
+	_vector	Get_Dir_From_Cam(Direction _DIRType);
+
 	void	Set_Dir_From_Velocity(_float fTimeDelta);
 
 private:
 	void	Start_Jump();
 	void	Start_Swing();
+	void	Escape_Swing(JumpState _eJumpState);
 
 private:
 	PlayerState	m_eCurrentState = PlayerState :: STATE_IDLE;	// 현재 상태
@@ -116,12 +124,12 @@ private:
 	CCrossHair*			m_pCrossHair = { nullptr };
 
 private:
-	CSimulation*	m_pCurrentSimulation = { nullptr };
+	CSimulation*		m_pCurrentSimulation = { nullptr };
 	CSimulation_Pool*	m_pSimulationPool = { nullptr };
 
 private:
 	const	_float m_fGravity{ -9.81f };		// 중력 가속도
-	const	_float m_fJumpforce{ 20.f };		// 초기 점프 속도
+	const	_float m_fJumpforce{ 25.f };		// 초기 점프 속도
 	const	_float m_fTerminalVelocity = -25.f; // 최대 낙하 속도
 	const	_float m_fDragCoefficient = 0.1f;	// 공기 저항 계수
 

@@ -6,7 +6,7 @@
 
 CSimulation_Pool::CSimulation_Pool()
 {
-	m_iSimulationNum[static_cast<_uint>(CSimulation::Simulation_Type::SIMULATION_ROPE)] = 10;
+	m_iSimulationNum[static_cast<_uint>(CSimulation::Simulation_Type::SIMULATION_ROPE)] = 30;
 
 
 	for (_uint i = 0; i < static_cast<_uint>(CSimulation::Simulation_Type::SIMULATION_END); ++i)
@@ -23,10 +23,10 @@ CSimulation_Pool::CSimulation_Pool()
 					10.f,
 					_vector{ 0.f, -9.81f, 0 },
 					0.02f,
-					100.f,
-					0.2f,
+					5.f,
+					1.f,
 					2.f,
-					-50.f);
+					1.1f);
 
 				break;
 

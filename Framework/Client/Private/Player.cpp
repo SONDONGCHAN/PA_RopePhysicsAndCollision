@@ -110,9 +110,33 @@ HRESULT CPlayer::Render()
 	}
 
 	m_pSimulationPool->Render();
-	//m_pRopeSimulation->Render();
 	
 	return S_OK;
+}
+
+void CPlayer::Event_CollisionEnter(ColData* _ColData)
+{
+	if (_ColData->eMyColType == COL_STATIC_OBJECT)
+	{
+		if (m_eJumpState == JumpState::SWINGING)
+		{
+			Escape_Swing(JumpState::FALLING);
+		}
+		else
+		{
+			m_vVelocity = XMVectorSet(0.f, 0.f, 0.f, 0.f);
+		}
+	}
+}
+
+void CPlayer::Event_CollisionStay(ColData* _ColData)
+{
+
+}
+
+void CPlayer::Event_CollisionExit(ColData* _ColData)
+{
+
 }
 
 
@@ -134,8 +158,10 @@ void CPlayer::Start_Stiff_Simulating(_vector _vDir, _vector _vPos, _float _fM, _
 	if (nullptr == m_pCurrentSimulation)
 		return;
 
-	Start_Swing();
+	m_pTransformCom->Set_Look_ForLandObject((-_vDir));
+	// 스윙이 시작 될때, 스윙 진행방향으로 캐릭터 Look 변경해주기
 
+	Start_Swing();
 }
 
 void CPlayer::End_Simulating()
@@ -151,15 +177,19 @@ void CPlayer::KeyInput(_float fTimeDelta)
 
 	if (KEYDOWN(DIK_Q))
 	{
-		_vector vVel = m_pCurrentSimulation->Get_FinalMass()->Get_Vel();
-		m_vVelocity = vVel * 1.3f;
-		dynamic_cast<CRope_Simulation*>(m_pCurrentSimulation)->Switch_Soft_Simulating(vVel);
-
 		if (m_eJumpState == JumpState::SWINGING)
 		{
+			_vector vVel = m_pCurrentSimulation->Get_FinalMass()->Get_Vel();
+			m_vVelocity = vVel * 1.3f;
+			dynamic_cast<CRope_Simulation*>(m_pCurrentSimulation)->Switch_Soft_Simulating(vVel);
+			dynamic_cast<CRope_Simulation*>(m_pCurrentSimulation)->Set_Accelerating(false);
+
 			m_eJumpState = JumpState::FALLING;
 			m_eCurrentState = PlayerState::STATE_FALLING;
 			m_eNextState = PlayerState::STATE_FALLING;
+
+			m_pCurrentSimulation = nullptr;
+
 		}
 	}
 
@@ -177,12 +207,13 @@ void CPlayer::KeyInput(_float fTimeDelta)
 	}
 	if (KEYDOWN(DIK_LSHIFT))
 	{
-		if (m_eJumpState == JumpState::SWINGING)
+		if (m_eJumpState == JumpState::SWINGING && m_pCurrentSimulation)
 			dynamic_cast<CRope_Simulation*>(m_pCurrentSimulation)->Set_Accelerating(true, 50.f);
 	}
 	else if (KEYUP(DIK_LSHIFT))
 	{
-		dynamic_cast<CRope_Simulation*>(m_pCurrentSimulation)->Set_Accelerating(false);
+		if(m_pCurrentSimulation)
+			dynamic_cast<CRope_Simulation*>(m_pCurrentSimulation)->Set_Accelerating(false);
 	}
 
 	// 상태
@@ -269,18 +300,14 @@ void CPlayer::Handle_MoveState(_float fTimeDelta)
 	{
 		Change_Anim(RUN_CYCLE);
 
-		_vector vLook = m_pTransformCom->Get_State(CTransform::STATE_POSITION) - XMLoadFloat4(&CGameInstance::GetInstance()->Get_CamPosition());
-		vLook = XMVector4Normalize(XMVectorSetY(vLook, 0.f));
-		_vector vRight = XMVector4Normalize(XMVector3Cross(XMVectorSet(0.f, 1.f, 0.f, 0.f), vLook));
-		_vector vMyLook = m_pTransformCom->Get_State(CTransform::STATE_LOOK);
-		_vector vTargetDir;
-
 		if (KEYPRESSING(DIK_W))
 		{
 			if (KEYPRESSING(DIK_A))
 				Set_Dir_From_Cam(fTimeDelta, Direction::DIR_FLEFT);
+
 			else if (KEYPRESSING(DIK_D))
 				Set_Dir_From_Cam(fTimeDelta, Direction::DIR_FRIGHT);
+
 			else
 				Set_Dir_From_Cam(fTimeDelta, Direction::DIR_FRONT);
 		}
@@ -288,8 +315,10 @@ void CPlayer::Handle_MoveState(_float fTimeDelta)
 		{
 			if (KEYPRESSING(DIK_A))
 				Set_Dir_From_Cam(fTimeDelta, Direction::DIR_BLEFT);
+
 			else if (KEYPRESSING(DIK_D))
 				Set_Dir_From_Cam(fTimeDelta, Direction::DIR_BRIGHT);
+
 			else
 				Set_Dir_From_Cam(fTimeDelta, Direction::DIR_BACK);
 		}
@@ -315,45 +344,66 @@ void CPlayer::Handle_FallingState(_float fTimeDelta)
 
 	Change_Anim(FLY_NORMAL);
 
-	if (KEYPRESSING(DIK_W) || KEYPRESSING(DIK_A) || KEYPRESSING(DIK_S) || KEYPRESSING(DIK_D))
+	if ((KEYPRESSING(DIK_W) || KEYPRESSING(DIK_A) || KEYPRESSING(DIK_S) || KEYPRESSING(DIK_D)))
 	{
-		_vector vLook = m_pTransformCom->Get_State(CTransform::STATE_POSITION) - XMLoadFloat4(&CGameInstance::GetInstance()->Get_CamPosition());
-		vLook = XMVector4Normalize(XMVectorSetY(vLook, 0.f));
-		_vector vRight = XMVector4Normalize(XMVector3Cross(XMVectorSet(0.f, 1.f, 0.f, 0.f), vLook));
-		_vector vMyLook = m_pTransformCom->Get_State(CTransform::STATE_LOOK);
-		_vector vTargetDir;
+		_vector vVel;
+
+		if(m_pCurrentSimulation )
+			vVel = m_pCurrentSimulation->Get_FinalMass()->Get_Vel();
+
+		_vector vDir = {0.f, 0.f, 1.f, 0.f};
 
 		if (KEYPRESSING(DIK_W))
 		{
 			if (KEYPRESSING(DIK_A))
 			{ 
+				vDir = Get_Dir_From_Cam(Direction::DIR_FLEFT);
 			}
 			else if (KEYPRESSING(DIK_D))
 			{
+				vDir = Get_Dir_From_Cam(Direction::DIR_FRIGHT);
 			}
 			else
 			{
+				vDir = Get_Dir_From_Cam(Direction::DIR_FRONT);
 			}
 		}
 		else if (KEYPRESSING(DIK_S))
 		{
 			if (KEYPRESSING(DIK_A))
 			{
+				vDir = Get_Dir_From_Cam(Direction::DIR_BLEFT);
 			}
 			else if (KEYPRESSING(DIK_D))
 			{
+				vDir = Get_Dir_From_Cam(Direction::DIR_BRIGHT);
 			}
 			else
 			{
+				vDir = Get_Dir_From_Cam(Direction::DIR_BACK);
 			}
 		}
 		else if (KEYPRESSING(DIK_A))
 		{
-			{ }
+			vDir = Get_Dir_From_Cam(Direction::DIR_LEFT);
 		}
 		else if (KEYPRESSING(DIK_D))
 		{
-			{ }
+			vDir = Get_Dir_From_Cam(Direction::DIR_RIGHT);
+		}
+
+		if (m_pCurrentSimulation)
+		{
+			_float fDirScale = XMVectorGetX(XMVector3Dot(vVel, vDir));
+
+			if (fDirScale < 5.f)
+			{
+				m_vVelocity += vDir * fTimeDelta * 2.f;
+			}
+		}
+		else
+		{
+			m_vVelocity += vDir * fTimeDelta * 2.f;
 		}
 	}
 	Set_Dir_From_Velocity(fTimeDelta);
@@ -390,10 +440,10 @@ void CPlayer::Handle_Jump(_float fTimeDelta)
 		if (vPos.m128_f32[1] <= fTerrainHeight)
 		{
 			vPos = XMVectorSetY(vPos, fTerrainHeight);
-			m_vVelocity = XMVectorSet(0.f, 0.f, 0.f, 0.f);
-			m_eJumpState = JumpState::ONGROUND;
+			m_vVelocity		= XMVectorSet(0.f, 0.f, 0.f, 0.f);
+			m_eJumpState	= JumpState::ONGROUND;
 			m_eCurrentState = PlayerState::STATE_IDLE;
-			m_eNextState = PlayerState::STATE_IDLE;
+			m_eNextState	= PlayerState::STATE_IDLE;
 		}
 		
 		m_pTransformCom->Set_State(CTransform::STATE_POSITION, vPos);
@@ -411,8 +461,26 @@ void CPlayer::Handle_Jump(_float fTimeDelta)
 void CPlayer::Handle_Swing(_float fTimeDelta)
 {
 	_vector vPos = dynamic_cast<CRope_Simulation*>(m_pCurrentSimulation)->Get_FinalMass()->Get_Pos();
+	vPos += _vector{ 0.f, -1.f, 0.f };
 	
-	m_pTransformCom->Set_State(CTransform::STATE_POSITION, vPos + _vector{ 0.f, -1.f, 0.f });
+	if (vPos.m128_f32[1] < 0.f)
+	{
+		vPos.m128_f32[1] = 0.f;
+
+		m_eJumpState = JumpState::ONGROUND;
+		m_eCurrentState = PlayerState::STATE_IDLE;
+		m_eNextState = PlayerState::STATE_IDLE;
+
+		m_vVelocity = XMVectorSet(0.f, 0.f, 0.f, 0.f);	
+		
+		_vector vVel = m_pCurrentSimulation->Get_FinalMass()->Get_Vel();
+		dynamic_cast<CRope_Simulation*>(m_pCurrentSimulation)->Switch_Soft_Simulating(vVel);
+		dynamic_cast<CRope_Simulation*>(m_pCurrentSimulation)->Set_Accelerating(false);
+
+		m_pCurrentSimulation = nullptr;	
+	}
+	
+	m_pTransformCom->Set_State(CTransform::STATE_POSITION, vPos);
 }
 
 void CPlayer::Set_Dir_From_Cam(_float fTimeDelta, Direction _DIRType)
@@ -478,6 +546,53 @@ void CPlayer::Set_Dir_From_Cam(_float fTimeDelta, Direction _DIRType)
 	m_pTransformCom->Set_WorldMatrix(mNewWorld);
 }
 
+_vector CPlayer::Get_Dir_From_Cam(Direction _DIRType)
+{
+	_vector vLook = m_pTransformCom->Get_State(CTransform::STATE_POSITION) - XMLoadFloat4(&CGameInstance::GetInstance()->Get_CamPosition());
+	vLook = XMVector4Normalize(XMVectorSetY(vLook, 0.f));
+	_vector vRight = XMVector4Normalize(XMVector3Cross(XMVectorSet(0.f, 1.f, 0.f, 0.f), vLook));
+	_vector vTargetDir = { 1.f, 1.f, 1.f, 0.f };
+
+	switch (_DIRType)
+	{
+	case Direction::DIR_FRONT:
+		vTargetDir = vLook;
+		break;
+
+	case Direction::DIR_BACK:
+		vTargetDir = -vLook;
+		break;
+
+	case Direction::DIR_LEFT:
+		vTargetDir = -vRight;
+		break;
+
+	case Direction::DIR_RIGHT:
+		vTargetDir = vRight;
+		break;
+
+	case Direction::DIR_FLEFT:
+		vTargetDir = vLook - vRight;
+		break;
+
+	case Direction::DIR_FRIGHT:
+		vTargetDir = vLook + vRight;
+		break;
+
+	case Direction::DIR_BLEFT:
+		vTargetDir = (-vLook) - vRight;
+		break;
+
+	case Direction::DIR_BRIGHT:
+		vTargetDir = (-vLook) + vRight;
+		break;
+	}
+
+	vTargetDir = XMVector4Normalize(vTargetDir);
+
+	return vTargetDir;
+}
+
 void CPlayer::Set_Dir_From_Velocity(_float fTimeDelta)
 {
 	_vector vDir = XMVector3Normalize(m_vVelocity);
@@ -506,8 +621,23 @@ void CPlayer::Start_Swing()
 		m_eCurrentState = PlayerState::STATE_IDLE;
 		m_eNextState	= PlayerState::STATE_IDLE;
 
-		m_vVelocity = XMVectorSet(0.f, 0.f, 0.f, 0.f);
+		m_vVelocity = XMVectorSet(0.f, 0.f, 0.f, 0.f); 
 	}
+}
+
+void CPlayer::Escape_Swing(JumpState _eJumpState)
+{
+	m_eJumpState = _eJumpState;
+	m_eCurrentState = PlayerState::STATE_FALLING;
+	m_eNextState = PlayerState::STATE_FALLING;
+
+	m_vVelocity = XMVectorSet(0.f, 0.f, 0.f, 0.f);
+
+	_vector vVel = m_pCurrentSimulation->Get_FinalMass()->Get_Vel();
+	dynamic_cast<CRope_Simulation*>(m_pCurrentSimulation)->Switch_Soft_Simulating(vVel);
+	dynamic_cast<CRope_Simulation*>(m_pCurrentSimulation)->Set_Accelerating(false);
+
+	m_pCurrentSimulation = nullptr;
 }
 
 HRESULT CPlayer::Add_Components()
@@ -533,14 +663,15 @@ HRESULT CPlayer::Add_Components()
 	ColData.isDead = false;
 
 	
-	CCollider::SPHERE_DESC	BoundingDesc{};
-	BoundingDesc.fRadius = 0.5f;
-	BoundingDesc.vCenter = _float3(0.f, BoundingDesc.fRadius, 0.f);
+	CCollider::OBB_DESC	BoundingDesc{};
+	BoundingDesc.vExtents = { 0.2f, 0.8f, 0.2f };
+	BoundingDesc.vCenter = {0.f, BoundingDesc.vExtents.y, 0.f};
+	BoundingDesc.vRadians = {0.f, 0.f, 0.f };
 
 	ColliderDesc.ColData = ColData;
-	ColliderDesc.SphereDesc = BoundingDesc;
+	ColliderDesc.OBBDesc = BoundingDesc;
 
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Collider_Sphere"),
+	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Collider_OBB"),
 		TEXT("Com_Collider"), reinterpret_cast<CComponent**>(&m_pColliderCom), &ColliderDesc)))
 		return E_FAIL;
 
