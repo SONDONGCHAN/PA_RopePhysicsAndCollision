@@ -18,12 +18,18 @@ HRESULT CBounding_OBB::Initialize(void * pArg)
 	m_pOriginalOBB = new BoundingOrientedBox(pDesc->vCenter, pDesc->vExtents, vRotation);
 	m_pOBB = new BoundingOrientedBox(*m_pOriginalOBB);
 
+	m_MyOriginalDesc._Center		= pDesc->vCenter;
+	m_MyOriginalDesc._Extents		= pDesc->vExtents;
+	m_MyOriginalDesc._Orientation	= vRotation;
+	m_MyDesc = m_MyOriginalDesc;
+
 	return S_OK;
 }
 
 void CBounding_OBB::Tick(_fmatrix WorldMatrix)
 {
 	m_pOriginalOBB->Transform(*m_pOBB, WorldMatrix);
+	TransformMyDesc(WorldMatrix);
 }
 
 HRESULT CBounding_OBB::Render(PrimitiveBatch<VertexPositionColor>* pBatch)
@@ -46,6 +52,8 @@ _bool CBounding_OBB::Intersect(CCollider::TYPE eType, CBounding * pBounding)
 		break;
 	case CCollider::TYPE_OBB:
 		isColl = m_pOBB->Intersects(*(BoundingOrientedBox*)pTargetBounding); /* Intersect((CBounding_OBB*)pBounding);*/
+		if(isColl)
+			vColFace = CalColFace(dynamic_cast<CBounding_OBB*>(pBounding)->Get_MyDesc());
 		break;
 	case CCollider::TYPE_SPHERE:
 		isColl = m_pOBB->Intersects(*(BoundingSphere*)pTargetBounding);
@@ -56,6 +64,72 @@ _bool CBounding_OBB::Intersect(CCollider::TYPE eType, CBounding * pBounding)
 		m_isColl = true;
 
 	return isColl;
+}
+
+_vector CBounding_OBB::CalColFace(My_Desc* _Target_Desc)
+{
+	// Build the 3x3 rotation matrix that defines the orientation of B relative to A.
+	XMVECTOR A_quat = XMLoadFloat4(&m_MyDesc._Orientation);
+	XMVECTOR B_quat = XMLoadFloat4(&_Target_Desc->_Orientation);
+
+	XMVECTOR Q = XMQuaternionMultiply(A_quat, XMQuaternionConjugate(B_quat));
+	XMMATRIX R = XMMatrixRotationQuaternion(Q);
+
+	// Compute the translation of B relative to A.
+	XMVECTOR A_cent = XMLoadFloat3(&m_MyDesc._Center);
+	XMVECTOR B_cent = XMLoadFloat3(&_Target_Desc->_Center);
+	XMVECTOR t = XMVector3InverseRotate(XMVectorSubtract(B_cent, A_cent), A_quat);
+
+
+	// Load extents of A and B.
+	XMVECTOR h_A = XMLoadFloat3(&m_MyDesc._Extents);
+	XMVECTOR h_B = XMLoadFloat3(&_Target_Desc->_Extents);
+
+	// Rows. Note R[0,1,2]X.w = 0.
+	XMVECTOR R0X = R.r[0];
+	XMVECTOR R1X = R.r[1];
+	XMVECTOR R2X = R.r[2];
+
+	// Absolute value of rows.
+	XMVECTOR AR0X = XMVectorAbs(R0X);
+	XMVECTOR AR1X = XMVectorAbs(R1X);
+	XMVECTOR AR2X = XMVectorAbs(R2X);
+
+
+	XMVECTOR minOverlap = XMVectorReplicate(FLT_MAX);
+	XMVECTOR collisionAxis = XMVectorZero();
+
+	// Helper lambda to check overlap and update minimum overlap axis
+	auto TestAxis = [&](XMVECTOR _d, XMVECTOR _d_A, XMVECTOR _d_B, XMVECTOR _axis) -> void
+	{
+		XMVECTOR overlap = XMVectorSubtract(XMVectorAdd(_d_A, _d_B), XMVectorAbs(_d));
+		if (XMVector3Less(overlap, minOverlap))
+		{
+			minOverlap = overlap;
+			collisionAxis = _axis;
+		}
+	};
+
+
+	XMVECTOR d, d_A, d_B;
+
+	d = XMVectorSplatX(t);
+	d_A = XMVectorSplatX(h_A);
+	d_B = XMVector3Dot(h_B, AR0X);
+	TestAxis(d, d_A, d_B, XMVectorSet(1, 0, 0, 0));
+
+	d = XMVectorSplatY(t);
+	d_A = XMVectorSplatY(h_A);
+	d_B = XMVector3Dot(h_B, AR1X);
+	TestAxis(d, d_A, d_B, XMVectorSet(0, 1, 0, 0));
+
+	d = XMVectorSplatZ(t);
+	d_A = XMVectorSplatZ(h_A);
+	d_B = XMVector3Dot(h_B, AR2X);
+	TestAxis(d, d_A, d_B, XMVectorSet(0, 0, 1, 0));
+
+
+	return collisionAxis;
 }
 
 CBounding_OBB::OBB_COL_DESC CBounding_OBB::Compute_OBBColDesc()
@@ -77,6 +151,42 @@ CBounding_OBB::OBB_COL_DESC CBounding_OBB::Compute_OBBColDesc()
 	}
 
 	return OBBDesc;
+}
+
+void CBounding_OBB::TransformMyDesc(_fmatrix WorldMatrix)
+{
+	// Load the box.
+	XMVECTOR vCenter = XMLoadFloat3(&m_MyOriginalDesc._Center);
+	XMVECTOR vExtents = XMLoadFloat3(&m_MyOriginalDesc._Extents);
+	XMVECTOR vOrientation = XMLoadFloat4(&m_MyOriginalDesc._Orientation);
+
+	assert(DirectX::Internal::XMQuaternionIsUnit(vOrientation));
+
+	// Composite the box rotation and the transform rotation.
+	XMMATRIX nM;
+	nM.r[0] = XMVector3Normalize(WorldMatrix.r[0]);
+	nM.r[1] = XMVector3Normalize(WorldMatrix.r[1]);
+	nM.r[2] = XMVector3Normalize(WorldMatrix.r[2]);
+	nM.r[3] = g_XMIdentityR3;
+	XMVECTOR Rotation = XMQuaternionRotationMatrix(nM);
+	vOrientation = XMQuaternionMultiply(vOrientation, Rotation);
+
+	// Transform the center.
+	vCenter = XMVector3Transform(vCenter, WorldMatrix);
+
+	// Scale the box extents.
+	XMVECTOR dX = XMVector3Length(WorldMatrix.r[0]);
+	XMVECTOR dY = XMVector3Length(WorldMatrix.r[1]);
+	XMVECTOR dZ = XMVector3Length(WorldMatrix.r[2]);
+
+	XMVECTOR VectorScale = XMVectorSelect(dY, dX, g_XMSelect1000);
+	VectorScale = XMVectorSelect(dZ, VectorScale, g_XMSelect1100);
+	vExtents = XMVectorMultiply(vExtents, VectorScale);
+
+	// Store the box.
+	XMStoreFloat3(&m_MyDesc._Center, vCenter);
+	XMStoreFloat3(&m_MyDesc._Extents, vExtents);
+	XMStoreFloat4(&m_MyDesc._Orientation, vOrientation);
 }
 
 _bool CBounding_OBB::Intersect(CBounding_OBB * pTargetBounding)
