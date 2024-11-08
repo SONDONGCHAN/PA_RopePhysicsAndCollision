@@ -90,10 +90,12 @@ public:
 
 public:
 	void	Reset_Iscoll();
+	class CBounding* Get_Bounding() { return m_pBounding; }
+
 
 private:
 	TYPE			m_eType = { TYPE_END };
-	class CBounding* m_pBounding = { nullptr };
+	CBounding* m_pBounding = { nullptr };
 
 	unordered_set<CCollider*> m_CurrentCollisions;
 	CGameObject:: ColData m_ColData;

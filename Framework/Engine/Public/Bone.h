@@ -40,6 +40,7 @@ private:
 	_char			m_szName[MAX_PATH] = "";
 	_float4x4		m_TransformationMatrix;		/* 부모를 기준으로 표현된 나의 상태 행렬. */
 	_float4x4		m_CombinedTransformationMatrix; /* 나의 TransformationMatrix * 부모`s m_CombinedTransformationMatrix*/
+	
 	_float4x4		m_PreTransformationMatrix;
 
 	_int			m_iParentBoneIndex = { 0 };

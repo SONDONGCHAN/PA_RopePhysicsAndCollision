@@ -42,15 +42,17 @@ public:
 	virtual void Tick(_fmatrix WorldMatrix) override;
 	virtual HRESULT Render(PrimitiveBatch<VertexPositionColor>* pBatch) override;
 	virtual _bool Intersect(CCollider::TYPE eType, CBounding * pBounding) override;
-	_vector GetColFace(My_Desc* _Target_Desc);
+	_vector CalColFace(My_Desc* _Target_Desc);
 
 public:
 	OBB_COL_DESC Compute_OBBColDesc();
 
 private:
 	void	TransformMyDesc(_fmatrix WorldMatrix);
+
 public:
-	My_Desc* Get_MyDesc() { return &m_MyDesc; }
+	My_Desc*	Get_MyDesc() { return &m_MyDesc; }
+	_vector		Get_ColFace() { return vColFace; }
 
 private:
 	BoundingOrientedBox*				m_pOriginalOBB = { nullptr };

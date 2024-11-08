@@ -126,6 +126,21 @@ void CPlayer::Event_CollisionEnter(ColData* _ColData)
 		{
 			m_vVelocity = XMVectorSet(0.f, 0.f, 0.f, 0.f);
 		}
+
+		_vector vFace = dynamic_cast<CBounding_OBB*>(m_pColliderCom->Get_Bounding())->Get_ColFace();
+		
+		if (vFace.m128_f32[0] > 0.5f)
+		{
+			int a = 0;
+		}
+		else if (vFace.m128_f32[1] > 0.5f)
+		{
+			int a = 0;
+		}
+		else if (vFace.m128_f32[2] > 0.5f)
+		{
+			int a = 0;
+		}
 	}
 }
 

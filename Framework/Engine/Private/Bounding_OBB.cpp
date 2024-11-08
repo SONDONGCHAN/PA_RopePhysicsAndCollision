@@ -68,17 +68,89 @@ _bool CBounding_OBB::Intersect(CCollider::TYPE eType, CBounding * pBounding)
 
 _vector CBounding_OBB::CalColFace(My_Desc* _Target_Desc)
 {
+	//// Build the 3x3 rotation matrix that defines the orientation of B relative to A.
+	//XMVECTOR A_quat = XMLoadFloat4(&m_MyDesc._Orientation);
+	//XMVECTOR B_quat = XMLoadFloat4(&_Target_Desc->_Orientation);
+
+	//XMVECTOR Q = XMQuaternionMultiply(A_quat, XMQuaternionConjugate(B_quat));
+	//XMMATRIX R = XMMatrixRotationQuaternion(Q);
+
+	//// Compute the translation of B relative to A.
+	//XMVECTOR A_cent = XMLoadFloat3(&m_MyDesc._Center);
+	//XMVECTOR B_cent = XMLoadFloat3(&_Target_Desc->_Center);
+	//XMVECTOR t = XMVector3InverseRotate(XMVectorSubtract(B_cent, A_cent), A_quat);
+
+
+	//// Load extents of A and B.
+	//XMVECTOR h_A = XMLoadFloat3(&m_MyDesc._Extents);
+	//XMVECTOR h_B = XMLoadFloat3(&_Target_Desc->_Extents);
+
+	//// Rows. Note R[0,1,2]X.w = 0.
+	//XMVECTOR R0X = R.r[0];
+	//XMVECTOR R1X = R.r[1];
+	//XMVECTOR R2X = R.r[2];
+
+	//R = XMMatrixTranspose(R);
+
+	//// Columns. Note RX[0,1,2].w = 0.
+	//XMVECTOR RX0 = R.r[0];
+	//XMVECTOR RX1 = R.r[1];
+	//XMVECTOR RX2 = R.r[2];
+
+	//// Absolute value of rows.
+	//XMVECTOR AR0X = XMVectorAbs(R0X);
+	//XMVECTOR AR1X = XMVectorAbs(R1X);
+	//XMVECTOR AR2X = XMVectorAbs(R2X);
+
+	//// Absolute value of columns.
+	//XMVECTOR ARX0 = XMVectorAbs(RX0);
+	//XMVECTOR ARX1 = XMVectorAbs(RX1);
+	//XMVECTOR ARX2 = XMVectorAbs(RX2);
+
+
+	//XMVECTOR minOverlap = XMVectorReplicate(FLT_MAX);
+	//XMVECTOR collisionAxis = XMVectorZero();
+
+	//// Helper lambda to check overlap and update minimum overlap axis
+	//auto TestAxis = [&](XMVECTOR _d, XMVECTOR _d_A, XMVECTOR _d_B, XMVECTOR _axis) -> void
+	//{
+	//	XMVECTOR overlap = XMVectorSubtract(XMVectorAdd(_d_A, _d_B), XMVectorAbs(_d));
+	//	if (XMVector3Less(overlap, minOverlap))
+	//	{
+	//		minOverlap = overlap;
+	//		collisionAxis = _axis;
+	//	}
+	//};
+
+
+	//XMVECTOR d, d_A, d_B;
+
+	//d = XMVectorSplatX(t);
+	//d_A = XMVectorSplatX(h_A);
+	//d_B = XMVector3Dot(h_B, AR0X);
+	//TestAxis(d, d_A, d_B, R0X);
+
+	//d = XMVectorSplatY(t);
+	//d_A = XMVectorSplatY(h_A);
+	//d_B = XMVector3Dot(h_B, AR1X);
+	//TestAxis(d, d_A, d_B, R1X);
+
+	//d = XMVectorSplatZ(t);
+	//d_A = XMVectorSplatZ(h_A);
+	//d_B = XMVector3Dot(h_B, AR2X);
+	//TestAxis(d, d_A, d_B, R2X);
+
 	// Build the 3x3 rotation matrix that defines the orientation of B relative to A.
 	XMVECTOR A_quat = XMLoadFloat4(&m_MyDesc._Orientation);
 	XMVECTOR B_quat = XMLoadFloat4(&_Target_Desc->_Orientation);
 
-	XMVECTOR Q = XMQuaternionMultiply(A_quat, XMQuaternionConjugate(B_quat));
+	XMVECTOR Q = XMQuaternionMultiply(B_quat, XMQuaternionConjugate(A_quat));
 	XMMATRIX R = XMMatrixRotationQuaternion(Q);
 
 	// Compute the translation of B relative to A.
 	XMVECTOR A_cent = XMLoadFloat3(&m_MyDesc._Center);
 	XMVECTOR B_cent = XMLoadFloat3(&_Target_Desc->_Center);
-	XMVECTOR t = XMVector3InverseRotate(XMVectorSubtract(B_cent, A_cent), A_quat);
+	XMVECTOR t = XMVector3InverseRotate(XMVectorSubtract(A_quat, B_cent), B_cent);
 
 
 	// Load extents of A and B.
@@ -90,10 +162,22 @@ _vector CBounding_OBB::CalColFace(My_Desc* _Target_Desc)
 	XMVECTOR R1X = R.r[1];
 	XMVECTOR R2X = R.r[2];
 
+	R = XMMatrixTranspose(R);
+
+	// Columns. Note RX[0,1,2].w = 0.
+	XMVECTOR RX0 = R.r[0];
+	XMVECTOR RX1 = R.r[1];
+	XMVECTOR RX2 = R.r[2];
+
 	// Absolute value of rows.
 	XMVECTOR AR0X = XMVectorAbs(R0X);
 	XMVECTOR AR1X = XMVectorAbs(R1X);
 	XMVECTOR AR2X = XMVectorAbs(R2X);
+
+	// Absolute value of columns.
+	XMVECTOR ARX0 = XMVectorAbs(RX0);
+	XMVECTOR ARX1 = XMVectorAbs(RX1);
+	XMVECTOR ARX2 = XMVectorAbs(RX2);
 
 
 	XMVECTOR minOverlap = XMVectorReplicate(FLT_MAX);
@@ -110,24 +194,22 @@ _vector CBounding_OBB::CalColFace(My_Desc* _Target_Desc)
 		}
 	};
 
-
 	XMVECTOR d, d_A, d_B;
 
 	d = XMVectorSplatX(t);
 	d_A = XMVectorSplatX(h_A);
 	d_B = XMVector3Dot(h_B, AR0X);
-	TestAxis(d, d_A, d_B, XMVectorSet(1, 0, 0, 0));
+	TestAxis(d, d_A, d_B, R0X);
 
 	d = XMVectorSplatY(t);
 	d_A = XMVectorSplatY(h_A);
 	d_B = XMVector3Dot(h_B, AR1X);
-	TestAxis(d, d_A, d_B, XMVectorSet(0, 1, 0, 0));
+	TestAxis(d, d_A, d_B, R1X);
 
 	d = XMVectorSplatZ(t);
 	d_A = XMVectorSplatZ(h_A);
 	d_B = XMVector3Dot(h_B, AR2X);
-	TestAxis(d, d_A, d_B, XMVectorSet(0, 0, 1, 0));
-
+	TestAxis(d, d_A, d_B, R2X);
 
 	return collisionAxis;
 }
