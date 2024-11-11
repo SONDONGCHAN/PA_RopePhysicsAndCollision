@@ -24,8 +24,9 @@ public:
 	{
 		STATE_IDLE,		// 대기 상태
 		STATE_MOVE,		// 이동
-		STATE_FALLING,	// 공중 이동
+		STATE_FALLING,	// 공중
 		STATE_ATTACK,	// 공격
+		STATE_CLIMING,	// 클라이밍
 	};
 
 	enum class JumpState
@@ -34,8 +35,9 @@ public:
 		JUMPING,		// 점프 중
 		SWINGING,		// 스윙 중
 		FALLING,		// 낙하 중
-	};
+		ONOBJECT,		// 오브젝트 위
 
+	};
 
 	enum PlayerAnim
 	{
@@ -129,7 +131,7 @@ private:
 
 private:
 	const	_float m_fGravity{ -9.81f };		// 중력 가속도
-	const	_float m_fJumpforce{ 25.f };		// 초기 점프 속도
+	const	_float m_fJumpforce{ 20.f };		// 초기 점프 속도
 	const	_float m_fTerminalVelocity = -25.f; // 최대 낙하 속도
 	const	_float m_fDragCoefficient = 0.1f;	// 공기 저항 계수
 

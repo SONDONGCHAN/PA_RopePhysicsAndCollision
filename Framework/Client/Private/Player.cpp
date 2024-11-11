@@ -118,29 +118,24 @@ void CPlayer::Event_CollisionEnter(ColData* _ColData)
 {
 	if (_ColData->eMyColType == COL_STATIC_OBJECT)
 	{
+		_vector vFace = dynamic_cast<CBounding_OBB*>(m_pColliderCom->Get_Bounding())->Get_ColFace();
+
 		if (m_eJumpState == JumpState::SWINGING)
 		{
 			Escape_Swing(JumpState::FALLING);
 		}
 		else
 		{
-			m_vVelocity = XMVectorSet(0.f, 0.f, 0.f, 0.f);
+			m_vVelocity = XMVectorSet(0.f, 0.f, 0.f, 0.f) ;
+		}
+		
+		if (vFace.m128_f32[1] > 0.9f)
+		{
+			m_eJumpState = JumpState::ONOBJECT;
+			m_eCurrentState = PlayerState::STATE_IDLE;
+			m_eNextState = PlayerState::STATE_IDLE;
 		}
 
-		_vector vFace = dynamic_cast<CBounding_OBB*>(m_pColliderCom->Get_Bounding())->Get_ColFace();
-		
-		if (vFace.m128_f32[0] > 0.5f)
-		{
-			int a = 0;
-		}
-		else if (vFace.m128_f32[1] > 0.5f)
-		{
-			int a = 0;
-		}
-		else if (vFace.m128_f32[2] > 0.5f)
-		{
-			int a = 0;
-		}
 	}
 }
 
@@ -470,6 +465,10 @@ void CPlayer::Handle_Jump(_float fTimeDelta)
 	else if (m_eJumpState == JumpState::SWINGING)
 	{
 		Handle_Swing(fTimeDelta);
+	}
+	else if (m_eJumpState == JumpState::ONOBJECT)
+	{
+
 	}
 }
 

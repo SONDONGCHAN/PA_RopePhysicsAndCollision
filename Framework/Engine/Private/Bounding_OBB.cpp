@@ -122,7 +122,6 @@ _vector CBounding_OBB::CalColFace(My_Desc* _Target_Desc)
 	//	}
 	//};
 
-
 	//XMVECTOR d, d_A, d_B;
 
 	//d = XMVectorSplatX(t);
@@ -140,6 +139,9 @@ _vector CBounding_OBB::CalColFace(My_Desc* _Target_Desc)
 	//d_B = XMVector3Dot(h_B, AR2X);
 	//TestAxis(d, d_A, d_B, R2X);
 
+	////////////////////////////////
+	////////////////////////////////
+
 	// Build the 3x3 rotation matrix that defines the orientation of B relative to A.
 	XMVECTOR A_quat = XMLoadFloat4(&m_MyDesc._Orientation);
 	XMVECTOR B_quat = XMLoadFloat4(&_Target_Desc->_Orientation);
@@ -150,7 +152,7 @@ _vector CBounding_OBB::CalColFace(My_Desc* _Target_Desc)
 	// Compute the translation of B relative to A.
 	XMVECTOR A_cent = XMLoadFloat3(&m_MyDesc._Center);
 	XMVECTOR B_cent = XMLoadFloat3(&_Target_Desc->_Center);
-	XMVECTOR t = XMVector3InverseRotate(XMVectorSubtract(A_quat, B_cent), B_cent);
+	XMVECTOR t = XMVector3InverseRotate(XMVectorSubtract(A_cent, B_cent), B_quat);
 
 
 	// Load extents of A and B.
@@ -187,29 +189,43 @@ _vector CBounding_OBB::CalColFace(My_Desc* _Target_Desc)
 	auto TestAxis = [&](XMVECTOR _d, XMVECTOR _d_A, XMVECTOR _d_B, XMVECTOR _axis) -> void
 	{
 		XMVECTOR overlap = XMVectorSubtract(XMVectorAdd(_d_A, _d_B), XMVectorAbs(_d));
-		if (XMVector3Less(overlap, minOverlap))
+		if (XMVectorGetX(overlap) < XMVectorGetX(minOverlap))
 		{
 			minOverlap = overlap;
 			collisionAxis = _axis;
 		}
 	};
 
+	// 기본 축 정의
+	XMVECTOR baseX = XMVectorSet(1.f, 0, 0, 0);
+	XMVECTOR baseY = XMVectorSet(0, 1.f, 0, 0);
+	XMVECTOR baseZ = XMVectorSet(0, 0, 1.f, 0);
+	// 기본 축 회전
+	XMVECTOR normalX = XMVector3Rotate(baseX, B_quat);
+	XMVECTOR normalY = XMVector3Rotate(baseY, B_quat);
+	XMVECTOR normalZ = XMVector3Rotate(baseZ, B_quat);
+
 	XMVECTOR d, d_A, d_B;
 
 	d = XMVectorSplatX(t);
-	d_A = XMVectorSplatX(h_A);
-	d_B = XMVector3Dot(h_B, AR0X);
-	TestAxis(d, d_A, d_B, R0X);
-
+	d_B = XMVectorSplatX(h_B);
+	d_A = XMVector3Dot(h_A, AR0X);
+	TestAxis(d, d_B, d_A, normalX);
+	
 	d = XMVectorSplatY(t);
-	d_A = XMVectorSplatY(h_A);
-	d_B = XMVector3Dot(h_B, AR1X);
-	TestAxis(d, d_A, d_B, R1X);
-
+	d_B = XMVectorSplatY(h_B);
+	d_A = XMVector3Dot(h_A, AR1X);
+	TestAxis(d, d_B, d_A, normalY);
+	
 	d = XMVectorSplatZ(t);
-	d_A = XMVectorSplatZ(h_A);
-	d_B = XMVector3Dot(h_B, AR2X);
-	TestAxis(d, d_A, d_B, R2X);
+	d_B = XMVectorSplatZ(h_B);
+	d_A = XMVector3Dot(h_A, AR2X);
+	TestAxis(d, d_B, d_A, normalZ);
+
+	if (XMVectorGetX(XMVector3Dot(collisionAxis, t)) < 0)
+	{
+		collisionAxis = XMVectorNegate(collisionAxis);
+	}
 
 	return collisionAxis;
 }
