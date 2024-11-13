@@ -50,6 +50,7 @@ HRESULT CCollider::Initialize(void * pArg)
 {
 	ColliderInitData* pInitData = ((ColliderInitData*)pArg);
 	m_ColData = pInitData->ColData;
+	m_ColData.pCol = this;
 
 	switch (m_eType)
 	{

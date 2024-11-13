@@ -8,7 +8,6 @@ namespace Client
 {
 	enum LEVEL { LEVEL_STATIC, LEVEL_LOADING, LEVEL_LOGO, LEVEL_GAMEPLAY, LEVEL_END };
 
-	enum Direction { DIR_FRONT, DIR_BACK, DIR_LEFT, DIR_RIGHT, DIR_FLEFT, DIR_FRIGHT, DIR_BLEFT, DIR_BRIGHT, DIR_END };
 
 	const unsigned int		g_iWinSizeX = 1280;
 	const unsigned int		g_iWinSizeY = 720;

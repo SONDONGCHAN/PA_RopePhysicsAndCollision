@@ -39,7 +39,7 @@ HRESULT CPlayer::Initialize(void * pArg)
 {
 	LANDOBJ_DESC*	pGameObjectDesc = (LANDOBJ_DESC*)pArg;
 
-	pGameObjectDesc->fSpeedPerSec = 10.f;
+	pGameObjectDesc->fSpeedPerSec = 5.f;
 	pGameObjectDesc->fRotationPerSec = XMConvertToRadians(90.0f);
 
 	if (FAILED(__super::Initialize(pArg)))
@@ -130,12 +130,47 @@ void CPlayer::Event_CollisionEnter(ColData* _ColData)
 		}
 		
 		if (vFace.m128_f32[1] > 0.9f)
-		{
-			m_eJumpState = JumpState::ONOBJECT;
-			m_eCurrentState = PlayerState::STATE_IDLE;
-			m_eNextState = PlayerState::STATE_IDLE;
-		}
+		{		
+			if (m_pLandColliders.empty())
+			{ 
+				m_eJumpState	= JumpState::ONOBJECT;
+				m_eCurrentState = PlayerState::STATE_IDLE;
+				m_eNextState	= PlayerState::STATE_IDLE;
 
+				m_pCurrentLandCollider = _ColData->pCol;
+				m_pLandColliders.push_back(_ColData->pCol);
+			}
+			else
+			{
+				//auto iter = find(m_pLandColliders.begin(), m_pLandColliders.end(), _ColData->pCol);
+				//if (iter == m_pLandColliders.end())
+					m_pLandColliders.push_back(_ColData->pCol);
+			}
+		}
+		else if (vFace.m128_f32[1] < -0.9f)
+		{
+			return;
+		}
+		else
+		{
+			if (m_pClimbColliders.empty())
+			{
+				m_eJumpState	= JumpState::CLIMING;
+				m_eCurrentState = PlayerState::STATE_CLIMING;
+				m_eNextState	= PlayerState::STATE_CLIMING;
+
+				m_pCurrentClimbCollider = _ColData->pCol;
+				m_pClimbColliders.push_back(_ColData->pCol);
+
+				m_pTransformCom->Set_Look_ForLandObject(-vFace);
+			}
+			else
+			{
+				//auto iter = find(m_pClimbColliders.begin(), m_pClimbColliders.end(), _ColData->pCol);
+				//if (iter == m_pClimbColliders.end())
+					m_pClimbColliders.push_back(_ColData->pCol);
+			}
+		}
 	}
 }
 
@@ -146,13 +181,51 @@ void CPlayer::Event_CollisionStay(ColData* _ColData)
 
 void CPlayer::Event_CollisionExit(ColData* _ColData)
 {
+	if (_ColData->eMyColType == COL_STATIC_OBJECT)
+	{
+		auto iter = find(m_pLandColliders.begin(), m_pLandColliders.end(), _ColData->pCol);
+		if(iter != m_pLandColliders.end())
+			m_pLandColliders.erase(iter);
 
+		if (_ColData->pCol == m_pCurrentLandCollider)
+		{
+			if (m_pLandColliders.empty())
+			{
+				m_eJumpState = JumpState::FALLING;
+				m_eCurrentState = PlayerState::STATE_FALLING;
+				m_eNextState = PlayerState::STATE_FALLING;
+				m_pCurrentLandCollider = nullptr;
+			}
+			else
+				m_pCurrentLandCollider = m_pLandColliders.front();
+		}
+
+		iter = find(m_pClimbColliders.begin(), m_pClimbColliders.end(), _ColData->pCol);
+		if (iter != m_pClimbColliders.end())
+			m_pClimbColliders.erase(iter);
+
+		if (_ColData->pCol == m_pCurrentClimbCollider)
+		{
+			if (m_pClimbColliders.empty())
+			{
+				m_eJumpState = JumpState::FALLING;
+				m_eCurrentState = PlayerState::STATE_FALLING;
+				m_eNextState = PlayerState::STATE_FALLING;
+				m_pCurrentClimbCollider = nullptr;
+			}
+			else
+				m_pCurrentClimbCollider = m_pClimbColliders.front();
+		}
+	}
 }
 
 
 void CPlayer::Start_Stiff_Simulating(_vector _vDir, _vector _vPos, _float _fM, _float _fLastM)
 {
 	if (nullptr == m_pSimulationPool)
+		return; 
+
+	if (m_eJumpState == JumpState::ONGROUND || m_eJumpState == JumpState::ONOBJECT)
 		return;
 
 	CRope_Simulation::Rope_Simulation_Data pData;
@@ -264,6 +337,10 @@ void CPlayer::Update_State(_float fTimeDelta)
 		Handle_FallingState(fTimeDelta);
 		break;
 
+	case PlayerState::STATE_CLIMING:
+		Handle_ClimingState(fTimeDelta);
+		break;
+
 	case PlayerState::STATE_ATTACK:
 		Handle_AttackState(fTimeDelta);
 		break;
@@ -294,7 +371,7 @@ void CPlayer::Handle_IdleState(_float fTimeDelta)
 
 	if (KEYINPUT(DIK_W) || KEYINPUT(DIK_A) || KEYINPUT(DIK_S) || KEYINPUT(DIK_D))
 	{	
-		if(m_eJumpState == JumpState::ONGROUND)
+		if(m_eJumpState == JumpState::ONGROUND || m_eJumpState == JumpState::ONOBJECT)
 			Change_State(PlayerState::STATE_MOVE);
 		else
 			Change_State(PlayerState::STATE_FALLING);
@@ -313,10 +390,10 @@ void CPlayer::Handle_MoveState(_float fTimeDelta)
 		if (KEYPRESSING(DIK_W))
 		{
 			if (KEYPRESSING(DIK_A))
-				Set_Dir_From_Cam(fTimeDelta, Direction::DIR_FLEFT);
+				Set_Dir_From_Cam(fTimeDelta, Direction::DIR_FRONT_LEFT);
 
 			else if (KEYPRESSING(DIK_D))
-				Set_Dir_From_Cam(fTimeDelta, Direction::DIR_FRIGHT);
+				Set_Dir_From_Cam(fTimeDelta, Direction::DIR_FRONT_RIGHT);
 
 			else
 				Set_Dir_From_Cam(fTimeDelta, Direction::DIR_FRONT);
@@ -324,10 +401,10 @@ void CPlayer::Handle_MoveState(_float fTimeDelta)
 		else if (KEYPRESSING(DIK_S))
 		{
 			if (KEYPRESSING(DIK_A))
-				Set_Dir_From_Cam(fTimeDelta, Direction::DIR_BLEFT);
+				Set_Dir_From_Cam(fTimeDelta, Direction::DIR_BACK_LEFT);
 
 			else if (KEYPRESSING(DIK_D))
-				Set_Dir_From_Cam(fTimeDelta, Direction::DIR_BRIGHT);
+				Set_Dir_From_Cam(fTimeDelta, Direction::DIR_BACK_RIGHT);
 
 			else
 				Set_Dir_From_Cam(fTimeDelta, Direction::DIR_BACK);
@@ -367,11 +444,11 @@ void CPlayer::Handle_FallingState(_float fTimeDelta)
 		{
 			if (KEYPRESSING(DIK_A))
 			{ 
-				vDir = Get_Dir_From_Cam(Direction::DIR_FLEFT);
+				vDir = Get_Dir_From_Cam(Direction::DIR_FRONT_LEFT);
 			}
 			else if (KEYPRESSING(DIK_D))
 			{
-				vDir = Get_Dir_From_Cam(Direction::DIR_FRIGHT);
+				vDir = Get_Dir_From_Cam(Direction::DIR_FRONT_RIGHT);
 			}
 			else
 			{
@@ -382,11 +459,11 @@ void CPlayer::Handle_FallingState(_float fTimeDelta)
 		{
 			if (KEYPRESSING(DIK_A))
 			{
-				vDir = Get_Dir_From_Cam(Direction::DIR_BLEFT);
+				vDir = Get_Dir_From_Cam(Direction::DIR_BACK_LEFT);
 			}
 			else if (KEYPRESSING(DIK_D))
 			{
-				vDir = Get_Dir_From_Cam(Direction::DIR_BRIGHT);
+				vDir = Get_Dir_From_Cam(Direction::DIR_BACK_RIGHT);
 			}
 			else
 			{
@@ -417,10 +494,59 @@ void CPlayer::Handle_FallingState(_float fTimeDelta)
 		}
 	}
 	Set_Dir_From_Velocity(fTimeDelta);
-	//else
-	//{
-	//	Change_State(PlayerState::STATE_IDLE);
-	//}
+
+}
+
+void CPlayer::Handle_ClimingState(_float fTimeDelta)
+{
+	if (m_eJumpState == JumpState::SWINGING)
+		return;
+
+	Change_Anim(CLIMB_IDLE);
+
+	if (KEYPRESSING(DIK_W) || KEYPRESSING(DIK_A) || KEYPRESSING(DIK_S) || KEYPRESSING(DIK_D))
+	{
+
+		if (KEYPRESSING(DIK_W))
+		{
+			if (KEYPRESSING(DIK_A))
+			{
+				m_pTransformCom->Go_Dir(Direction::DIR_UP_LEFT, fTimeDelta);
+			}
+			else if (KEYPRESSING(DIK_D))
+			{
+				m_pTransformCom->Go_Dir(Direction::DIR_UP_RIGHT, fTimeDelta);
+			}
+			else
+			{
+				m_pTransformCom->Go_Dir(Direction::DIR_UP, fTimeDelta);
+			}
+		}
+		else if (KEYPRESSING(DIK_S))
+		{
+			if (KEYPRESSING(DIK_A))
+			{
+				m_pTransformCom->Go_Dir(Direction::DIR_DOWN_LEFT, fTimeDelta);
+			}
+			else if (KEYPRESSING(DIK_D))
+			{
+				m_pTransformCom->Go_Dir(Direction::DIR_DOWN_RIGHT, fTimeDelta);
+			}
+			else
+			{
+				m_pTransformCom->Go_Dir(Direction::DIR_DOWN, fTimeDelta);
+			}
+		}
+		else if (KEYPRESSING(DIK_A))
+		{
+			m_pTransformCom->Go_Dir(Direction::DIR_LEFT, fTimeDelta);
+		}
+		else if (KEYPRESSING(DIK_D))
+		{
+			m_pTransformCom->Go_Dir(Direction::DIR_RIGHT, fTimeDelta);
+		}
+	}
+
 }
 
 void CPlayer::Handle_AttackState(_float fTimeDelta)
@@ -522,19 +648,19 @@ void CPlayer::Set_Dir_From_Cam(_float fTimeDelta, Direction _DIRType)
 		vTargetDir = vRight;
 		break;
 
-	case Direction::DIR_FLEFT:
+	case Direction::DIR_FRONT_LEFT:
 		vTargetDir = vLook - vRight;
 		break;
 
-	case Direction::DIR_FRIGHT:
+	case Direction::DIR_FRONT_RIGHT:
 		vTargetDir = vLook + vRight;
 		break;
 
-	case Direction::DIR_BLEFT:
+	case Direction::DIR_BACK_LEFT:
 		vTargetDir = (-vLook) - vRight;
 		break;
 
-	case Direction::DIR_BRIGHT:
+	case Direction::DIR_BACK_RIGHT:
 		vTargetDir = (- vLook) + vRight;
 		break;
 	}
@@ -585,19 +711,19 @@ _vector CPlayer::Get_Dir_From_Cam(Direction _DIRType)
 		vTargetDir = vRight;
 		break;
 
-	case Direction::DIR_FLEFT:
+	case Direction::DIR_FRONT_LEFT:
 		vTargetDir = vLook - vRight;
 		break;
 
-	case Direction::DIR_FRIGHT:
+	case Direction::DIR_FRONT_RIGHT:
 		vTargetDir = vLook + vRight;
 		break;
 
-	case Direction::DIR_BLEFT:
+	case Direction::DIR_BACK_LEFT:
 		vTargetDir = (-vLook) - vRight;
 		break;
 
-	case Direction::DIR_BRIGHT:
+	case Direction::DIR_BACK_RIGHT:
 		vTargetDir = (-vLook) + vRight;
 		break;
 	}
@@ -616,11 +742,21 @@ void CPlayer::Set_Dir_From_Velocity(_float fTimeDelta)
 	m_pTransformCom->Set_Look_ForLandObject(vDir);
 }
 
+
 void CPlayer::Start_Jump()
 {
-	if (m_eJumpState == JumpState::ONGROUND) 
+	if (m_eJumpState == JumpState::ONGROUND || m_eJumpState == JumpState::ONOBJECT)
 	{
 		m_vVelocity = XMVectorSetY(m_vVelocity, m_fJumpforce); // 초기 점프 속도 설정
+		m_eJumpState = JumpState::JUMPING;
+		m_eCurrentState = PlayerState::STATE_FALLING;
+		m_eNextState = PlayerState::STATE_FALLING;
+	}
+	else if (m_eJumpState == JumpState::CLIMING)
+	{
+		m_vVelocity = XMVectorSetY(m_vVelocity, 7.f);
+		_vector v = m_pTransformCom->Get_State(CTransform::STATE_LOOK);
+		m_vVelocity -= (5 * v);
 		m_eJumpState = JumpState::JUMPING;
 		m_eCurrentState = PlayerState::STATE_FALLING;
 		m_eNextState = PlayerState::STATE_FALLING;
@@ -790,6 +926,17 @@ void CPlayer::Free()
 	for (auto& Pair : m_PlayerParts)
 		Safe_Release(Pair.second);
 	m_PlayerParts.clear();
+
+	for (auto iter : m_pLandColliders)
+		Safe_Release(iter);
+	m_pLandColliders.clear();
+
+	for (auto iter : m_pClimbColliders)
+		Safe_Release(iter);
+	m_pClimbColliders.clear();
+
+	Safe_Release(m_pCurrentLandCollider);
+	Safe_Release(m_pCurrentClimbCollider);
 
 	Safe_Release(m_pNavigationCom);
 	Safe_Release(m_pColliderCom);

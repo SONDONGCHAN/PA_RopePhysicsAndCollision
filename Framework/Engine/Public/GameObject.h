@@ -20,6 +20,7 @@ public:
 		COL_TYPE	eMyColType;
 		_uint		iTargetColType;
 		_bool		isDead = { false };
+		class CCollider* pCol{ nullptr };
 	};
 
 protected:

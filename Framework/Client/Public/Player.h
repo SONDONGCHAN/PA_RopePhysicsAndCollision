@@ -25,8 +25,8 @@ public:
 		STATE_IDLE,		// 대기 상태
 		STATE_MOVE,		// 이동
 		STATE_FALLING,	// 공중
-		STATE_ATTACK,	// 공격
 		STATE_CLIMING,	// 클라이밍
+		STATE_ATTACK,	// 공격
 	};
 
 	enum class JumpState
@@ -36,7 +36,7 @@ public:
 		SWINGING,		// 스윙 중
 		FALLING,		// 낙하 중
 		ONOBJECT,		// 오브젝트 위
-
+		CLIMING,		// 클라이밍 중
 	};
 
 	enum PlayerAnim
@@ -53,6 +53,7 @@ public:
 		SPRINT_STOP		= 10,	// 질주 중지
 		SPRINT_TO_RUN	= 11,	// 질주 -> 달리기
 
+		CLIMB_IDLE		= 22,	// 클라이밍
 		FLY_NORMAL		= 32,	// 체공 반복	
 	};
 
@@ -95,6 +96,7 @@ private:
 	void	Handle_IdleState(_float fTimeDelta);
 	void	Handle_MoveState(_float fTimeDelta);
 	void	Handle_FallingState(_float fTimeDelta);
+	void	Handle_ClimingState(_float fTimeDelta);
 	void	Handle_AttackState(_float fTimeDelta);
 
 	//
@@ -128,6 +130,12 @@ private:
 private:
 	CSimulation*		m_pCurrentSimulation = { nullptr };
 	CSimulation_Pool*	m_pSimulationPool = { nullptr };
+
+private:
+	list<CCollider*>	m_pLandColliders;
+	CCollider*			m_pCurrentLandCollider{nullptr};
+	list<CCollider*>	m_pClimbColliders;
+	CCollider*			m_pCurrentClimbCollider{ nullptr };
 
 private:
 	const	_float m_fGravity{ -9.81f };		// 중력 가속도

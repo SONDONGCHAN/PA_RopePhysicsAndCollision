@@ -184,6 +184,9 @@
     <Filter Include="01.Utility\03.Component\VIBuffer\Point\DoublePoint">
       <UniqueIdentifier>{1c10c9ab-2fd1-4f10-87f1-a74222ac2b25}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\03.Component\Collider\Bounding\Cylinder">
+      <UniqueIdentifier>{4eb6921d-2e69-4ca7-949c-5644d93edaec}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\public\Base.h">
@@ -366,6 +369,9 @@
     <ClInclude Include="..\Public\VIBuffer_Point.h">
       <Filter>01.Utility\03.Component\VIBuffer\Point\SinglePoint</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Bounding_Cylinder.h">
+      <Filter>01.Utility\03.Component\Collider\Bounding\Cylinder</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\Base.cpp">
@@ -535,6 +541,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\VIBuffer_Point.cpp">
       <Filter>01.Utility\03.Component\VIBuffer\Point\SinglePoint</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Bounding_Cylinder.cpp">
+      <Filter>01.Utility\03.Component\Collider\Bounding\Cylinder</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

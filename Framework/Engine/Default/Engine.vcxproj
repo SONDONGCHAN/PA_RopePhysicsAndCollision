@@ -172,6 +172,7 @@
     <ClInclude Include="..\public\Bone.h" />
     <ClInclude Include="..\public\Bounding.h" />
     <ClInclude Include="..\Public\Bounding_AABB.h" />
+    <ClInclude Include="..\Public\Bounding_Cylinder.h" />
     <ClInclude Include="..\Public\Bounding_OBB.h" />
     <ClInclude Include="..\public\Bounding_Sphere.h" />
     <ClInclude Include="..\public\Camera.h" />
@@ -234,6 +235,7 @@
     <ClCompile Include="..\private\Bone.cpp" />
     <ClCompile Include="..\private\Bounding.cpp" />
     <ClCompile Include="..\Private\Bounding_AABB.cpp" />
+    <ClCompile Include="..\Private\Bounding_Cylinder.cpp" />
     <ClCompile Include="..\Private\Bounding_OBB.cpp" />
     <ClCompile Include="..\private\Bounding_Sphere.cpp" />
     <ClCompile Include="..\private\Camera.cpp" />

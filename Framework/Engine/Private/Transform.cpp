@@ -83,6 +83,57 @@ void CTransform::Go_Right(_float fTimeDelta)
 	Set_State(STATE_POSITION, vPosition);
 }
 
+void CTransform::Go_Dir(Direction _eDirection, _float fTimeDelta)
+{
+	if (_eDirection >= DIR_END)
+		return;
+
+	_vector		vPosition	= Get_State(STATE_POSITION);
+	_vector		vUp			= Get_State(STATE_UP);
+	_vector		vLook		= Get_State(STATE_LOOK);
+	_vector		vRight		= Get_State(STATE_RIGHT);
+
+	_vector		vDir {0.f, 0.f, 1.f, 0.f};
+	
+	switch (_eDirection)
+	{
+	case Direction::DIR_UP:
+		vDir = vUp;
+		break;
+
+	case Direction::DIR_DOWN:
+		vDir = -vUp;
+		break;
+
+	case Direction::DIR_LEFT:
+		vDir = -vRight;
+		break;
+
+	case Direction::DIR_RIGHT:
+		vDir = vRight;
+		break;
+
+	case Direction::DIR_UP_LEFT:
+		vDir = vUp - vRight;
+		break;
+
+	case Direction::DIR_UP_RIGHT:
+		vDir = vUp + vRight;
+		break;
+
+	case Direction::DIR_DOWN_LEFT:
+		vDir = -vUp - vRight;
+		break;
+
+	case Direction::DIR_DOWN_RIGHT:
+		vDir = -vUp + vRight;
+		break;
+	}
+	vPosition += XMVector3Normalize(vDir) * m_fSpeedPerSec * fTimeDelta;
+
+	Set_State(STATE_POSITION, vPosition);
+}
+
 void CTransform::Move(XMVECTOR _Movement, CNavigation* pNavigation)
 {
 	_vector		vPosition = Get_State(STATE_POSITION);

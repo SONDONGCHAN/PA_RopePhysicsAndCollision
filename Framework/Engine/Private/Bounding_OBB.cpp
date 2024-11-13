@@ -25,7 +25,7 @@ HRESULT CBounding_OBB::Initialize(void * pArg)
 
 	return S_OK;
 }
-
+ 
 void CBounding_OBB::Tick(_fmatrix WorldMatrix)
 {
 	m_pOriginalOBB->Transform(*m_pOBB, WorldMatrix);
