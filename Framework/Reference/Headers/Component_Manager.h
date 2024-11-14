@@ -21,6 +21,7 @@
 #include "Bounding_AABB.h"
 #include "Bounding_OBB.h"
 #include "Bounding_Sphere.h"
+#include "Bounding_Capsule.h"
 #pragma endregion
 
 /* 컴포넌트 원형을 레벨별로 보관한다. */

@@ -4,19 +4,11 @@
 
 BEGIN(Engine)
 
-class CBounding_Cylinder final : public CBounding
+class CBounding_Capsule final : public CBounding
 {
-
-public:
-	//typedef struct : public CBounding::BOUNDING_DESC
-	//{
-	//	_float3		vExtents;
-	//	_float3		vRadians; /* x : x축 기준 회전 각도, y : y축 기준 회전 각도, z : z축 기준 회전 각도 */
-	//}OBB_DESC;
-
 private:
-	CBounding_Cylinder(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	virtual ~CBounding_Cylinder() = default;
+	CBounding_Capsule(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	virtual ~CBounding_Capsule() = default;
 
 public:
 	virtual void* Get_Bounding() override { return nullptr; }
@@ -35,14 +27,23 @@ private:
 	_bool Intersect(class CBounding_AABB* pTargetBounding);
 	_bool Intersect(class CBounding_OBB* pTargetBounding);
 	_bool Intersect(class CBounding_Sphere* pTargetBounding);
-	_bool Intersect(CBounding_Cylinder* pTargetBounding);
+	_bool Intersect(class CBounding_Cylinder* pTargetBounding);
+	_bool Intersect(CBounding_Capsule* pTargetBounding);
 
 private:
-	CCollider::CYLINDER_DESC* m_pOriginalMyDesc{ nullptr };
-	CCollider::CYLINDER_DESC* m_pMyDesc{ nullptr };
+	void	Capsule_Tranform(_fmatrix WorldMatrix);
+
+private:
+	CCollider::CAPSULE_DESC m_pOriginalMyDesc{  };
+	CCollider::CAPSULE_DESC m_pMyDesc{  };
+
+	// 렌더링 용
+	BoundingSphere* m_pSphere_1			= { nullptr };
+	BoundingSphere* m_pSphere_2			= { nullptr };
+
 
 public:
-	static CBounding_Cylinder* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, void* pArg);
+	static CBounding_Capsule* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, void* pArg);
 	virtual void Free() override;
 };
 

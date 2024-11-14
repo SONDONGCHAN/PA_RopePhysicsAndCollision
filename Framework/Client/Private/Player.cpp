@@ -61,6 +61,7 @@ HRESULT CPlayer::Initialize(void * pArg)
 		return E_FAIL;
 
 	m_pTransformCom->Set_State(CTransform::STATE_POSITION, _vector{ 250.f, 0.f, 250.f});
+	SetUp_OnTerrain(m_pTransformCom);
 
 	return S_OK;
 }
@@ -75,7 +76,7 @@ void CPlayer::Tick(_float fTimeDelta)
 {
 	KeyInput(fTimeDelta);
 
-	Handle_Jump(fTimeDelta);
+	//Handle_Jump(fTimeDelta);
 
 	for (auto& Pair : m_PlayerParts)
 		(Pair.second)->Tick(fTimeDelta);
@@ -118,59 +119,59 @@ void CPlayer::Event_CollisionEnter(ColData* _ColData)
 {
 	if (_ColData->eMyColType == COL_STATIC_OBJECT)
 	{
-		_vector vFace = dynamic_cast<CBounding_OBB*>(m_pColliderCom->Get_Bounding())->Get_ColFace();
+		//_vector vFace = dynamic_cast<CBounding_OBB*>(m_pColliderCom->Get_Bounding())->Get_ColFace();
 
-		if (m_eJumpState == JumpState::SWINGING)
-		{
-			Escape_Swing(JumpState::FALLING);
-		}
-		else
-		{
-			m_vVelocity = XMVectorSet(0.f, 0.f, 0.f, 0.f) ;
-		}
-		
-		if (vFace.m128_f32[1] > 0.9f)
-		{		
-			if (m_pLandColliders.empty())
-			{ 
-				m_eJumpState	= JumpState::ONOBJECT;
-				m_eCurrentState = PlayerState::STATE_IDLE;
-				m_eNextState	= PlayerState::STATE_IDLE;
+		//if (m_eJumpState == JumpState::SWINGING)
+		//{
+		//	Escape_Swing(JumpState::FALLING);
+		//}
+		//else
+		//{
+		//	m_vVelocity = XMVectorSet(0.f, 0.f, 0.f, 0.f) ;
+		//}
+		//
+		//if (vFace.m128_f32[1] > 0.9f)
+		//{		
+		//	if (m_pLandColliders.empty())
+		//	{ 
+		//		m_eJumpState	= JumpState::ONOBJECT;
+		//		m_eCurrentState = PlayerState::STATE_IDLE;
+		//		m_eNextState	= PlayerState::STATE_IDLE;
 
-				m_pCurrentLandCollider = _ColData->pCol;
-				m_pLandColliders.push_back(_ColData->pCol);
-			}
-			else
-			{
-				//auto iter = find(m_pLandColliders.begin(), m_pLandColliders.end(), _ColData->pCol);
-				//if (iter == m_pLandColliders.end())
-					m_pLandColliders.push_back(_ColData->pCol);
-			}
-		}
-		else if (vFace.m128_f32[1] < -0.9f)
-		{
-			return;
-		}
-		else
-		{
-			if (m_pClimbColliders.empty())
-			{
-				m_eJumpState	= JumpState::CLIMING;
-				m_eCurrentState = PlayerState::STATE_CLIMING;
-				m_eNextState	= PlayerState::STATE_CLIMING;
+		//		m_pCurrentLandCollider = _ColData->pCol;
+		//		m_pLandColliders.push_back(_ColData->pCol);
+		//	}
+		//	else
+		//	{
+		//		//auto iter = find(m_pLandColliders.begin(), m_pLandColliders.end(), _ColData->pCol);
+		//		//if (iter == m_pLandColliders.end())
+		//			m_pLandColliders.push_back(_ColData->pCol);
+		//	}
+		//}
+		//else if (vFace.m128_f32[1] < -0.9f)
+		//{
+		//	return;
+		//}
+		//else
+		//{
+		//	if (m_pClimbColliders.empty())
+		//	{
+		//		m_eJumpState	= JumpState::CLIMING;
+		//		m_eCurrentState = PlayerState::STATE_CLIMING;
+		//		m_eNextState	= PlayerState::STATE_CLIMING;
 
-				m_pCurrentClimbCollider = _ColData->pCol;
-				m_pClimbColliders.push_back(_ColData->pCol);
+		//		m_pCurrentClimbCollider = _ColData->pCol;
+		//		m_pClimbColliders.push_back(_ColData->pCol);
 
-				m_pTransformCom->Set_Look_ForLandObject(-vFace);
-			}
-			else
-			{
-				//auto iter = find(m_pClimbColliders.begin(), m_pClimbColliders.end(), _ColData->pCol);
-				//if (iter == m_pClimbColliders.end())
-					m_pClimbColliders.push_back(_ColData->pCol);
-			}
-		}
+		//		m_pTransformCom->Set_Look_ForLandObject(-vFace);
+		//	}
+		//	else
+		//	{
+		//		//auto iter = find(m_pClimbColliders.begin(), m_pClimbColliders.end(), _ColData->pCol);
+		//		//if (iter == m_pClimbColliders.end())
+		//			m_pClimbColliders.push_back(_ColData->pCol);
+		//	}
+		//}
 	}
 }
 
@@ -183,7 +184,7 @@ void CPlayer::Event_CollisionExit(ColData* _ColData)
 {
 	if (_ColData->eMyColType == COL_STATIC_OBJECT)
 	{
-		auto iter = find(m_pLandColliders.begin(), m_pLandColliders.end(), _ColData->pCol);
+		/*auto iter = find(m_pLandColliders.begin(), m_pLandColliders.end(), _ColData->pCol);
 		if(iter != m_pLandColliders.end())
 			m_pLandColliders.erase(iter);
 
@@ -215,7 +216,7 @@ void CPlayer::Event_CollisionExit(ColData* _ColData)
 			}
 			else
 				m_pCurrentClimbCollider = m_pClimbColliders.front();
-		}
+		}*/
 	}
 }
 
@@ -254,6 +255,16 @@ void CPlayer::End_Simulating()
 
 void CPlayer::KeyInput(_float fTimeDelta)
 {
+	/*µð¹ö±ë*/
+	if (KEYPRESSING(DIK_UP))
+	{
+		m_pTransformCom->Go_Dir(Direction::DIR_UP, fTimeDelta);
+	}
+	if (KEYPRESSING(DIK_DOWN))
+	{
+		m_pTransformCom->Go_Dir(Direction::DIR_DOWN, fTimeDelta);
+	}
+
 	// Á¡ÇÁ
 	if (KEYDOWN(DIK_SPACE))
 		Start_Jump();
@@ -813,7 +824,7 @@ HRESULT CPlayer::Add_Components()
 	ColData.isDead = false;
 
 	
-	CCollider::OBB_DESC	BoundingDesc{};
+	/*CCollider::OBB_DESC	BoundingDesc{};
 	BoundingDesc.vExtents = { 0.2f, 0.8f, 0.2f };
 	BoundingDesc.vCenter = {0.f, BoundingDesc.vExtents.y, 0.f};
 	BoundingDesc.vRadians = {0.f, 0.f, 0.f };
@@ -822,6 +833,19 @@ HRESULT CPlayer::Add_Components()
 	ColliderDesc.OBBDesc = BoundingDesc;
 
 	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Collider_OBB"),
+		TEXT("Com_Collider"), reinterpret_cast<CComponent**>(&m_pColliderCom), &ColliderDesc)))
+		return E_FAIL;*/
+
+	CCollider::CAPSULE_DESC	BoundingDesc{};
+	BoundingDesc.fHeight = 0.6f;
+	BoundingDesc.fRadius = 0.3f;
+	BoundingDesc.vCenter = { 0.f, BoundingDesc.fHeight + BoundingDesc.fRadius, 0.f };
+	BoundingDesc.vDir = { 0.f, 1.f, 0.f };
+
+	ColliderDesc.ColData = ColData;
+	ColliderDesc.CapsuleDesc = BoundingDesc;
+
+	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Collider_Capsule"),
 		TEXT("Com_Collider"), reinterpret_cast<CComponent**>(&m_pColliderCom), &ColliderDesc)))
 		return E_FAIL;
 

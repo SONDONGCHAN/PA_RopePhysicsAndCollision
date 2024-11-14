@@ -1,5 +1,5 @@
 #include "..\Public\Collider.h"
-#include "GameINstance.h"
+#include "GameInstance.h"
 
 CCollider::CCollider(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CComponent(pDevice, pContext)
@@ -62,6 +62,9 @@ HRESULT CCollider::Initialize(void * pArg)
 		break;
 	case TYPE_SPHERE:
 		m_pBounding = CBounding_Sphere::Create(m_pDevice, m_pContext, &pInitData->SphereDesc);
+		break;
+	case TYPE_CAPSULE:
+		m_pBounding = CBounding_Capsule::Create(m_pDevice, m_pContext, &pInitData->CapsuleDesc);
 		break;
 	}
 
