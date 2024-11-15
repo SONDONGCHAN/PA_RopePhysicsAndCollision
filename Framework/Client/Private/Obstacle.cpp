@@ -73,22 +73,22 @@ HRESULT CObstacle::Add_Component()
 	ColData.iTargetColType = COL_NONE;
 	ColData.isDead = false;
 
-	//CCollider::OBB_DESC	BoundingDesc{};
+	CCollider::OBB_DESC	BoundingDesc{};
 
-	//BoundingDesc.vExtents = _float3{4.f, 2.f, 4.f};
-	//BoundingDesc.vRadians = _float3(0.f, 0.f, 0.f);;
-	//BoundingDesc.vCenter = _float3(0.f, BoundingDesc.vExtents.y, 0.f);
+	BoundingDesc.vExtents = _float3{4.f, 2.f, 4.f};
+	BoundingDesc.vRadians = _float3(0.f, 0.f, 0.f);;
+	BoundingDesc.vCenter = _float3(0.f, BoundingDesc.vExtents.y, 0.f);
 
-	CCollider::SPHERE_DESC	BoundingDesc{};
+	//CCollider::SPHERE_DESC	BoundingDesc{};
 
-	BoundingDesc.fRadius = 4.f;
-	BoundingDesc.vCenter = _float3(0.f, BoundingDesc.fRadius, 0.f);
+	//BoundingDesc.fRadius = 4.f;
+	//BoundingDesc.vCenter = _float3(0.f, BoundingDesc.fRadius, 0.f);
 
 
 	ColliderDesc.ColData = ColData;
-	ColliderDesc.SphereDesc = BoundingDesc;
+	ColliderDesc.OBBDesc = BoundingDesc;
 
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Collider_Sphere"),
+	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Collider_OBB"),
 		TEXT("Com_Collider"), reinterpret_cast<CComponent**>(&m_pColliderCom), &ColliderDesc)))
 		return E_FAIL;
 

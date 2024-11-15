@@ -34,6 +34,10 @@ private:
 	void	Capsule_Tranform(_fmatrix WorldMatrix);
 
 private:
+	float SquaredDistanceBetweenPoints(const _vector& point1, const _vector& point2);
+	XMVECTOR ClosestPointOnLineSegment(const _vector& start, const _vector& end, const _vector& point);
+
+private:
 	CCollider::CAPSULE_DESC m_pOriginalMyDesc{  };
 	CCollider::CAPSULE_DESC m_pMyDesc{  };
 

@@ -97,12 +97,12 @@ void CTransform::Go_Dir(Direction _eDirection, _float fTimeDelta)
 	
 	switch (_eDirection)
 	{
-	case Direction::DIR_UP:
-		vDir = vUp;
+	case Direction::DIR_FRONT:
+		vDir = vLook;
 		break;
 
-	case Direction::DIR_DOWN:
-		vDir = -vUp;
+	case Direction::DIR_BACK:
+		vDir = -vLook;
 		break;
 
 	case Direction::DIR_LEFT:
@@ -111,6 +111,31 @@ void CTransform::Go_Dir(Direction _eDirection, _float fTimeDelta)
 
 	case Direction::DIR_RIGHT:
 		vDir = vRight;
+		break;
+
+	case Direction::DIR_FRONT_LEFT:
+		vDir = vLook - vRight;
+		break;
+
+	case Direction::DIR_FRONT_RIGHT:
+		vDir = vLook + vRight;
+		break;
+
+	case Direction::DIR_BACK_LEFT:
+		vDir = -vLook - vRight;
+		break;
+
+	case Direction::DIR_BACK_RIGHT:
+		vDir = -vLook + vRight;
+		break;
+
+
+	case Direction::DIR_UP:
+		vDir = vUp;
+		break;
+
+	case Direction::DIR_DOWN:
+		vDir = -vUp;
 		break;
 
 	case Direction::DIR_UP_LEFT:

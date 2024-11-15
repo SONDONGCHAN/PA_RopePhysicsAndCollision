@@ -72,6 +72,30 @@ void XM_CALLCONV DX::Draw(PrimitiveBatch<VertexPositionColor>* batch,
     DrawRing(batch, origin, xaxis, zaxis, color);
     DrawRing(batch, origin, xaxis, yaxis, color);
     DrawRing(batch, origin, yaxis, zaxis, color);
+
+    _vector vX = { 1.f, 0.f, 0.f, 0.f };
+    _vector vY = { 0.f, 1.f, 0.f, 0.f };
+    _vector vZ = { 0.f, 0.f, 1.f, 0.f };
+    XMVECTOR vXY1 = XMVector3Normalize(vX + vY);
+    XMVECTOR vXY2 = XMVector3Normalize(vX - vY);
+    XMVECTOR vXZ1 = XMVector3Normalize(vX + vZ);
+    XMVECTOR vXZ2 = XMVector3Normalize(vX - vZ);
+    XMVECTOR vYZ1 = XMVector3Normalize(vY + vZ);
+    XMVECTOR vYZ2 = XMVector3Normalize(vY - vZ);
+
+    XMVECTOR XY1axis = vXY1 * radius;
+    XMVECTOR XY2axis = vXY2 * radius;
+    XMVECTOR XZ1axis = vXZ1 * radius;
+    XMVECTOR XZ2axis = vXZ2 * radius;
+    XMVECTOR YZ1axis = vYZ1 * radius;
+    XMVECTOR YZ2axis = vYZ2 * radius;
+
+    DrawRing(batch, origin, XY1axis, zaxis, color);
+    DrawRing(batch, origin, XY2axis, zaxis, color);
+    DrawRing(batch, origin, XZ1axis, yaxis, color);
+    DrawRing(batch, origin, XZ2axis, yaxis, color);
+    DrawRing(batch, origin, YZ1axis, xaxis, color);
+    DrawRing(batch, origin, YZ2axis, xaxis, color);
 }
 
 

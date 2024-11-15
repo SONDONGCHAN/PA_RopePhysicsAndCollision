@@ -39,7 +39,7 @@ HRESULT CPlayer::Initialize(void * pArg)
 {
 	LANDOBJ_DESC*	pGameObjectDesc = (LANDOBJ_DESC*)pArg;
 
-	pGameObjectDesc->fSpeedPerSec = 5.f;
+	pGameObjectDesc->fSpeedPerSec = 3.f;
 	pGameObjectDesc->fRotationPerSec = XMConvertToRadians(90.0f);
 
 	if (FAILED(__super::Initialize(pArg)))
@@ -76,6 +76,7 @@ void CPlayer::Tick(_float fTimeDelta)
 {
 	KeyInput(fTimeDelta);
 
+	/*µð¹ö±ë*/
 	//Handle_Jump(fTimeDelta);
 
 	for (auto& Pair : m_PlayerParts)
@@ -119,6 +120,7 @@ void CPlayer::Event_CollisionEnter(ColData* _ColData)
 {
 	if (_ColData->eMyColType == COL_STATIC_OBJECT)
 	{
+		/*µð¹ö±ë*/
 		//_vector vFace = dynamic_cast<CBounding_OBB*>(m_pColliderCom->Get_Bounding())->Get_ColFace();
 
 		//if (m_eJumpState == JumpState::SWINGING)
@@ -184,6 +186,7 @@ void CPlayer::Event_CollisionExit(ColData* _ColData)
 {
 	if (_ColData->eMyColType == COL_STATIC_OBJECT)
 	{
+		/*µð¹ö±ë*/
 		/*auto iter = find(m_pLandColliders.begin(), m_pLandColliders.end(), _ColData->pCol);
 		if(iter != m_pLandColliders.end())
 			m_pLandColliders.erase(iter);
@@ -394,7 +397,8 @@ void CPlayer::Handle_MoveState(_float fTimeDelta)
 	if (m_eJumpState == JumpState::SWINGING)
 		return;
 
-	if (KEYPRESSING(DIK_W) || KEYPRESSING(DIK_A) || KEYPRESSING(DIK_S) || KEYPRESSING(DIK_D))
+	
+	/*if (KEYPRESSING(DIK_W) || KEYPRESSING(DIK_A) || KEYPRESSING(DIK_S) || KEYPRESSING(DIK_D))
 	{
 		Change_Anim(RUN_CYCLE);
 
@@ -427,6 +431,40 @@ void CPlayer::Handle_MoveState(_float fTimeDelta)
 		else if (KEYPRESSING(DIK_D))
 		{
 			Set_Dir_From_Cam(fTimeDelta, Direction::DIR_RIGHT);
+		}
+	}*/
+
+	/*µð¹ö±ë*/
+	if (KEYPRESSING(DIK_W) || KEYPRESSING(DIK_A) || KEYPRESSING(DIK_S) || KEYPRESSING(DIK_D))
+	{
+		if (KEYPRESSING(DIK_W))
+		{
+			if (KEYPRESSING(DIK_A))
+				m_pTransformCom->Go_Dir(Direction::DIR_FRONT_LEFT, fTimeDelta);
+
+			else if (KEYPRESSING(DIK_D))
+				m_pTransformCom->Go_Dir(Direction::DIR_FRONT_RIGHT, fTimeDelta);
+			else
+				m_pTransformCom->Go_Dir(Direction::DIR_FRONT, fTimeDelta);
+		}
+		else if (KEYPRESSING(DIK_S))
+		{
+			if (KEYPRESSING(DIK_A))
+				m_pTransformCom->Go_Dir(Direction::DIR_BACK_LEFT, fTimeDelta);
+
+			else if (KEYPRESSING(DIK_D))
+				m_pTransformCom->Go_Dir(Direction::DIR_BACK_RIGHT, fTimeDelta);
+
+			else
+				m_pTransformCom->Go_Dir(Direction::DIR_BACK, fTimeDelta);
+		}
+		else if (KEYPRESSING(DIK_A))
+		{
+			m_pTransformCom->Go_Dir(Direction::DIR_LEFT, fTimeDelta);
+		}
+		else if (KEYPRESSING(DIK_D))
+		{
+			m_pTransformCom->Go_Dir(Direction::DIR_RIGHT, fTimeDelta);
 		}
 	}
 	else
@@ -824,17 +862,17 @@ HRESULT CPlayer::Add_Components()
 	ColData.isDead = false;
 
 	
-	/*CCollider::OBB_DESC	BoundingDesc{};
-	BoundingDesc.vExtents = { 0.2f, 0.8f, 0.2f };
-	BoundingDesc.vCenter = {0.f, BoundingDesc.vExtents.y, 0.f};
-	BoundingDesc.vRadians = {0.f, 0.f, 0.f };
+	//CCollider::OBB_DESC	BoundingDesc{};
+	//BoundingDesc.vExtents = { 0.2f, 0.8f, 0.2f };
+	//BoundingDesc.vCenter = {0.f, BoundingDesc.vExtents.y, 0.f};
+	//BoundingDesc.vRadians = {0.f, 0.f, 0.f };
 
-	ColliderDesc.ColData = ColData;
-	ColliderDesc.OBBDesc = BoundingDesc;
+	//ColliderDesc.ColData = ColData;
+	//ColliderDesc.OBBDesc = BoundingDesc;
 
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Collider_OBB"),
-		TEXT("Com_Collider"), reinterpret_cast<CComponent**>(&m_pColliderCom), &ColliderDesc)))
-		return E_FAIL;*/
+	//if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Collider_OBB"),
+	//	TEXT("Com_Collider"), reinterpret_cast<CComponent**>(&m_pColliderCom), &ColliderDesc)))
+	//	return E_FAIL;
 
 	CCollider::CAPSULE_DESC	BoundingDesc{};
 	BoundingDesc.fHeight = 0.6f;
