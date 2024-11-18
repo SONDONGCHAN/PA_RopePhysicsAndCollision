@@ -3,6 +3,7 @@
 #include "Bounding_OBB.h"
 #include "Collider.h"
 
+
 CBounding_Capsule::CBounding_Capsule(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CBounding(pDevice, pContext)
 {
@@ -130,83 +131,8 @@ _bool CBounding_Capsule::Intersect(CBounding_AABB* pTargetBounding)
 
 _bool CBounding_Capsule::Intersect(CBounding_OBB* pTargetBounding)
 {
-	//// OBB의 중심과 크기
-	//XMVECTOR vOBBCenter = XMLoadFloat3(&pTargetBounding->Get_MyDesc()->_Center);
-	//XMVECTOR vOBBExtents = XMLoadFloat3(&pTargetBounding->Get_MyDesc()->_Extents);
-
-	//// 캡슐의 상단과 하단 점
-	//XMVECTOR vTop = XMVectorAdd(XMLoadFloat3(&m_pMyDesc.vCenter), XMVectorScale(XMLoadFloat3(&m_pMyDesc.vDir), m_pMyDesc.fHeight));
-	//XMVECTOR vBot = XMVectorAdd(XMLoadFloat3(&m_pMyDesc.vCenter), -(XMVectorScale(XMLoadFloat3(&m_pMyDesc.vDir), m_pMyDesc.fHeight)));
-
-	//// 캡슐의 중심 축 벡터
-	//XMVECTOR capsuleAxis = XMVectorSubtract(vBot, vTop);
-
-	//// OBB의 축 정보
-	//XMVECTOR obbXAxis, obbYAxis, obbZAxis;
+	//_vector obbXAxis, obbYAxis, obbZAxis;
 	//pTargetBounding->GetOBBAxes(obbXAxis, obbYAxis, obbZAxis);
-
-	//// 분리축 정리를 위한 축들
-	//XMVECTOR Axes[7] = {
-	//	obbXAxis, obbYAxis, obbZAxis,
-	//	capsuleAxis,
-	//	XMVector3Cross(capsuleAxis, obbXAxis),
-	//	XMVector3Cross(capsuleAxis, obbYAxis),
-	//	XMVector3Cross(capsuleAxis, obbZAxis)
-	//};
-
-	//// OBB와 캡슐의 충돌 검사 (분리축 검사)
-	//for (int i = 0; i < 7; ++i) {
-	//	XMVECTOR Axis = Axes[i];
-
-	//	// 캡슐의 투영 거리 계산
-	//	XMVECTOR capsuleStartProj = XMVector3Dot(vTop, Axis);
-	//	XMVECTOR capsuleEndProj = XMVector3Dot(vBot, Axis);
-	//	float capsuleMin = XMVectorGetX(XMVectorMin(capsuleStartProj, capsuleEndProj)) - m_pMyDesc.fRadius;
-	//	float capsuleMax = XMVectorGetX(XMVectorMax(capsuleStartProj, capsuleEndProj)) + m_pMyDesc.fRadius;
-
-	//	// OBB의 투영 거리 계산
-	//	XMVECTOR obbCenterProj = XMVector3Dot(vOBBCenter, Axis);
-	//	float obbRadius = fabsf(XMVectorGetX(XMVector3Dot(vOBBExtents, obbXAxis))) +
-	//		fabsf(XMVectorGetX(XMVector3Dot(vOBBExtents, obbYAxis))) +
-	//		fabsf(XMVectorGetX(XMVector3Dot(vOBBExtents, obbZAxis)));
-	//	float obbMin = XMVectorGetX(obbCenterProj) - obbRadius;
-	//	float obbMax = XMVectorGetX(obbCenterProj) + obbRadius;
-
-	//	// 분리축에서 충돌 여부 판단 (간격이 존재하면 분리됨)
-	//	if (capsuleMax < obbMin || obbMax < capsuleMin)
-	//		return false; // 분리축 발견, 충돌 없음
-	//}
-
-	//// 2. 캡슐의 끝부분(구체)과 OBB 충돌 검사
-	//// OBB의 각 모서리와 캡슐의 끝부분(구체) 사이의 거리를 계산
-	//XMFLOAT3 obbCorners[8];
-	//pTargetBounding->GetCorners(obbCorners);
-
-	//// 캡슐의 상단(구체)
-	//XMVECTOR sphereTopCenter = vTop;
-	//// 캡슐의 하단(구체)
-	//XMVECTOR sphereBotCenter = vBot;
-
-	//// 구체와 OBB의 각 모서리 사이의 거리 계산
-	//for (int i = 0; i < 8; ++i) {
-	//	XMVECTOR obbCorner = XMLoadFloat3(&obbCorners[i]);
-
-	//	// 구체와 모서리 간의 거리 계산 (구체의 반경 + OBB 모서리까지의 거리)
-	//	XMVECTOR distToTop = XMVectorSubtract(obbCorner, sphereTopCenter);
-	//	float distToTopLength = XMVectorGetX(XMVector3Length(distToTop));
-
-	//	XMVECTOR distToBot = XMVectorSubtract(obbCorner, sphereBotCenter);
-	//	float distToBotLength = XMVectorGetX(XMVector3Length(distToBot));
-
-	//	// 캡슐의 반경이 거리보다 작다면 충돌 발생
-	//	if (distToTopLength <= m_pMyDesc.fRadius || distToBotLength <= m_pMyDesc.fRadius)
-	//		return true;
-	//}
-
-	//return true;
-
-	_vector obbXAxis, obbYAxis, obbZAxis;
-	pTargetBounding->GetOBBAxes(obbXAxis, obbYAxis, obbZAxis);
 	_vector vOBBCenter = XMLoadFloat3(&pTargetBounding->Get_MyDesc()->_Center);
 	_vector vOBBExtents = XMLoadFloat3(&pTargetBounding->Get_MyDesc()->_Extents);
 	
@@ -215,36 +141,71 @@ _bool CBounding_Capsule::Intersect(CBounding_OBB* pTargetBounding)
 	// 캡슐의 중심 축 벡터
 	XMVECTOR capsuleAxis = XMVectorSubtract(vBot, vTop);
 
-	XMVECTOR Axes[7] = { 
-		obbXAxis, obbYAxis, obbZAxis,
-		capsuleAxis,
-		XMVector3Cross(capsuleAxis, obbXAxis),
-		XMVector3Cross(capsuleAxis, obbYAxis),
-		XMVector3Cross(capsuleAxis, obbZAxis)
-	};
+	//XMVECTOR NorcapsuleAxis = XMVector3Normalize(capsuleAxis);
+
+	//XMVECTOR Axes[7] = { 
+	//	obbXAxis, 
+	//	obbYAxis, 
+	//	obbZAxis,
+	//	NorcapsuleAxis,
+	//	XMVector3Cross(NorcapsuleAxis, obbXAxis),
+	//	XMVector3Cross(NorcapsuleAxis, obbYAxis),
+	//	XMVector3Cross(NorcapsuleAxis, obbZAxis)
+	//};
 
 	// OBB의 각 축과 캡슐 중심 축 사이의 분리축 검사
-	for (int i = 0; i < 7; ++i) {
-		XMVECTOR Axis = XMVector3Normalize(Axes[i]);
+	//for (int i = 0; i < 7; ++i) {
+	//	XMVECTOR Axis = Axes[i];
 
-		// 캡슐의 투영 거리 계산
-		XMVECTOR capsuleStartProj = XMVector3Dot(vTop, Axis);
-		XMVECTOR capsuleEndProj = XMVector3Dot(vBot, Axis);
-		float capsuleMin = XMVectorGetX(XMVectorMin(capsuleStartProj, capsuleEndProj)) - m_pMyDesc.fRadius;
-		float capsuleMax = XMVectorGetX(XMVectorMax(capsuleStartProj, capsuleEndProj)) + m_pMyDesc.fRadius;
+	//	if (XMVector3LengthSq(Axis).m128_f32[0] < 1e-6f) 
+	//		continue;
 
-		// OBB의 투영 거리 계산
-		XMVECTOR obbCenterProj = XMVector3Dot(vOBBCenter, Axis);
-		float obbRadius = fabsf(XMVectorGetX(XMVector3Dot(obbXAxis * vOBBExtents.m128_f32[0], Axis))) +
-							fabsf(XMVectorGetX(XMVector3Dot(obbYAxis * vOBBExtents.m128_f32[1], Axis))) +
-							fabsf(XMVectorGetX(XMVector3Dot(obbZAxis * vOBBExtents.m128_f32[2], Axis)));
-		float obbMin = XMVectorGetX(obbCenterProj) - obbRadius;
-		float obbMax = XMVectorGetX(obbCenterProj) + obbRadius;
+	//	Axis = XMVector3Normalize(Axes[i]);
 
-		// 분리축에서 충돌 여부 판단 (간격이 존재하면 분리됨)
-		if (capsuleMax < obbMin || obbMax < capsuleMin)
-			return false; // 분리축 발견, 충돌 없음	
-	}
+		//// 캡슐의 투영 거리 계산
+		//XMVECTOR capsuleStartProj = XMVector3Dot(vTop, Axis);
+		//XMVECTOR capsuleEndProj = XMVector3Dot(vBot, Axis);
+
+		//float capsuleMin = XMVectorGetX(XMVectorMin(capsuleStartProj, capsuleEndProj)) - m_pMyDesc.fRadius;
+		//float capsuleMax = XMVectorGetX(XMVectorMax(capsuleStartProj, capsuleEndProj)) + m_pMyDesc.fRadius;
+
+
+		//// OBB의 투영 거리 계산
+		//XMVECTOR obbCenterProj = XMVector3Dot(vOBBCenter, Axis);
+
+		//float obbRadius =	(vOBBExtents.m128_f32[0] * fabsf(XMVectorGetX(XMVector3Dot(obbXAxis, Axis)))) +
+		//					(vOBBExtents.m128_f32[1] * fabsf(XMVectorGetX(XMVector3Dot(obbYAxis, Axis)))) +
+		//					(vOBBExtents.m128_f32[2] * fabsf(XMVectorGetX(XMVector3Dot(obbZAxis, Axis))));
+
+		//float obbMin = XMVectorGetX(obbCenterProj) - obbRadius;
+		//float obbMax = XMVectorGetX(obbCenterProj) + obbRadius;
+
+		//// 분리축에서 충돌 여부 판단 (간격이 존재하면 분리됨)
+		//if (capsuleMax < obbMin || obbMax < capsuleMin)
+		//	return false; // 분리축 발견, 충돌 없음	
+
+
+		
+		float t = XMVectorGetX(XMVector3Dot(XMVectorSubtract(vOBBCenter, vTop), capsuleAxis)) /
+			XMVectorGetX(XMVector3Dot(capsuleAxis, capsuleAxis));
+		t = std::clamp (t, 0.0f, 1.0f); // t를 [0, 1] 사이로 제한
+
+		XMVECTOR closestPointOnCapsule = XMVectorAdd(vTop, XMVectorScale(capsuleAxis, t));
+
+		XMVECTOR closestPointOnOBB = XMVectorClamp(
+			closestPointOnCapsule,
+			vOBBCenter - vOBBExtents,
+			vOBBCenter + vOBBExtents
+		);
+
+		XMVECTOR distanceVec = XMVectorSubtract(closestPointOnCapsule, closestPointOnOBB);
+		float distanceSquared = XMVectorGetX(XMVector3LengthSq(distanceVec));
+
+		if (distanceSquared > m_pMyDesc.fRadius * m_pMyDesc.fRadius) {
+			return false; // 분리축 기준으로도 충돌 없음
+		}
+	//}
+
 	return true;
 }
 
