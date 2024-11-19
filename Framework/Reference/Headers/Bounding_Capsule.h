@@ -35,7 +35,9 @@ private:
 
 private:
 	float SquaredDistanceBetweenPoints(const _vector& point1, const _vector& point2);
-	XMVECTOR ClosestPointOnLineSegment(const _vector& start, const _vector& end, const _vector& point);
+	
+	_vector ClosestPointOnLineSegment(const _vector& start, const _vector& end, const _vector& point);
+	_vector ClosestPointBetweenSegments(const _vector& A1, const _vector& A2, const _vector& B1, const _vector& B2);
 
 private:
 	CCollider::CAPSULE_DESC m_pOriginalMyDesc{  };

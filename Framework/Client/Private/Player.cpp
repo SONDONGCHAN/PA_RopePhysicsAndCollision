@@ -39,7 +39,7 @@ HRESULT CPlayer::Initialize(void * pArg)
 {
 	LANDOBJ_DESC*	pGameObjectDesc = (LANDOBJ_DESC*)pArg;
 
-	pGameObjectDesc->fSpeedPerSec = 3.f;
+	pGameObjectDesc->fSpeedPerSec = 1.f;
 	pGameObjectDesc->fRotationPerSec = XMConvertToRadians(90.0f);
 
 	if (FAILED(__super::Initialize(pArg)))
@@ -267,7 +267,14 @@ void CPlayer::KeyInput(_float fTimeDelta)
 	{
 		m_pTransformCom->Go_Dir(Direction::DIR_DOWN, fTimeDelta);
 	}
-
+	if (KEYDOWN(DIK_LCONTROL))
+	{
+		m_pTransformCom->Set_SpeedPerSec(10.f);
+	}
+	else if (KEYUP(DIK_LCONTROL))
+	{
+		m_pTransformCom->Set_SpeedPerSec(1.f);
+	}
 	// มกวม
 	if (KEYDOWN(DIK_SPACE))
 		Start_Jump();

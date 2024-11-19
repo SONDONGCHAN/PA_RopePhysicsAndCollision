@@ -87,6 +87,9 @@ public:
 	void Set_Look(_fvector direction);
 	void Set_Look_ForLandObject(_fvector direction);
 
+public:
+	void Set_SpeedPerSec(_float _fSpeed) { m_fSpeedPerSec = _fSpeed; }
+
 private:
 	_float4x4			m_WorldMatrix = {};
 
