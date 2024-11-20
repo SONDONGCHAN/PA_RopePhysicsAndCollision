@@ -76,7 +76,7 @@ HRESULT CObstacle::Add_Component()
 	CCollider::OBB_DESC	BoundingDesc{};
 
 	BoundingDesc.vExtents = _float3{4.f, 2.f, 4.f};
-	BoundingDesc.vRadians = _float3(0.f, 0.f, 0.f);;
+	BoundingDesc.vRadians = _float3(XMConvertToRadians(45.f), 0.f, 0.f);;
 	BoundingDesc.vCenter = _float3(0.f, BoundingDesc.vExtents.y, 0.f);
 
 	//CCollider::SPHERE_DESC	BoundingDesc{};

@@ -34,10 +34,13 @@ private:
 	void	Capsule_Tranform(_fmatrix WorldMatrix);
 
 private:
-	float SquaredDistanceBetweenPoints(const _vector& point1, const _vector& point2);
-	
-	_vector ClosestPointOnLineSegment(const _vector& start, const _vector& end, const _vector& point);
+	_vector ClosestPointOnLineSegment(const _vector& point, const _vector& start, const _vector& end);
 	_vector ClosestPointBetweenSegments(const _vector& A1, const _vector& A2, const _vector& B1, const _vector& B2);
+	bool GetIntersectionPoint(
+		_vector A1, _vector d1, // 선분 1의 시작점과 방향 벡터
+		_vector A2, _vector d2, // 선분 2의 시작점과 방향 벡터
+		_vector& intersection    // 교차점 (출력)
+	);
 
 private:
 	CCollider::CAPSULE_DESC m_pOriginalMyDesc{  };
