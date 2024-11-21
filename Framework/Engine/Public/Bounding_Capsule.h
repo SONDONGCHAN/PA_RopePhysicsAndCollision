@@ -41,6 +41,8 @@ private:
 		_vector A2, _vector d2, // 선분 2의 시작점과 방향 벡터
 		_vector& intersection    // 교차점 (출력)
 	);
+	float SegmentSegmentDistanceSq(XMVECTOR p1, XMVECTOR q1, XMVECTOR p2, XMVECTOR q2);
+
 
 private:
 	CCollider::CAPSULE_DESC m_pOriginalMyDesc{  };

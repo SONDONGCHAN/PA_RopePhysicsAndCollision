@@ -135,46 +135,20 @@ _bool CBounding_Capsule::Intersect(CBounding_OBB* pTargetBounding)
 	_vector vOBBExtents = XMLoadFloat3(&pTargetBounding->Get_MyDesc()->_Extents);
 	_vector vOBBOrientation = XMLoadFloat4(&pTargetBounding->Get_MyDesc()->_Orientation);
 
-	// 캡슐의 두 점을 OBB 좌표계로 변환
 	_vector	vTop = XMVectorAdd(XMLoadFloat3(&m_pMyDesc.vCenter), XMVectorScale(XMLoadFloat3(&m_pMyDesc.vDir), m_pMyDesc.fHeight));
 	_vector	vBot = XMVectorAdd(XMLoadFloat3(&m_pMyDesc.vCenter), -(XMVectorScale(XMLoadFloat3(&m_pMyDesc.vDir), m_pMyDesc.fHeight)));
-
+	
+	// 캡슐의 두 점을 OBB 좌표계로 변환
 	_vector vOBBSpaceTop = XMVector3InverseRotate(XMVectorSubtract(vTop, vOBBCenter), vOBBOrientation);
 	_vector vOBBSpaceBot = XMVector3InverseRotate(XMVectorSubtract(vBot, vOBBCenter), vOBBOrientation);
 
-	// 캡슐의 선분과 OBB의 최단 거리 계산
+	// 캡슐내부 선분의 양 끝점과 OBB의 최단 거리 계산
 	_vector clampedTop = XMVectorClamp(vOBBSpaceTop, XMVectorNegate(vOBBExtents), vOBBExtents);
 	_vector clampedBot = XMVectorClamp(vOBBSpaceBot, XMVectorNegate(vOBBExtents), vOBBExtents);
 
-	// OBB내부로 클램프한 Top과 Bot에서 캡슐 선분위의 가장 가까운 점 계산
-	_vector vClosestPoint1 = ClosestPointOnLineSegment(clampedTop, vOBBSpaceTop, vOBBSpaceBot);
-	_vector vClosestPoint2 = ClosestPointOnLineSegment(clampedBot, vOBBSpaceTop, vOBBSpaceBot);
-
-	//두번쨰 클램프
-	_vector clampedTop2 = XMVectorClamp(vClosestPoint1, XMVectorNegate(vOBBExtents), vOBBExtents);
-	_vector clampedBot2 = XMVectorClamp(vClosestPoint2, XMVectorNegate(vOBBExtents), vOBBExtents);
-
-	// 첫번째 클램프와 두번째 클램프를 이용한 방향 벡터
-	_vector DirClampedTop = XMVectorSubtract(clampedTop2, clampedTop);
-	_vector DirClampedBot = XMVectorSubtract(clampedBot2, clampedBot);
-
-	_vector vPoint = XMVectorZero();
-
-	if (GetIntersectionPoint(clampedTop, DirClampedTop, clampedBot, DirClampedBot, vPoint))
-	{
-		_vector vClosestPoint = ClosestPointOnLineSegment(vPoint, vOBBSpaceTop, vOBBSpaceBot);
-		_vector delta = XMVectorSubtract(vClosestPoint, vPoint);
-		float distSquared = XMVectorGetX(XMVector3LengthSq(delta));
-
-		if (distSquared <= (m_pMyDesc.fRadius * m_pMyDesc.fRadius))
-			return true;
-		else
-			return false;
-	}
-
 	// 클램핑된 점과 원래 점 사이의 벡터를 계산하여 최단 거리 구함
-	_vector deltaTop = XMVectorSubtract(vClosestPoint1, clampedTop);
-	_vector deltaBot = XMVectorSubtract(vClosestPoint2, clampedBot);
+	_vector deltaTop = XMVectorSubtract(vOBBSpaceTop, clampedTop);
+	_vector deltaBot = XMVectorSubtract(vOBBSpaceBot, clampedBot);
 
 	// 두 점 중 최소 거리를 선택
 	float distSquaredTop = XMVectorGetX(XMVector3LengthSq(deltaTop));
@@ -182,7 +156,45 @@ _bool CBounding_Capsule::Intersect(CBounding_OBB* pTargetBounding)
 	float minDistSquared = min(distSquaredTop, distSquaredBot);
 
 	// 캡슐의 반지름과 비교하여 충돌 여부 판단
-	return (minDistSquared <= (m_pMyDesc.fRadius * m_pMyDesc.fRadius));
+	if (minDistSquared <= (m_pMyDesc.fRadius * m_pMyDesc.fRadius))
+		return true;
+
+	//========================
+
+	// OBB의 8개 꼭짓점 계산
+	XMVECTOR corners[8];
+	corners[0] = XMVectorSet(-XMVectorGetX(vOBBExtents), -XMVectorGetY(vOBBExtents), -XMVectorGetZ(vOBBExtents), 0.0f);
+	corners[1] = XMVectorSet(XMVectorGetX(vOBBExtents), -XMVectorGetY(vOBBExtents), -XMVectorGetZ(vOBBExtents), 0.0f);
+	corners[2] = XMVectorSet(-XMVectorGetX(vOBBExtents), -XMVectorGetY(vOBBExtents), XMVectorGetZ(vOBBExtents), 0.0f);
+	corners[3] = XMVectorSet(XMVectorGetX(vOBBExtents), -XMVectorGetY(vOBBExtents), XMVectorGetZ(vOBBExtents), 0.0f);
+	corners[4] = XMVectorSet(-XMVectorGetX(vOBBExtents), XMVectorGetY(vOBBExtents), -XMVectorGetZ(vOBBExtents), 0.0f);
+	corners[5] = XMVectorSet(XMVectorGetX(vOBBExtents), XMVectorGetY(vOBBExtents), -XMVectorGetZ(vOBBExtents), 0.0f);
+	corners[6] = XMVectorSet(-XMVectorGetX(vOBBExtents), XMVectorGetY(vOBBExtents), XMVectorGetZ(vOBBExtents), 0.0f);
+	corners[7] = XMVectorSet(XMVectorGetX(vOBBExtents), XMVectorGetY(vOBBExtents), XMVectorGetZ(vOBBExtents), 0.0f);
+
+
+	// OBB의 12개 모서리 정의
+	int edgePairs[12][2] = 
+	{
+		{0, 1}, {1, 3}, {3, 2}, {2, 0}, // 아래 네 모서리
+		{4, 5}, {5, 7}, {7, 6}, {6, 4}, // 위 네 모서리
+		{0, 4}, {1, 5}, {3, 7}, {2, 6}  // 수직 모서리
+	};
+
+	vector<pair<XMVECTOR, XMVECTOR>> edges;
+	// 모서리 추가
+	for (int i = 0; i < 12; ++i)
+		edges.emplace_back(corners[edgePairs[i][0]], corners[edgePairs[i][1]]);
+
+	for (int i = 0; i < 12; ++i) 
+	{
+		float distSq = SegmentSegmentDistanceSq(vOBBSpaceTop, vOBBSpaceBot,edges[i].first, edges[i].second);
+
+		if (distSq <= (m_pMyDesc.fRadius * m_pMyDesc.fRadius))
+			return true; // 모서리 충돌
+	}
+
+	return false;
 }
 
 _bool CBounding_Capsule::Intersect(CBounding_Sphere* pTargetBounding)
@@ -351,6 +363,39 @@ bool CBounding_Capsule::GetIntersectionPoint(_vector A1, _vector d1, _vector A2,
 	// 교차점 계산
 	intersection = A1 + t * d1;
 	return true;
+}
+
+float CBounding_Capsule::SegmentSegmentDistanceSq(XMVECTOR p1, XMVECTOR q1, XMVECTOR p2, XMVECTOR q2)
+{
+	XMVECTOR d1 = XMVectorSubtract(q1, p1); // 선분 1의 방향
+	XMVECTOR d2 = XMVectorSubtract(q2, p2); // 선분 2의 방향
+	XMVECTOR r = XMVectorSubtract(p1, p2);
+
+	float a = XMVectorGetX(XMVector3Dot(d1, d1));
+	float e = XMVectorGetX(XMVector3Dot(d2, d2));
+	float f = XMVectorGetX(XMVector3Dot(d2, r));
+
+	if (a <= FLT_EPSILON && e <= FLT_EPSILON) {
+		return XMVectorGetX(XMVector3LengthSq(r)); // 둘 다 점일 경우
+	}
+
+	float s = 0.0f, t = 0.0f;
+
+	if (a > FLT_EPSILON) {
+		s = XMVectorGetX(XMVector3Dot(d1, r)) / a;
+		s = std::clamp(s, 0.0f, 1.0f);
+	}
+
+	if (e > FLT_EPSILON) {
+		t = XMVectorGetX(XMVector3Dot(d2, r)) / e;
+		t = std::clamp(t, 0.0f, 1.0f);
+	}
+
+	XMVECTOR closestPoint1 = XMVectorAdd(p1, XMVectorScale(d1, s));
+	XMVECTOR closestPoint2 = XMVectorAdd(p2, XMVectorScale(d2, t));
+
+	return XMVectorGetX(XMVector3LengthSq(XMVectorSubtract(closestPoint1, closestPoint2)));
+
 }
 
 CBounding_Capsule* CBounding_Capsule::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, void* pArg)
