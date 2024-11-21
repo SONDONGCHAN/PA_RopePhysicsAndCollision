@@ -41,8 +41,10 @@ private:
 		_vector A2, _vector d2, // 선분 2의 시작점과 방향 벡터
 		_vector& intersection    // 교차점 (출력)
 	);
-	float SegmentSegmentDistanceSq(XMVECTOR p1, XMVECTOR q1, XMVECTOR p2, XMVECTOR q2);
+	float SegmentSegmentDistanceSq(XMVECTOR p1, XMVECTOR q1, XMVECTOR p2, XMVECTOR q2, XMVECTOR& vNormal);
 
+public:
+	_vector Get_ColNormal() { return vColNormal; }
 
 private:
 	CCollider::CAPSULE_DESC m_pOriginalMyDesc{  };
@@ -52,6 +54,7 @@ private:
 	BoundingSphere* m_pSphere_1			= { nullptr };
 	BoundingSphere* m_pSphere_2			= { nullptr };
 
+	_vector vColNormal {1.f, 0.f, 0.f};
 
 public:
 	static CBounding_Capsule* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, void* pArg);

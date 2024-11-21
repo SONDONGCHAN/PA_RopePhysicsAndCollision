@@ -157,8 +157,12 @@ _bool CBounding_Capsule::Intersect(CBounding_OBB* pTargetBounding)
 
 	// 캡슐의 반지름과 비교하여 충돌 여부 판단
 	if (minDistSquared <= (m_pMyDesc.fRadius * m_pMyDesc.fRadius))
+	{
+		XMVECTOR closestPoint = (distSquaredTop < distSquaredBot) ? clampedTop : clampedBot;
+		XMVECTOR normal = XMVectorSubtract((distSquaredTop < distSquaredBot) ? vOBBSpaceTop : vOBBSpaceBot, closestPoint);
+		vColNormal = XMVector3Normalize(normal);
 		return true;
-
+	}
 	//========================
 
 	// OBB의 8개 꼭짓점 계산
@@ -188,10 +192,14 @@ _bool CBounding_Capsule::Intersect(CBounding_OBB* pTargetBounding)
 
 	for (int i = 0; i < 12; ++i) 
 	{
-		float distSq = SegmentSegmentDistanceSq(vOBBSpaceTop, vOBBSpaceBot,edges[i].first, edges[i].second);
+		_vector vNormal;
+		float distSq = SegmentSegmentDistanceSq(vOBBSpaceTop, vOBBSpaceBot,edges[i].first, edges[i].second, vNormal);
 
 		if (distSq <= (m_pMyDesc.fRadius * m_pMyDesc.fRadius))
+		{			
+			vColNormal = XMVector3Normalize(vNormal);
 			return true; // 모서리 충돌
+		}
 	}
 
 	return false;
@@ -365,37 +373,60 @@ bool CBounding_Capsule::GetIntersectionPoint(_vector A1, _vector d1, _vector A2,
 	return true;
 }
 
-float CBounding_Capsule::SegmentSegmentDistanceSq(XMVECTOR p1, XMVECTOR q1, XMVECTOR p2, XMVECTOR q2)
+float CBounding_Capsule::SegmentSegmentDistanceSq(XMVECTOR p1, XMVECTOR q1, XMVECTOR p2, XMVECTOR q2, XMVECTOR& vNormal)
 {
 	XMVECTOR d1 = XMVectorSubtract(q1, p1); // 선분 1의 방향
 	XMVECTOR d2 = XMVectorSubtract(q2, p2); // 선분 2의 방향
 	XMVECTOR r = XMVectorSubtract(p1, p2);
 
-	float a = XMVectorGetX(XMVector3Dot(d1, d1));
-	float e = XMVectorGetX(XMVector3Dot(d2, d2));
-	float f = XMVectorGetX(XMVector3Dot(d2, r));
-
-	if (a <= FLT_EPSILON && e <= FLT_EPSILON) {
-		return XMVectorGetX(XMVector3LengthSq(r)); // 둘 다 점일 경우
-	}
+	float a = XMVectorGetX(XMVector3Dot(d1, d1)); // d1·d1
+	float e = XMVectorGetX(XMVector3Dot(d2, d2)); // d2·d2
+	float f = XMVectorGetX(XMVector3Dot(d2, r));  // d2·r
 
 	float s = 0.0f, t = 0.0f;
 
-	if (a > FLT_EPSILON) {
-		s = XMVectorGetX(XMVector3Dot(d1, r)) / a;
-		s = std::clamp(s, 0.0f, 1.0f);
+	// 두 선분 모두 점인 경우
+	if (a <= FLT_EPSILON && e <= FLT_EPSILON) {
+		return XMVectorGetX(XMVector3Length(r));
 	}
 
-	if (e > FLT_EPSILON) {
-		t = XMVectorGetX(XMVector3Dot(d2, r)) / e;
-		t = std::clamp(t, 0.0f, 1.0f);
+	// 선분 1이 점인 경우
+	if (a <= FLT_EPSILON) {
+		t = std::clamp(f / e, 0.0f, 1.0f);
+	}
+	// 선분 2가 점인 경우
+	else if (e <= FLT_EPSILON) {
+		s = std::clamp(XMVectorGetX(XMVector3Dot(d1, r)) / a, 0.0f, 1.0f);
+	}
+	// 일반적인 경우
+	else {
+		float c = XMVectorGetX(XMVector3Dot(d1, r)); // d1·r
+		float b = XMVectorGetX(XMVector3Dot(d1, d2)); // d1·d2
+
+		float denom = a * e - b * b;
+
+		if (denom != 0.0f) {
+			s = std::clamp((b * f - c * e) / denom, 0.0f, 1.0f);
+		}
+
+		t = (b * s + f) / e;
+
+		// t가 범위를 벗어나면 다시 s를 조정
+		if (t < 0.0f) {
+			t = 0.0f;
+			s = std::clamp(-c / a, 0.0f, 1.0f);
+		}
+		else if (t > 1.0f) {
+			t = 1.0f;
+			s = std::clamp((b - c) / a, 0.0f, 1.0f);
+		}
 	}
 
 	XMVECTOR closestPoint1 = XMVectorAdd(p1, XMVectorScale(d1, s));
 	XMVECTOR closestPoint2 = XMVectorAdd(p2, XMVectorScale(d2, t));
 
+	vNormal = XMVectorSubtract(closestPoint1, closestPoint2);
 	return XMVectorGetX(XMVector3LengthSq(XMVectorSubtract(closestPoint1, closestPoint2)));
-
 }
 
 CBounding_Capsule* CBounding_Capsule::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, void* pArg)
