@@ -108,19 +108,19 @@ void CCollider::CollisionEnter(CCollider* pTarget_Collider)
 	m_CurrentCollisions.insert(pTarget_Collider);
 	Safe_AddRef(pTarget_Collider);
 
-	m_ColData.pGameObject->Event_CollisionEnter(pTarget_Collider->Get_ColData());
+	m_ColData.pGameObject->Event_CollisionEnter(pTarget_Collider->Get_ColData(), &m_ColData);
 }
 
 void CCollider::CollisionStay(CCollider* pTarget_Collider)
 {
-	m_ColData.pGameObject->Event_CollisionStay(pTarget_Collider->Get_ColData());
+	m_ColData.pGameObject->Event_CollisionStay(pTarget_Collider->Get_ColData(), &m_ColData);
 }
 
 void CCollider::CollisionExit(CCollider* pTarget_Collider)
 {
 	m_CurrentCollisions.erase(pTarget_Collider);
 	Safe_Release(pTarget_Collider);
-	m_ColData.pGameObject->Event_CollisionExit(pTarget_Collider->Get_ColData());
+	m_ColData.pGameObject->Event_CollisionExit(pTarget_Collider->Get_ColData(), &m_ColData);
 }
 
 #ifdef _DEBUG

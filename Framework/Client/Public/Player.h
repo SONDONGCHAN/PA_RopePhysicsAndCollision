@@ -74,9 +74,9 @@ public:
 	virtual HRESULT Render() override;
 
 public:
-	virtual void Event_CollisionEnter(ColData* _ColData) override;
-	virtual void Event_CollisionStay(ColData* _ColData) override;
-	virtual void Event_CollisionExit(ColData* _ColData) override;
+	virtual void Event_CollisionEnter(ColData* _ColData, ColData* _MyColData) override;
+	virtual void Event_CollisionStay(ColData* _ColData, ColData* _MyColData) override;
+	virtual void Event_CollisionExit(ColData* _ColData, ColData* _MyColData) override;
 
 public:
 	void	Start_Stiff_Simulating(_vector _vDir, _vector _vPos, _float _fM, _float _fLastM);
@@ -123,7 +123,9 @@ private:
 
 private:
 	CNavigation*		m_pNavigationCom = { nullptr };
-	CCollider*			m_pColliderCom = { nullptr };
+	CCollider*			m_pRigidColliderCom = { nullptr };
+	CCollider*			m_pTrigerColliderCom = { nullptr };
+
 	CProjectile_Rope*	m_pProjectile_Rope = { nullptr };
 	CCrossHair*			m_pCrossHair = { nullptr };
 
@@ -139,7 +141,7 @@ private:
 
 private:
 	const	_float m_fGravity{ -9.81f };		// 중력 가속도
-	const	_float m_fJumpforce{ 20.f };		// 초기 점프 속도
+	const	_float m_fJumpforce{ 18.f };		// 초기 점프 속도
 	const	_float m_fTerminalVelocity = -25.f; // 최대 낙하 속도
 	const	_float m_fDragCoefficient = 0.1f;	// 공기 저항 계수
 

@@ -51,15 +51,15 @@ HRESULT CObstacle::Render()
 	return S_OK;
 }
 
-void CObstacle::Event_CollisionEnter(ColData* _ColData)
+void CObstacle::Event_CollisionEnter(ColData* _ColData, ColData* _MyColData)
 {
 }
 
-void CObstacle::Event_CollisionStay(ColData* _ColData)
+void CObstacle::Event_CollisionStay(ColData* _ColData, ColData* _MyColData)
 {
 }
 
-void CObstacle::Event_CollisionExit(ColData* _ColData)
+void CObstacle::Event_CollisionExit(ColData* _ColData, ColData* _MyColData)
 {
 }
 
@@ -76,7 +76,8 @@ HRESULT CObstacle::Add_Component()
 	CCollider::OBB_DESC	BoundingDesc{};
 
 	BoundingDesc.vExtents = _float3{4.f, 2.f, 4.f};
-	BoundingDesc.vRadians = _float3(XMConvertToRadians(45.f), 0.f, XMConvertToRadians(45.f));;
+	//BoundingDesc.vRadians = _float3(XMConvertToRadians(45.f), 0.f, XMConvertToRadians(45.f));;
+	BoundingDesc.vRadians = _float3(0.f, 0.f, 0.f);;
 	BoundingDesc.vCenter = _float3(0.f, BoundingDesc.vExtents.y, 0.f);
 
 	//CCollider::SPHERE_DESC	BoundingDesc{};

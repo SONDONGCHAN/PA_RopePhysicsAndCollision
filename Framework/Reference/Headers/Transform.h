@@ -76,6 +76,8 @@ public:
 	void Go_Right(_float fTimeDelta);
 	void Go_Dir(Direction _eDirection, _float fTimeDelta);
 	void Move(XMVECTOR _Movement, CNavigation* pNavigation);
+	void Move_Dir(_vector _Dir, _float _fScale);
+
 
 	void Turn(_fvector vAxis, _float fTimeDelta);
 	void Rotation(_fvector vAxis, _float fRadian);

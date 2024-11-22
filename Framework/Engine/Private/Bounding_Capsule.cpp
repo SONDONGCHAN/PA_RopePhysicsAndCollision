@@ -137,7 +137,7 @@ _bool CBounding_Capsule::Intersect(CBounding_OBB* pTargetBounding)
 
 	_vector	vTop = XMVectorAdd(XMLoadFloat3(&m_pMyDesc.vCenter), XMVectorScale(XMLoadFloat3(&m_pMyDesc.vDir), m_pMyDesc.fHeight));
 	_vector	vBot = XMVectorAdd(XMLoadFloat3(&m_pMyDesc.vCenter), -(XMVectorScale(XMLoadFloat3(&m_pMyDesc.vDir), m_pMyDesc.fHeight)));
-	
+
 	// 캡슐의 두 점을 OBB 좌표계로 변환
 	_vector vOBBSpaceTop = XMVector3InverseRotate(XMVectorSubtract(vTop, vOBBCenter), vOBBOrientation);
 	_vector vOBBSpaceBot = XMVector3InverseRotate(XMVectorSubtract(vBot, vOBBCenter), vOBBOrientation);
@@ -156,11 +156,13 @@ _bool CBounding_Capsule::Intersect(CBounding_OBB* pTargetBounding)
 	float minDistSquared = min(distSquaredTop, distSquaredBot);
 
 	// 캡슐의 반지름과 비교하여 충돌 여부 판단
-	if (minDistSquared <= (m_pMyDesc.fRadius * m_pMyDesc.fRadius))
+	if (minDistSquared < (m_pMyDesc.fRadius * m_pMyDesc.fRadius))
 	{
 		XMVECTOR closestPoint = (distSquaredTop < distSquaredBot) ? clampedTop : clampedBot;
-		XMVECTOR normal = XMVectorSubtract((distSquaredTop < distSquaredBot) ? vOBBSpaceTop : vOBBSpaceBot, closestPoint);
-		vColNormal = XMVector3Normalize(normal);
+		XMVECTOR vNormal = XMVectorSubtract((distSquaredTop < distSquaredBot) ? vOBBSpaceTop : vOBBSpaceBot, closestPoint);
+		fColDepth = m_pMyDesc.fRadius - sqrtf(minDistSquared);
+		vColNormal = XMVector3Normalize(vNormal);
+		vColNormal = XMVector3Rotate(vColNormal, vOBBOrientation);
 		return true;
 	}
 	//========================
@@ -178,7 +180,7 @@ _bool CBounding_Capsule::Intersect(CBounding_OBB* pTargetBounding)
 
 
 	// OBB의 12개 모서리 정의
-	int edgePairs[12][2] = 
+	int edgePairs[12][2] =
 	{
 		{0, 1}, {1, 3}, {3, 2}, {2, 0}, // 아래 네 모서리
 		{4, 5}, {5, 7}, {7, 6}, {6, 4}, // 위 네 모서리
@@ -190,14 +192,17 @@ _bool CBounding_Capsule::Intersect(CBounding_OBB* pTargetBounding)
 	for (int i = 0; i < 12; ++i)
 		edges.emplace_back(corners[edgePairs[i][0]], corners[edgePairs[i][1]]);
 
-	for (int i = 0; i < 12; ++i) 
+	for (int i = 0; i < 12; ++i)
 	{
 		_vector vNormal;
-		float distSq = SegmentSegmentDistanceSq(vOBBSpaceTop, vOBBSpaceBot,edges[i].first, edges[i].second, vNormal);
+		float distSq = SegmentSegmentDistanceSq(vOBBSpaceTop, vOBBSpaceBot, edges[i].first, edges[i].second, vNormal);
 
-		if (distSq <= (m_pMyDesc.fRadius * m_pMyDesc.fRadius))
-		{			
+		if (distSq < (m_pMyDesc.fRadius * m_pMyDesc.fRadius))
+		{
+			fColDepth = m_pMyDesc.fRadius - sqrtf(distSq);
+			fColDepth = XMVectorGetX(XMVector3Length(vNormal));
 			vColNormal = XMVector3Normalize(vNormal);
+			vColNormal = XMVector3Rotate(vColNormal, vOBBOrientation);
 			return true; // 모서리 충돌
 		}
 	}

@@ -27,9 +27,9 @@ public:
 	virtual void	Disable_Projectile() override;
 
 public:
-	virtual void Event_CollisionEnter(ColData* _ColData) override;
-	virtual void Event_CollisionStay(ColData* _ColData) override;
-	virtual void Event_CollisionExit(ColData* _ColData) override;
+	virtual void Event_CollisionEnter(ColData* _ColData, ColData* _MyColData) override;
+	virtual void Event_CollisionStay(ColData* _ColData, ColData* _MyColData) override;
+	virtual void Event_CollisionExit(ColData* _ColData, ColData* _MyColData) override;
 
 private:
 	HRESULT Add_Component();

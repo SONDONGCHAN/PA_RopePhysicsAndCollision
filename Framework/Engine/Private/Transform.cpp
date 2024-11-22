@@ -174,6 +174,13 @@ void CTransform::Move(XMVECTOR _Movement, CNavigation* pNavigation)
 		Set_State(STATE_POSITION, vPosition);
 }
 
+void CTransform::Move_Dir(_vector _Dir, _float _fScale)
+{
+	_vector		vPosition = Get_State(STATE_POSITION);
+	vPosition += XMVectorScale(_Dir, _fScale);
+	Set_State(STATE_POSITION, vPosition);
+}
+
 void CTransform::Turn(_fvector vAxis, _float fTimeDelta)
 {
 	_matrix		RotationMatrix = XMMatrixRotationAxis(vAxis, m_fRotationPerSec * fTimeDelta);

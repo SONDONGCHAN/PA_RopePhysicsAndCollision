@@ -31,9 +31,9 @@ public:
 	virtual HRESULT Render() override;
 
 public:
-	virtual void Event_CollisionEnter(ColData* _ColData) override;
-	virtual void Event_CollisionStay(ColData* _ColData) override;
-	virtual void Event_CollisionExit(ColData* _ColData) override;
+	virtual void Event_CollisionEnter(ColData* _ColData, ColData* _MyColData) override;
+	virtual void Event_CollisionStay(ColData* _ColData, ColData* _MyColData) override;
+	virtual void Event_CollisionExit(ColData* _ColData, ColData* _MyColData) override;
 
 private:
 	CCollider* m_pColliderCom = { nullptr };

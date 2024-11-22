@@ -103,7 +103,7 @@ void CProjectile_Rope::Disable_Projectile()
 	m_isEnable = false;
 }
 
-void CProjectile_Rope::Event_CollisionEnter(ColData* _ColData)
+void CProjectile_Rope::Event_CollisionEnter(ColData* _ColData, ColData* _MyColData)
 {
 	if (_ColData->eMyColType == COL_STATIC_OBJECT)
 	{
@@ -122,12 +122,12 @@ void CProjectile_Rope::Event_CollisionEnter(ColData* _ColData)
 	}
 }
 
-void CProjectile_Rope::Event_CollisionStay(ColData* _ColData)
+void CProjectile_Rope::Event_CollisionStay(ColData* _ColData, ColData* _MyColData)
 {
 
 }
 
-void CProjectile_Rope::Event_CollisionExit(ColData* _ColData)
+void CProjectile_Rope::Event_CollisionExit(ColData* _ColData, ColData* _MyColData)
 {
 	int i = 0;
 }

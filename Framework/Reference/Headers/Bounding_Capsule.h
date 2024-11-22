@@ -43,6 +43,10 @@ private:
 	);
 	float SegmentSegmentDistanceSq(XMVECTOR p1, XMVECTOR q1, XMVECTOR p2, XMVECTOR q2, XMVECTOR& vNormal);
 
+public:
+	_vector Get_ColNormal() { return vColNormal; }
+	_float	Get_ColDepth() { return fColDepth; }
+
 
 private:
 	CCollider::CAPSULE_DESC m_pOriginalMyDesc{  };
@@ -52,7 +56,8 @@ private:
 	BoundingSphere* m_pSphere_1			= { nullptr };
 	BoundingSphere* m_pSphere_2			= { nullptr };
 
-	_vector vColNormal {1.f, 0.f, 0.f};
+	_vector vColNormal {0.f, 0.f, 0.f};
+	_float	fColDepth{ 0.f };
 
 public:
 	static CBounding_Capsule* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, void* pArg);
