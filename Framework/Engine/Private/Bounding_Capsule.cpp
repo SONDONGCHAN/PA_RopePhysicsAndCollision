@@ -1,6 +1,8 @@
 #include "Bounding_Capsule.h"
 #include "Bounding_Sphere.h"
 #include "Bounding_OBB.h"
+#include "Bounding_Triangles.h"
+
 #include "Collider.h"
 
 
@@ -266,6 +268,13 @@ _bool CBounding_Capsule::Intersect(CBounding_Cylinder* pTargetBounding)
 _bool CBounding_Capsule::Intersect(CBounding_Capsule* pTargetBounding)
 {
 	return _bool();
+}
+
+_bool CBounding_Capsule::Intersect(CBounding_Triangles* pTargetBounding)
+{
+
+
+	return false;
 }
 
 void CBounding_Capsule::Capsule_Tranform(_fmatrix WorldMatrix)

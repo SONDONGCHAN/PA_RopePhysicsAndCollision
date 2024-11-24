@@ -73,23 +73,36 @@ HRESULT CObstacle::Add_Component()
 	ColData.iTargetColType = COL_NONE;
 	ColData.isDead = false;
 
-	CCollider::OBB_DESC	BoundingDesc{};
+	/*OBB*/
+	//CCollider::OBB_DESC	BoundingDesc{};
 
-	BoundingDesc.vExtents = _float3{4.f, 2.f, 4.f};
-	//BoundingDesc.vRadians = _float3(XMConvertToRadians(45.f), 0.f, XMConvertToRadians(45.f));;
-	BoundingDesc.vRadians = _float3(0.f, 0.f, 0.f);;
-	BoundingDesc.vCenter = _float3(0.f, BoundingDesc.vExtents.y, 0.f);
+	//BoundingDesc.vExtents = _float3{4.f, 2.f, 4.f};
+	////BoundingDesc.vRadians = _float3(XMConvertToRadians(45.f), 0.f, XMConvertToRadians(45.f));;
+	//BoundingDesc.vRadians = _float3(0.f, 0.f, 0.f);;
+	//BoundingDesc.vCenter = _float3(0.f, BoundingDesc.vExtents.y, 0.f);
+	//ColliderDesc.ColData = ColData;
+	//ColliderDesc.OBBDesc = BoundingDesc;
 
+	/*±¸*/
 	//CCollider::SPHERE_DESC	BoundingDesc{};
 
 	//BoundingDesc.fRadius = 4.f;
 	//BoundingDesc.vCenter = _float3(0.f, BoundingDesc.fRadius, 0.f);
+	//ColliderDesc.ColData = ColData;
+	//ColliderDesc.SphereDesc = BoundingDesc;
 
+	/*»ï°¢Çü*/
+	CCollider::TRIANGLE_DESC BoundingDesc{};
+
+	BoundingDesc.vVertex1 = {0.f, 0.f, 0.f };
+	BoundingDesc.vVertex2 = {0.f, 0.f, 10.f};
+	BoundingDesc.vVertex3 = {10.f, 0.f, 0.f};
+	BoundingDesc.vCenter;
 
 	ColliderDesc.ColData = ColData;
-	ColliderDesc.OBBDesc = BoundingDesc;
+	ColliderDesc.TriangleDesc = BoundingDesc;
 
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Collider_OBB"),
+	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Collider_Triangle"),
 		TEXT("Com_Collider"), reinterpret_cast<CComponent**>(&m_pColliderCom), &ColliderDesc)))
 		return E_FAIL;
 

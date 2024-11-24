@@ -8,7 +8,7 @@ BEGIN(Engine)
 class ENGINE_DLL CCollider final : public CComponent
 {
 public:
-	enum TYPE { TYPE_SPHERE, TYPE_AABB, TYPE_OBB, TYPE_CYLINDER, TYPE_CAPSULE,  TYPE_END };
+	enum TYPE { TYPE_SPHERE, TYPE_AABB, TYPE_OBB, TYPE_CYLINDER, TYPE_CAPSULE, TYPE_TRIANGLE, TYPE_END };
 
 	struct BOUNDING_DESC
 	{
@@ -43,6 +43,12 @@ public:
 		_float		fHeight;
 		_float3		vDir;
 	};
+	struct TRIANGLE_DESC: public BOUNDING_DESC
+	{
+		_float3		vVertex1;
+		_float3		vVertex2;
+		_float3		vVertex3;
+	};
 
 	struct ColliderInitData
 	{
@@ -56,6 +62,7 @@ public:
 			SPHERE_DESC		SphereDesc;
 			CYLINDER_DESC	SylinderDesc;
 			CAPSULE_DESC	CapsuleDesc;
+			TRIANGLE_DESC	TriangleDesc;
 		};
 	};
 

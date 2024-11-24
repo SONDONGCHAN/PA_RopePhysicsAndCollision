@@ -29,6 +29,7 @@ private:
 	_bool Intersect(class CBounding_Sphere* pTargetBounding);
 	_bool Intersect(class CBounding_Cylinder* pTargetBounding);
 	_bool Intersect(CBounding_Capsule* pTargetBounding);
+	_bool Intersect(class CBounding_Triangles* pTargetBounding);
 
 private:
 	void	Capsule_Tranform(_fmatrix WorldMatrix);

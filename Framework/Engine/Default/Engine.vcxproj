@@ -41,7 +41,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -177,6 +177,7 @@
     <ClInclude Include="..\Public\Bounding_Cylinder.h" />
     <ClInclude Include="..\Public\Bounding_OBB.h" />
     <ClInclude Include="..\public\Bounding_Sphere.h" />
+    <ClInclude Include="..\Public\Bounding_Triangles.h" />
     <ClInclude Include="..\public\Camera.h" />
     <ClInclude Include="..\public\Cell.h" />
     <ClInclude Include="..\public\Channel.h" />
@@ -241,6 +242,7 @@
     <ClCompile Include="..\Private\Bounding_Cylinder.cpp" />
     <ClCompile Include="..\Private\Bounding_OBB.cpp" />
     <ClCompile Include="..\private\Bounding_Sphere.cpp" />
+    <ClCompile Include="..\Private\Bounding_Triangles.cpp" />
     <ClCompile Include="..\private\Camera.cpp" />
     <ClCompile Include="..\private\Cell.cpp" />
     <ClCompile Include="..\private\Channel.cpp" />

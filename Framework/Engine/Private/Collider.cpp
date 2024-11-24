@@ -66,6 +66,9 @@ HRESULT CCollider::Initialize(void * pArg)
 	case TYPE_CAPSULE:
 		m_pBounding = CBounding_Capsule::Create(m_pDevice, m_pContext, &pInitData->CapsuleDesc);
 		break;
+	case TYPE_TRIANGLE:
+		m_pBounding = CBounding_Triangles::Create(m_pDevice, m_pContext, &pInitData->CapsuleDesc);
+		break;
 	}
 
 	return S_OK;
