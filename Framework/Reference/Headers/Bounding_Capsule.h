@@ -78,6 +78,10 @@ private:
 	{
 		return (Value >= Min) && (Value <= Max);
 	}
+	inline bool InRangeOpen(float Value, float Min, float Max)
+	{
+		return (Value > Min) && (Value < Max);
+	}
 
 public:
 	_vector Get_ColNormal() { return vColNormal; }

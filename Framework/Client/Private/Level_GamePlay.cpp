@@ -147,9 +147,6 @@ HRESULT CLevel_GamePlay::Ready_Layer_Obstacle(const wstring& strLayerTag)
 	if (FAILED(m_pGameInstance->Add_CloneObject(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Obstacle"), &Obstacle_Desc)))
 		return E_FAIL;
 
-
-
-
 	return S_OK;
 }
 

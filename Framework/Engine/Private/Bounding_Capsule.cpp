@@ -499,7 +499,7 @@ _bool CBounding_Capsule::Intersect(CBounding_Triangles* pTargetBounding)
 	if ((bCheckCylinder0 | bCheckCylinder1) != 0)
 	{
 		_vector RadialAxis = XMVector3Cross(XMVector3Cross(Axis, FaceN), Axis);
-		if (XMVectorGetX(XMVector3Length(RadialAxis)) > NormalTolerance)
+		if (XMVectorGetX(XMVector3Length(RadialAxis)) >= NormalTolerance)
 		{
 			RadialAxis = XMVector3Normalize(RadialAxis);
 
@@ -554,8 +554,150 @@ _bool CBounding_Capsule::Intersect(CBounding_Triangles* pTargetBounding)
 	}
 
 
+	// Add edge contacts to the manifold
+	EdgeVertexIndex0 = 2;
+	for (int EdgeIndex = 0; EdgeIndex < 3; ++EdgeIndex)
+	{
+		const int EdgeVertexIndex1 = EdgeIndex;
+		const _vector& EdgeP0 = vVertex[EdgeVertexIndex0];
+		const _vector& EdgeP1 = vVertex[EdgeVertexIndex1];
+		EdgeVertexIndex0 = EdgeVertexIndex1;
 
+		// Reuse edge-segment data calculated in cull check above
+		_vector SegmentEdgeN = EdgeSegmentDeltas[EdgeIndex];
+		const _vector& EdgeP = EdgeEdgePs[EdgeIndex];
+		const _vector& SegmentP = EdgeSegmentPs[EdgeIndex];
+		const _float EdgeT = EdgeEdgeTs[EdgeIndex];
+		const _float SegmentT = EdgeSegmentTs[EdgeIndex];
+		const _float SegmentEdgeDistSq = EdgeDistSqs[EdgeIndex];
+		const _float SegmentEdgeDistSign = EdgeDistSigns[EdgeIndex];
+		const _float DotFace = EdgeDotFace[EdgeIndex];
+	
+		// We only care about edges if at least one capsule segment point is outside the edge plane
+			// (internal points were handled already)
+		if (((EdgeD0s[EdgeIndex] > -DistanceTolerance) | (EdgeD1s[EdgeIndex] > -DistanceTolerance)) != 0)
+		{
+			// Don't collide with inside face
+			if (DotFace < (-NormalTolerance))
+			{
+				continue;
+			}
 
+			// We will create a face contact rather than an edge contact where possible.
+			// When the angle between the axis and the face is below a threshold.
+			const bool bInEdgeRange = InRangeOpen(EdgeT, (0.f), (1.f));
+			const bool bInSegmentRange = InRangeOpen(SegmentT, (0.f), (1.f));
+			const bool bCrossedEdgeSegment = ((bInEdgeRange & bInSegmentRange) != 0);
+
+			// Calculate separation distance and normal
+				// If we have zero separation, we cannot renormalize the separation vector so we must calculate the normal
+			//캡슐 축이 엣지와 접촉하지 않은 경우
+			//캡슐 축과 삼각형 엣지가 서로 분리된 상태라면, 두 선분 간의 가장 가까운 점을 기준으로 충돌 정보를 계산.
+			_float SegmentEdgeDist;
+			if (SegmentEdgeDistSq > NormalToleranceSq)
+			{
+				// Get the signed distance and separating axis
+				SegmentEdgeDist = sqrt(SegmentEdgeDistSq);
+				SegmentEdgeN = SegmentEdgeN / SegmentEdgeDist;
+				SegmentEdgeDist *= SegmentEdgeDistSign;
+			}
+			// 캡슐 축이 엣지와 거의 접촉한 경우
+			//축(segment)과 엣지가 거의 평행한 경우, 법선 벡터를 계산하여 충돌을 처리.
+			else
+			{
+				// Segment passes right through edge - calculate normal
+				SegmentEdgeDist = (0.f);
+				SegmentEdgeN = XMVector3Cross(Axis, EdgeP1 - EdgeP0);
+				if (XMVectorGetX(XMVector3Length(SegmentEdgeN)) < NormalToleranceSq)
+					continue;
+				
+				if (XMVectorGetX(XMVector3Dot(SegmentEdgeN, FaceN)) < (0.f))
+				{
+					SegmentEdgeN = -SegmentEdgeN;
+				}
+				const _float DotEdge = XMVectorGetX(XMVector3Dot(EdgeNs[EdgeIndex], SegmentEdgeN));
+				if (DotEdge < -NormalTolerance)
+				{
+					continue;
+				}
+			}
+			
+			if ((bCrossedEdgeSegment & bPreferFaceContact) == 0)
+			{
+				// We cannot collide with the inside of the edge
+				// 엣지 내부충돌이면 무시
+				const _float DotEdge = XMVectorGetX(XMVector3Dot(EdgeNs[EdgeIndex], SegmentEdgeN));
+				if (DotEdge < -NormalTolerance)
+				{
+					continue;
+				}
+
+				// For Vertex contacts, check that the normal is in the valid range
+				// it must point away from the edge vectors that share the vertex
+				if (EdgeT == (0.f))
+				{
+					const int PrevEdgeVertexIndex0 = (EdgeIndex >= 2) ? (EdgeIndex - 2) : (EdgeIndex - 2 + 3);
+					const _vector& PrevEdgeP0 = vVertex[PrevEdgeVertexIndex0];
+					const _vector& PrevEdgeP1 = EdgeP0;
+
+					// NOTE: both edge vetors here point towards the shared vertex (at EdgeP0)
+					const _float PrevEdgeDotNormal = XMVectorGetX(XMVector3Dot(PrevEdgeP1 - PrevEdgeP0, SegmentEdgeN));
+					const _float EdgeDotNormal = XMVectorGetX(XMVector3Dot(EdgeP0 - EdgeP1, SegmentEdgeN));
+					if ((PrevEdgeDotNormal < -NormalTolerance) || (EdgeDotNormal < -NormalTolerance))
+					{
+						continue;
+					}
+				}
+				if (EdgeT == (1.f))
+				{
+					const int NextEdgeVertexIndex1 = (EdgeIndex < 2) ? EdgeIndex + 1 : 0;
+					const _vector& NextEdgeP0 = EdgeP1;
+					const _vector& NextEdgeP1 = vVertex[NextEdgeVertexIndex1];
+
+					// NOTE: both edge vetors here point towards the shared vertex (at EgdeP1)
+					const _float EdgeDotNormal = XMVectorGetX(XMVector3Dot(EdgeP1 - EdgeP0, SegmentEdgeN));
+					const _float NextEdgeDotNormal = XMVectorGetX(XMVector3Dot(NextEdgeP0 - NextEdgeP1, SegmentEdgeN));
+					if ((EdgeDotNormal < -NormalTolerance) || (NextEdgeDotNormal < -NormalTolerance))
+					{
+						continue;
+					}
+				}
+			}
+
+			// If we are within the face angle tolerance, generate a face contact rather than an edge one
+			// (but only if we have an edge contact and not a vertex one)
+			// NOTE: we rely on the fact that the Ts will be exactly 0 or 1 when the near point is outside the segment or edge
+			if ((bCrossedEdgeSegment & bPreferFaceContact) != 0)
+			{
+				const _vector CapsuleP = SegmentP - R * SegmentEdgeN;
+				const _float CapsuleDist = XMVectorGetX(XMVector3Dot(CapsuleP - FaceP, FaceN));
+
+				ContactPoint stContactPoint;
+				stContactPoint.ShapeContactPoints[0] = CapsuleP;
+				stContactPoint.ShapeContactPoints[1] = CapsuleP - CapsuleDist * FaceN;
+				stContactPoint.ShapeContactNormal = FaceN;
+				stContactPoint.Phi = CapsuleDist;
+				stContactPoint.ContactType = ContactPointType::VertexPlane;
+				stContactPoint.FaceIndex = 0;
+				m_vecPoints.push_back(stContactPoint);
+
+				if(stContactPoint.Phi < 0) isCol = true;				
+			}
+			else
+			{
+				ContactPoint stContactPoint;
+				stContactPoint.ShapeContactPoints[0] = SegmentP - R * SegmentEdgeN;
+				stContactPoint.ShapeContactPoints[1] = EdgeP;
+				stContactPoint.ShapeContactNormal = SegmentEdgeN;
+				stContactPoint.Phi = SegmentEdgeDist - R;
+				stContactPoint.ContactType = ContactPointType::EdgeEdge;
+				stContactPoint.FaceIndex = 0;
+				m_vecPoints.push_back(stContactPoint);
+
+				if (stContactPoint.Phi < 0) isCol = true;
+			}
+		}
+	}
 
 	return isCol;
 }
