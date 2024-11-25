@@ -39,7 +39,7 @@ HRESULT CPlayer::Initialize(void * pArg)
 {
 	LANDOBJ_DESC*	pGameObjectDesc = (LANDOBJ_DESC*)pArg;
 
-	pGameObjectDesc->fSpeedPerSec = 4.f;
+	pGameObjectDesc->fSpeedPerSec = 1.f;
 	pGameObjectDesc->fRotationPerSec = XMConvertToRadians(90.0f);
 
 	if (FAILED(__super::Initialize(pArg)))
@@ -77,7 +77,7 @@ void CPlayer::Tick(_float fTimeDelta)
 	KeyInput(fTimeDelta);
 
 	/*µð¹ö±ë*/
-	Handle_Jump(fTimeDelta);
+	//Handle_Jump(fTimeDelta);
 
 	for (auto& Pair : m_PlayerParts)
 		(Pair.second)->Tick(fTimeDelta);
@@ -122,67 +122,68 @@ void CPlayer::Event_CollisionEnter(ColData* _TargetColData, ColData* _MyColData)
 {
 	if (_TargetColData->eMyColType == COL_STATIC_OBJECT)
 	{
-		if (_MyColData->pCol == m_pRigidColliderCom)
-		{
-			/*µð¹ö±ë*/
-			_vector vNormal = dynamic_cast<CBounding_Capsule*>(m_pRigidColliderCom->Get_Bounding())->Get_ColNormal();
-			_float	fDepth	= dynamic_cast<CBounding_Capsule*>(m_pRigidColliderCom->Get_Bounding())->Get_ColDepth();
+		/*µð¹ö±ë*/
+
+		//if (_MyColData->pCol == m_pRigidColliderCom)
+		//{		
+		//	_vector vNormal = dynamic_cast<CBounding_Capsule*>(m_pRigidColliderCom->Get_Bounding())->Get_ColNormal();
+		//	_float	fDepth	= dynamic_cast<CBounding_Capsule*>(m_pRigidColliderCom->Get_Bounding())->Get_ColDepth();
 
 
-			if (m_eJumpState == JumpState::SWINGING)
-			{
-				Escape_Swing(JumpState::FALLING);
-			}
-			else
-			{
-				m_vVelocity = XMVectorSet(0.f, 0.f, 0.f, 0.f);
-			}
+		//	if (m_eJumpState == JumpState::SWINGING)
+		//	{
+		//		Escape_Swing(JumpState::FALLING);
+		//	}
+		//	else
+		//	{
+		//		m_vVelocity = XMVectorSet(0.f, 0.f, 0.f, 0.f);
+		//	}
 
-			if (vNormal.m128_f32[1] > 0.9f)
-			{
-				if (m_pLandColliders.empty())
-				{
-					m_eJumpState = JumpState::ONOBJECT;
-					m_eCurrentState = PlayerState::STATE_IDLE;
-					m_eNextState = PlayerState::STATE_IDLE;
+		//	if (vNormal.m128_f32[1] > 0.9f)
+		//	{
+		//		if (m_pLandColliders.empty())
+		//		{
+		//			m_eJumpState = JumpState::ONOBJECT;
+		//			m_eCurrentState = PlayerState::STATE_IDLE;
+		//			m_eNextState = PlayerState::STATE_IDLE;
 
-					m_pCurrentLandCollider = _TargetColData->pCol;
-					m_pLandColliders.push_back(_TargetColData->pCol);
-				}
-				else
-				{
-					//auto iter = find(m_pLandColliders.begin(), m_pLandColliders.end(), _ColData->pCol);
-					//if (iter == m_pLandColliders.end())
-					m_pLandColliders.push_back(_TargetColData->pCol);
-				}
-			}
-			else if (vNormal.m128_f32[1] < -0.9f)
-			{
-				return;
-			}
-			else
-			{
-				if (m_pClimbColliders.empty())
-				{
-					m_eJumpState = JumpState::CLIMING;
-					m_eCurrentState = PlayerState::STATE_CLIMING;
-					m_eNextState = PlayerState::STATE_CLIMING;
+		//			m_pCurrentLandCollider = _TargetColData->pCol;
+		//			m_pLandColliders.push_back(_TargetColData->pCol);
+		//		}
+		//		else
+		//		{
+		//			//auto iter = find(m_pLandColliders.begin(), m_pLandColliders.end(), _ColData->pCol);
+		//			//if (iter == m_pLandColliders.end())
+		//			m_pLandColliders.push_back(_TargetColData->pCol);
+		//		}
+		//	}
+		//	else if (vNormal.m128_f32[1] < -0.9f)
+		//	{
+		//		return;
+		//	}
+		//	else
+		//	{
+		//		if (m_pClimbColliders.empty())
+		//		{
+		//			m_eJumpState = JumpState::CLIMING;
+		//			m_eCurrentState = PlayerState::STATE_CLIMING;
+		//			m_eNextState = PlayerState::STATE_CLIMING;
 
-					m_pCurrentClimbCollider = _TargetColData->pCol;
-					m_pClimbColliders.push_back(_TargetColData->pCol);
+		//			m_pCurrentClimbCollider = _TargetColData->pCol;
+		//			m_pClimbColliders.push_back(_TargetColData->pCol);
 
-					m_pTransformCom->Set_Look_ForLandObject(-vNormal);
-				}
-				else
-				{
-					//auto iter = find(m_pClimbColliders.begin(), m_pClimbColliders.end(), _ColData->pCol);
-					//if (iter == m_pClimbColliders.end())
-					m_pClimbColliders.push_back(_TargetColData->pCol);
-				}
-			}
-			
-			m_pTransformCom->Move_Dir(vNormal, fDepth);
-		}
+		//			m_pTransformCom->Set_Look_ForLandObject(-vNormal);
+		//		}
+		//		else
+		//		{
+		//			//auto iter = find(m_pClimbColliders.begin(), m_pClimbColliders.end(), _ColData->pCol);
+		//			//if (iter == m_pClimbColliders.end())
+		//			m_pClimbColliders.push_back(_TargetColData->pCol);
+		//		}
+		//	}
+		//	
+		//	m_pTransformCom->Move_Dir(vNormal, fDepth);
+		//}
 	}
 }
 
@@ -195,9 +196,11 @@ void CPlayer::Event_CollisionExit(ColData* _ColData, ColData* _MyColData)
 {
 	if (_ColData->eMyColType == COL_STATIC_OBJECT)
 	{
-		if (_MyColData->pCol == m_pTrigerColliderCom)
+		/*µð¹ö±ë*/
+
+		/*if (_MyColData->pCol == m_pTrigerColliderCom)
 		{
-			/*µð¹ö±ë*/
+			
 			auto iter = find(m_pLandColliders.begin(), m_pLandColliders.end(), _ColData->pCol);
 			if (iter != m_pLandColliders.end())
 				m_pLandColliders.erase(iter);
@@ -231,7 +234,7 @@ void CPlayer::Event_CollisionExit(ColData* _ColData, ColData* _MyColData)
 				else
 					m_pCurrentClimbCollider = m_pClimbColliders.front();
 			}
-		}
+		}*/
 	}
 }
 
@@ -271,22 +274,22 @@ void CPlayer::End_Simulating()
 void CPlayer::KeyInput(_float fTimeDelta)
 {
 	/*µð¹ö±ë*/
-	//if (KEYPRESSING(DIK_UP))
-	//{
-	//	m_pTransformCom->Go_Dir(Direction::DIR_UP, fTimeDelta);
-	//}
-	//if (KEYPRESSING(DIK_DOWN))
-	//{
-	//	m_pTransformCom->Go_Dir(Direction::DIR_DOWN, fTimeDelta);
-	//}
-	//if (KEYDOWN(DIK_LCONTROL))
-	//{
-	//	m_pTransformCom->Set_SpeedPerSec(10.f);
-	//}
-	//else if (KEYUP(DIK_LCONTROL))
-	//{
-	//	m_pTransformCom->Set_SpeedPerSec(1.f);
-	//}
+	if (KEYPRESSING(DIK_UP))
+	{
+		m_pTransformCom->Go_Dir(Direction::DIR_UP, fTimeDelta);
+	}
+	if (KEYPRESSING(DIK_DOWN))
+	{
+		m_pTransformCom->Go_Dir(Direction::DIR_DOWN, fTimeDelta);
+	}
+	if (KEYDOWN(DIK_LCONTROL))
+	{
+		m_pTransformCom->Set_SpeedPerSec(10.f);
+	}
+	else if (KEYUP(DIK_LCONTROL))
+	{
+		m_pTransformCom->Set_SpeedPerSec(1.f);
+	}
 	// Á¡ÇÁ
 	if (KEYDOWN(DIK_SPACE))
 		Start_Jump();
@@ -417,44 +420,44 @@ void CPlayer::Handle_MoveState(_float fTimeDelta)
 		return;
 
 	
-	if (KEYPRESSING(DIK_W) || KEYPRESSING(DIK_A) || KEYPRESSING(DIK_S) || KEYPRESSING(DIK_D))
-	{
-		Change_Anim(RUN_CYCLE);
+	//if (KEYPRESSING(DIK_W) || KEYPRESSING(DIK_A) || KEYPRESSING(DIK_S) || KEYPRESSING(DIK_D))
+	//{
+	//	Change_Anim(RUN_CYCLE);
 
-		if (KEYPRESSING(DIK_W))
-		{
-			if (KEYPRESSING(DIK_A))
-				Set_Dir_From_Cam(fTimeDelta, Direction::DIR_FRONT_LEFT);
+	//	if (KEYPRESSING(DIK_W))
+	//	{
+	//		if (KEYPRESSING(DIK_A))
+	//			Set_Dir_From_Cam(fTimeDelta, Direction::DIR_FRONT_LEFT);
 
-			else if (KEYPRESSING(DIK_D))
-				Set_Dir_From_Cam(fTimeDelta, Direction::DIR_FRONT_RIGHT);
+	//		else if (KEYPRESSING(DIK_D))
+	//			Set_Dir_From_Cam(fTimeDelta, Direction::DIR_FRONT_RIGHT);
 
-			else
-				Set_Dir_From_Cam(fTimeDelta, Direction::DIR_FRONT);
-		}
-		else if (KEYPRESSING(DIK_S))
-		{
-			if (KEYPRESSING(DIK_A))
-				Set_Dir_From_Cam(fTimeDelta, Direction::DIR_BACK_LEFT);
+	//		else
+	//			Set_Dir_From_Cam(fTimeDelta, Direction::DIR_FRONT);
+	//	}
+	//	else if (KEYPRESSING(DIK_S))
+	//	{
+	//		if (KEYPRESSING(DIK_A))
+	//			Set_Dir_From_Cam(fTimeDelta, Direction::DIR_BACK_LEFT);
 
-			else if (KEYPRESSING(DIK_D))
-				Set_Dir_From_Cam(fTimeDelta, Direction::DIR_BACK_RIGHT);
+	//		else if (KEYPRESSING(DIK_D))
+	//			Set_Dir_From_Cam(fTimeDelta, Direction::DIR_BACK_RIGHT);
 
-			else
-				Set_Dir_From_Cam(fTimeDelta, Direction::DIR_BACK);
-		}
-		else if (KEYPRESSING(DIK_A))
-		{
-			Set_Dir_From_Cam(fTimeDelta, Direction::DIR_LEFT);
-		}
-		else if (KEYPRESSING(DIK_D))
-		{
-			Set_Dir_From_Cam(fTimeDelta, Direction::DIR_RIGHT);
-		}
-	}
+	//		else
+	//			Set_Dir_From_Cam(fTimeDelta, Direction::DIR_BACK);
+	//	}
+	//	else if (KEYPRESSING(DIK_A))
+	//	{
+	//		Set_Dir_From_Cam(fTimeDelta, Direction::DIR_LEFT);
+	//	}
+	//	else if (KEYPRESSING(DIK_D))
+	//	{
+	//		Set_Dir_From_Cam(fTimeDelta, Direction::DIR_RIGHT);
+	//	}
+	//}
 
 	/*µð¹ö±ë*/
-	/*if (KEYPRESSING(DIK_W) || KEYPRESSING(DIK_A) || KEYPRESSING(DIK_S) || KEYPRESSING(DIK_D))
+	if (KEYPRESSING(DIK_W) || KEYPRESSING(DIK_A) || KEYPRESSING(DIK_S) || KEYPRESSING(DIK_D))
 	{
 		if (KEYPRESSING(DIK_W))
 		{
@@ -485,7 +488,7 @@ void CPlayer::Handle_MoveState(_float fTimeDelta)
 		{
 			m_pTransformCom->Go_Dir(Direction::DIR_RIGHT, fTimeDelta);
 		}
-	}*/
+	}
 	else
 	{ 
 		Change_State(PlayerState::STATE_IDLE);

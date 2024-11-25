@@ -12,6 +12,7 @@ private:
 
 public:
 	virtual void* Get_Bounding() override { return nullptr; }
+	CCollider::TRIANGLE_DESC* Get_Desc() { return &m_MyDesc;}
 
 public:
 	HRESULT Initialize(void* pArg);
@@ -25,6 +26,8 @@ private:
 	_bool Intersect(class CBounding_Sphere* pTargetBounding);
 	_bool Intersect(class CBounding_Cylinder* pTargetBounding);
 	_bool Intersect(class CBounding_Capsule* pTargetBounding);
+	_bool Intersect(CBounding_Triangles* pTargetBounding);
+
 
 private:
 	void	Triangle_Tranform(_fmatrix WorldMatrix);

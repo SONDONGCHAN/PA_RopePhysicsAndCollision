@@ -105,7 +105,6 @@ HRESULT CObstacle::Add_Component()
 	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Collider_Triangle"),
 		TEXT("Com_Collider"), reinterpret_cast<CComponent**>(&m_pColliderCom), &ColliderDesc)))
 		return E_FAIL;
-
 	CGameInstance::GetInstance()->Add_Collider(m_pColliderCom);
 
 	return S_OK;

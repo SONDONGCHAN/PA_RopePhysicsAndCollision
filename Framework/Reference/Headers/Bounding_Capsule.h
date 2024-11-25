@@ -6,6 +6,25 @@ BEGIN(Engine)
 
 class CBounding_Capsule final : public CBounding
 {
+public:
+	enum class ContactPointType
+	{
+		VertexPlane,  // 꼭짓점과 평면 간 충돌
+		EdgeEdge,     // 엣지와 엣지 간 충돌
+		FaceFace,     // 면과 면 간 충돌
+		Unknown       // 유형이 정의되지 않은 경우
+	};
+
+	struct ContactPoint
+	{
+		_vector ShapeContactPoints[2]; // 충돌한 두 물체에서의 접촉점 (월드 좌표)
+		_vector ShapeContactNormal;   // 접촉 지점의 법선 벡터
+		float Phi;                    // 충돌 깊이 (음수일 경우 관통)
+		ContactPointType ContactType; // 접촉점의 유형 (Vertex-Plane, Edge-Edge 등)
+		_int FaceIndex;              // 충돌한 면의 인덱스 (삼각형 등)
+	};
+
+
 private:
 	CBounding_Capsule(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual ~CBounding_Capsule() = default;
@@ -29,6 +48,7 @@ private:
 	_bool Intersect(class CBounding_Sphere* pTargetBounding);
 	_bool Intersect(class CBounding_Cylinder* pTargetBounding);
 	_bool Intersect(CBounding_Capsule* pTargetBounding);
+	_bool Intersect(class CBounding_Triangles* pTargetBounding);
 
 private:
 	void	Capsule_Tranform(_fmatrix WorldMatrix);
@@ -43,14 +63,32 @@ private:
 	);
 	float SegmentSegmentDistanceSq(XMVECTOR p1, XMVECTOR q1, XMVECTOR p2, XMVECTOR q2, XMVECTOR& vNormal);
 
+	void NearestPointsOnLineSegments(
+		const XMVECTOR& P0, const XMVECTOR& P1,
+		const XMVECTOR& EdgeP0, const XMVECTOR& EdgeP1,
+		float& SegmentT, float& EdgeT,
+		XMVECTOR& SegmentP, XMVECTOR& EdgeP);
+
+	_bool AddCapsuleTriangleParallelEdgeManifoldContacts(
+		const XMVECTOR& P0, const XMVECTOR& P1,
+		const XMVECTOR& EdgeP0, const XMVECTOR& EdgeP1,
+		const _float R, const _float RejectDistanceSq, const _float NormalToleranceSq);
+
+	inline bool InRangeClosed(float Value, float Min, float Max)
+	{
+		return (Value >= Min) && (Value <= Max);
+	}
+
 public:
 	_vector Get_ColNormal() { return vColNormal; }
 	_float	Get_ColDepth() { return fColDepth; }
+	vector<ContactPoint>&	Get_Points() { return m_vecPoints; }
 
 
 private:
 	CCollider::CAPSULE_DESC m_pOriginalMyDesc{  };
 	CCollider::CAPSULE_DESC m_pMyDesc{  };
+	vector<ContactPoint> m_vecPoints{	};
 
 	// 렌더링 용
 	BoundingSphere* m_pSphere_1			= { nullptr };

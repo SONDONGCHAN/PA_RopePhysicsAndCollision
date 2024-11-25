@@ -39,7 +39,39 @@ HRESULT CBounding_Triangles::Render(PrimitiveBatch<VertexPositionColor>* pBatch)
 
 _bool CBounding_Triangles::Intersect(CCollider::TYPE eType, CBounding* pBounding)
 {
-	return false;
+	_bool isColl = false;
+
+	switch (eType)
+	{
+	case CCollider::TYPE_AABB:
+		isColl = Intersect((CBounding_AABB*)pBounding);
+		break;
+
+	case CCollider::TYPE_OBB:
+		isColl = Intersect((CBounding_OBB*)pBounding);
+		break;
+
+	case CCollider::TYPE_SPHERE:
+		isColl = Intersect((CBounding_Sphere*)pBounding);
+		break;
+
+	case CCollider::TYPE_CYLINDER:
+		isColl = Intersect((CBounding_Cylinder*)pBounding);
+		break;
+
+	case CCollider::TYPE_CAPSULE:
+		isColl = Intersect((CBounding_Capsule*)pBounding);
+		break;
+
+	case CCollider::TYPE_TRIANGLE:
+		isColl = Intersect((CBounding_Triangles*)pBounding);
+		break;
+	}
+
+	if (isColl && (!m_isColl))
+		m_isColl = true;
+
+	return isColl;
 }
 
 _bool CBounding_Triangles::Intersect(CBounding_AABB* pTargetBounding)
@@ -63,6 +95,11 @@ _bool CBounding_Triangles::Intersect(CBounding_Cylinder* pTargetBounding)
 }
 
 _bool CBounding_Triangles::Intersect(CBounding_Capsule* pTargetBounding)
+{
+	return false;
+}
+
+_bool CBounding_Triangles::Intersect(CBounding_Triangles* pTargetBounding)
 {
 	return false;
 }
