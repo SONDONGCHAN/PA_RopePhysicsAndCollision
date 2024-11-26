@@ -134,13 +134,15 @@ private:
 	CSimulation_Pool*	m_pSimulationPool = { nullptr };
 
 private:
-	list<CCollider*>	m_pLandColliders;
+	//list<CCollider*>	m_pLandColliders;
 	CCollider*			m_pCurrentLandCollider{nullptr};
-	list<CCollider*>	m_pClimbColliders;
+	//list<CCollider*>	m_pClimbColliders;
 	CCollider*			m_pCurrentClimbCollider{ nullptr };
 
 private:
-	_float3				m_vCurrentNormal{0.f, 1.f, 0.f};
+	_float3				m_vCurrentNormal {0.f, 1.f, 0.f};
+	_float3				m_vClimingNormal{ 0.f, 1.f, 0.f };
+
 
 private:
 	const	_float m_fGravity{ -9.81f };		// 중력 가속도

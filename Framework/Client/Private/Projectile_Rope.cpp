@@ -21,7 +21,7 @@ HRESULT CProjectile_Rope::Initialize_Prototype()
 HRESULT CProjectile_Rope::Initialize(void* pArg)
 {
 	PROJECTILE_DESC* pProjectileDesc = (PROJECTILE_DESC*)pArg;
-	pProjectileDesc->fSpeedPerSec = 100.f;
+	pProjectileDesc->fSpeedPerSec = 70.f;
 	m_pOwnerObject = pProjectileDesc->pOwnerObject;
 	
 	if (FAILED(__super::Initialize(pArg)))
@@ -109,8 +109,29 @@ void CProjectile_Rope::Event_CollisionEnter(ColData* _ColData, ColData* _MyColDa
 	{
 		Disable_Projectile();
 
+		vector<vector<CBounding_Capsule::ContactPoint>>& vecPoints = dynamic_cast<CBounding_Capsule*>(m_pColliderCom->Get_Bounding())->Get_Points()[0];
+		CBounding_Capsule::ContactPoint ContactPoint;
+		for (int i = 0; i < vecPoints.size(); ++i)
+		{
+			if (vecPoints[i][0].isCol)
+			{
+				ContactPoint = vecPoints[i][0];
+				if (ContactPoint.ContactType == CBounding_Capsule::ContactPointType::VertexPlane)
+					break;
+			}
+			if ((vecPoints[i].size() > 1) && (vecPoints[i][1].isCol))
+			{
+				ContactPoint = vecPoints[i][1];
+				if (ContactPoint.ContactType == CBounding_Capsule::ContactPointType::VertexPlane)
+					break;
+		
+			}
+		}
+
 		_vector vOwnerPos = dynamic_cast<CPlayer*>(m_pOwnerObject)->Get_TranformCom()->Get_State(CTransform::STATE_POSITION);
-		_vector vMyPos = m_pTransformCom->Get_State(CTransform::STATE_POSITION);
+		_vector vMyPos = ContactPoint.ShapeContactPoints[1];
+		vMyPos.m128_f32[3] = 1.f;
+		//_vector vMyPos = m_pTransformCom->Get_State(CTransform::STATE_POSITION);
 		_vector vDir = (vOwnerPos + _vector{ 0.f, 1.f, 0.f }) - vMyPos;
 
 		//µð¹ö±ë
@@ -142,15 +163,27 @@ HRESULT CProjectile_Rope::Add_Component()
 	ColData.iTargetColType = COL_STATIC_OBJECT;
 	ColData.isDead = false;
 
+	//CCollider::SPHERE_DESC	BoundingDesc{};
+	//BoundingDesc.fRadius = 0.1f;
+	//BoundingDesc.vCenter = _float3(0.f, 0.f, 0.f);
 
-	CCollider::SPHERE_DESC	BoundingDesc{};
-	BoundingDesc.fRadius = 0.1f;
-	BoundingDesc.vCenter = _float3(0.f, 0.f, 0.f);
+	//ColliderDesc.ColData = ColData;
+	//ColliderDesc.ColliderDesc = BoundingDesc;
 
+	//if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Collider_Sphere"),
+	//	TEXT("Com_Collider"), reinterpret_cast<CComponent**>(&m_pColliderCom), &ColliderDesc)))
+	//	return E_FAIL;
+
+	CCollider::CAPSULE_DESC	BoundingDesc{};
+	BoundingDesc.fHeight = 0.01f;
+	BoundingDesc.fRadius = 0.6f;
+	BoundingDesc.vCenter = { 0.f, 0.f, 0.f };
+	BoundingDesc.vDir = { 0.f, 1.f, 0.f };
+	
 	ColliderDesc.ColData = ColData;
 	ColliderDesc.ColliderDesc = BoundingDesc;
 
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Collider_Sphere"),
+	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Collider_Capsule"),
 		TEXT("Com_Collider"), reinterpret_cast<CComponent**>(&m_pColliderCom), &ColliderDesc)))
 		return E_FAIL;
 
@@ -160,6 +193,19 @@ HRESULT CProjectile_Rope::Add_Component()
 	m_pVIBufferCom = dynamic_cast<CVIBuffer_Point_Double*>(m_pGameInstance->Clone_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_VIBuffer_Point_Double")));
 
 	m_pShaderCom = dynamic_cast<CShader*>(m_pGameInstance->Clone_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Shader_VtxPoint_Rope")));
+
+
+	//CCollider::OBB_DESC	BoundingDesc{};
+	//BoundingDesc.vExtents = { 0.2f, 0.8f, 0.2f };
+	//BoundingDesc.vCenter = {0.f, BoundingDesc.vExtents.y, 0.f};
+	//BoundingDesc.vRadians = {0.f, 0.f, 0.f };
+
+	//ColliderDesc.ColData = ColData;
+	//ColliderDesc.ColliderDesc = BoundingDesc;
+
+	//if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Collider_OBB"),
+	//	TEXT("Com_Collider"), reinterpret_cast<CComponent**>(&m_pColliderCom), &ColliderDesc)))
+	//	return E_FAIL;
 
 	return S_OK;
 }

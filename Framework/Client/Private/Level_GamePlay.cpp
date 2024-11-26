@@ -143,13 +143,18 @@ HRESULT CLevel_GamePlay::Ready_Layer_Obstacle(const wstring& strLayerTag)
 	//}
 
 
-	Obstacle_Desc.vStartpos = _float3(252.f , 5.f , 250.f );
+	Obstacle_Desc.vStartpos = _float3(255.f , 0.f , 245.f );
 	Obstacle_Desc.eShape = OBSTACLE_SHAPE::SHAPE_BOX;
 	if (FAILED(m_pGameInstance->Add_CloneObject(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Obstacle"), &Obstacle_Desc)))
 		return E_FAIL;
 
-	Obstacle_Desc.vStartpos = _float3(240.f, 3.f, 250.f);
+	Obstacle_Desc.vStartpos = _float3(238.f, 3.f, 250.f);
 	Obstacle_Desc.eShape = OBSTACLE_SHAPE::SHAPE_PLANE;
+	if (FAILED(m_pGameInstance->Add_CloneObject(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Obstacle"), &Obstacle_Desc)))
+		return E_FAIL;
+
+	Obstacle_Desc.vStartpos = _float3(245.f, 0.f, 265.f);
+	Obstacle_Desc.eShape = OBSTACLE_SHAPE::SHAPE_CUSTOM_1;
 	if (FAILED(m_pGameInstance->Add_CloneObject(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Obstacle"), &Obstacle_Desc)))
 		return E_FAIL;
 

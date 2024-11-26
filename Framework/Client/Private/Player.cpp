@@ -74,6 +74,8 @@ void CPlayer::Priority_Tick(_float fTimeDelta)
 
 void CPlayer::Tick(_float fTimeDelta)
 {
+	Root_Transform();
+
 	KeyInput(fTimeDelta);
 
 	/*µð¹ö±ë*/
@@ -82,7 +84,6 @@ void CPlayer::Tick(_float fTimeDelta)
 	for (auto& Pair : m_PlayerParts)
 		(Pair.second)->Tick(fTimeDelta);
 
-	Root_Transform();
 	m_pRigidColliderCom->Tick(m_pTransformCom->Get_WorldMatrix());
 	m_pTrigerColliderCom->Tick(m_pTransformCom->Get_WorldMatrix());
 
@@ -123,7 +124,6 @@ void CPlayer::Event_CollisionEnter(ColData* _TargetColData, ColData* _MyColData)
 	if (_TargetColData->eMyColType == COL_STATIC_OBJECT)
 	{
 		/*µð¹ö±ë*/
-
 		if (_MyColData->pCol == m_pRigidColliderCom)
 		{		
 			vector<vector<CBounding_Capsule::ContactPoint>>& vecPoints = dynamic_cast<CBounding_Capsule*>(m_pRigidColliderCom->Get_Bounding())->Get_Points()[0];
@@ -141,6 +141,7 @@ void CPlayer::Event_CollisionEnter(ColData* _TargetColData, ColData* _MyColData)
 					ContactPoint = vecPoints[i][1];
 					if (ContactPoint.ContactType == CBounding_Capsule::ContactPointType::VertexPlane)
 						break;
+
 				}			
 			}
 
@@ -166,19 +167,19 @@ void CPlayer::Event_CollisionEnter(ColData* _TargetColData, ColData* _MyColData)
 			if (angleDeg <= 60.f)
 			{
 				XMStoreFloat3(&m_vCurrentNormal, vNormal);
-				if (m_pLandColliders.empty())
+				if (m_pCurrentLandCollider == nullptr)
 				{
 					m_eJumpState = JumpState::ONOBJECT;
 					m_eCurrentState = PlayerState::STATE_IDLE;
 					m_eNextState = PlayerState::STATE_IDLE;
 
 					m_pCurrentLandCollider = _TargetColData->pCol;
-					m_pLandColliders.push_back(_TargetColData->pCol);
 				}
 				else
 				{
-					m_pLandColliders.push_back(_TargetColData->pCol);
+					m_pCurrentLandCollider = _TargetColData->pCol;
 				}
+				
 			}
 			else if ( 120.f<= angleDeg )
 			{
@@ -186,23 +187,37 @@ void CPlayer::Event_CollisionEnter(ColData* _TargetColData, ColData* _MyColData)
 			}
 			else
 			{
-				if (m_pClimbColliders.empty())
+				if (m_eJumpState == JumpState::ONGROUND || m_eJumpState == JumpState::ONOBJECT)
 				{
-					m_eJumpState = JumpState::CLIMING;
-					m_eCurrentState = PlayerState::STATE_CLIMING;
-					m_eNextState = PlayerState::STATE_CLIMING;
-
-					m_pCurrentClimbCollider = _TargetColData->pCol;
-					m_pClimbColliders.push_back(_TargetColData->pCol);
-
-					m_pTransformCom->Set_Look_ForLandObject(-vNormal);
+					
 				}
 				else
 				{
-					m_pClimbColliders.push_back(_TargetColData->pCol);
-				}
-			}
+					XMStoreFloat3(&m_vClimingNormal, vNormal);
+					if (m_pCurrentClimbCollider == nullptr)
+					{
+						m_eJumpState = JumpState::CLIMING;
+						m_eCurrentState = PlayerState::STATE_CLIMING;
+						m_eNextState = PlayerState::STATE_CLIMING;
 
+						m_pCurrentClimbCollider = _TargetColData->pCol;
+						m_pTransformCom->Set_Look_ForLandObject(-vNormal);
+					}
+					else
+					{
+						m_pCurrentClimbCollider = _TargetColData->pCol;
+					}
+				}
+				
+			}
+			m_pTransformCom->Move_Dir(vNormal, fDepth);
+			m_pRigidColliderCom->Tick(m_pTransformCom->Get_WorldMatrix());
+			m_pTrigerColliderCom->Tick(m_pTransformCom->Get_WorldMatrix());
+
+			if (!m_pRigidColliderCom->Intersect(_TargetColData->pCol))
+			{
+				m_pRigidColliderCom->CollisionExit(_TargetColData->pCol);
+			}
 			//if (vNormal.m128_f32[1] > 0.9f)
 			//{
 			//	if (m_pLandColliders.empty())
@@ -246,7 +261,7 @@ void CPlayer::Event_CollisionEnter(ColData* _TargetColData, ColData* _MyColData)
 			//	}
 			//}
 			
-			m_pTransformCom->Move_Dir(vNormal, fDepth);
+			
 		}
 	}
 }
@@ -262,7 +277,7 @@ void CPlayer::Event_CollisionExit(ColData* _ColData, ColData* _MyColData)
 	{
 		/*µð¹ö±ë*/
 
-		if (_MyColData->pCol == m_pTrigerColliderCom)
+		/*if (_MyColData->pCol == m_pTrigerColliderCom)
 		{
 			
 			auto iter = find(m_pLandColliders.begin(), m_pLandColliders.end(), _ColData->pCol);
@@ -298,7 +313,7 @@ void CPlayer::Event_CollisionExit(ColData* _ColData, ColData* _MyColData)
 				else
 					m_pCurrentClimbCollider = m_pClimbColliders.front();
 			}
-		}
+		}*/
 	}
 }
 
@@ -411,16 +426,16 @@ void CPlayer::Root_Transform()
 	if (m_eJumpState == JumpState::ONOBJECT)
 	{
 		_vector vMove	= XMLoadFloat3(&vRootTransform);
-		_float	fMoveScale = XMVectorGetX(XMVector3Length(vMove));
+		_vector	vLook	= m_pTransformCom->Get_State(CTransform::STATE_LOOK);
+		_vector	vRight	= m_pTransformCom->Get_State(CTransform::STATE_RIGHT);
+		_vector vFinal  = XMVector3Normalize(vLook) * XMVectorGetZ(vMove);
+		vFinal += (XMVector3Normalize(vRight) * XMVectorGetX(vMove));
+
+		_float	fMoveScale = XMVectorGetX(XMVector3Length(vFinal));
 		_vector vNormal = XMLoadFloat3(&m_vCurrentNormal);
-		_vector vSurface = vMove - (XMVectorGetX(XMVector3Dot(vMove, vNormal)) * vNormal);
+		_vector vSurface = vFinal - (XMVectorGetX(XMVector3Dot(vFinal, vNormal)) * vNormal);
 		vSurface = XMVector3Normalize(vSurface);
-		vSurface *= fMoveScale;
-		if (XMVector3Length(vSurface).m128_f32[0] > 0.f)
-		{
-			int a = 0;
-		}
-		m_pTransformCom->Move(vSurface, m_pNavigationCom);
+		m_pTransformCom->Move_Dir(vSurface, fMoveScale);
 	}
 	else
 		m_pTransformCom->Move(XMLoadFloat3(&vRootTransform), m_pNavigationCom);
@@ -653,48 +668,101 @@ void CPlayer::Handle_ClimingState(_float fTimeDelta)
 
 	Change_Anim(CLIMB_IDLE);
 
+	
 	if (KEYPRESSING(DIK_W) || KEYPRESSING(DIK_A) || KEYPRESSING(DIK_S) || KEYPRESSING(DIK_D))
 	{
+		_vector vDir = {0.f, 1.f, 0.f};
 
 		if (KEYPRESSING(DIK_W))
 		{
+			vDir = { 0.f, 1.f, 0.f };
+
 			if (KEYPRESSING(DIK_A))
 			{
-				m_pTransformCom->Go_Dir(Direction::DIR_UP_LEFT, fTimeDelta);
+				vDir -= (m_pTransformCom->Get_State(CTransform::STATE_RIGHT));
 			}
 			else if (KEYPRESSING(DIK_D))
 			{
-				m_pTransformCom->Go_Dir(Direction::DIR_UP_RIGHT, fTimeDelta);
+				vDir += (m_pTransformCom->Get_State(CTransform::STATE_RIGHT));
 			}
 			else
-			{
-				m_pTransformCom->Go_Dir(Direction::DIR_UP, fTimeDelta);
+			{				
 			}
 		}
 		else if (KEYPRESSING(DIK_S))
 		{
+			vDir = { 0.f, -1.f, 0.f };
+
 			if (KEYPRESSING(DIK_A))
 			{
-				m_pTransformCom->Go_Dir(Direction::DIR_DOWN_LEFT, fTimeDelta);
+				vDir -= (m_pTransformCom->Get_State(CTransform::STATE_RIGHT));
 			}
 			else if (KEYPRESSING(DIK_D))
 			{
-				m_pTransformCom->Go_Dir(Direction::DIR_DOWN_RIGHT, fTimeDelta);
+				vDir += (m_pTransformCom->Get_State(CTransform::STATE_RIGHT));
 			}
 			else
 			{
-				m_pTransformCom->Go_Dir(Direction::DIR_DOWN, fTimeDelta);
 			}
 		}
 		else if (KEYPRESSING(DIK_A))
 		{
-			m_pTransformCom->Go_Dir(Direction::DIR_LEFT, fTimeDelta);
+			vDir = -(m_pTransformCom->Get_State(CTransform::STATE_RIGHT));
 		}
 		else if (KEYPRESSING(DIK_D))
 		{
-			m_pTransformCom->Go_Dir(Direction::DIR_RIGHT, fTimeDelta);
+			vDir = (m_pTransformCom->Get_State(CTransform::STATE_RIGHT));
 		}
+		
+		vDir = XMVector3Normalize(vDir);
+		_vector vNormal = XMLoadFloat3(&m_vClimingNormal);
+		_vector vSurface = vDir - (XMVectorGetX(XMVector3Dot(vDir, vNormal)) * vNormal);
+		vSurface = XMVector3Normalize(vSurface);
+		m_pTransformCom->Move_Dir(vSurface, 3 * fTimeDelta);
 	}
+	
+	//if (KEYPRESSING(DIK_W) || KEYPRESSING(DIK_A) || KEYPRESSING(DIK_S) || KEYPRESSING(DIK_D))
+	//{
+
+	//	if (KEYPRESSING(DIK_W))
+	//	{
+	//		if (KEYPRESSING(DIK_A))
+	//		{
+	//			m_pTransformCom->Go_Dir(Direction::DIR_UP_LEFT, fTimeDelta);
+	//		}
+	//		else if (KEYPRESSING(DIK_D))
+	//		{
+	//			m_pTransformCom->Go_Dir(Direction::DIR_UP_RIGHT, fTimeDelta);
+	//		}
+	//		else
+	//		{
+	//			m_pTransformCom->Go_Dir(Direction::DIR_UP, fTimeDelta);
+	//		}
+	//	}
+	//	else if (KEYPRESSING(DIK_S))
+	//	{
+	//		if (KEYPRESSING(DIK_A))
+	//		{
+	//			m_pTransformCom->Go_Dir(Direction::DIR_DOWN_LEFT, fTimeDelta);
+	//		}
+	//		else if (KEYPRESSING(DIK_D))
+	//		{
+	//			m_pTransformCom->Go_Dir(Direction::DIR_DOWN_RIGHT, fTimeDelta);
+	//		}
+	//		else
+	//		{
+	//			m_pTransformCom->Go_Dir(Direction::DIR_DOWN, fTimeDelta);
+	//		}
+	//	}
+	//	else if (KEYPRESSING(DIK_A))
+	//	{
+	//		m_pTransformCom->Go_Dir(Direction::DIR_LEFT, fTimeDelta);
+	//	}
+	//	else if (KEYPRESSING(DIK_D))
+	//	{
+	//		m_pTransformCom->Go_Dir(Direction::DIR_RIGHT, fTimeDelta);
+	//	}
+	//}
 
 }
 
@@ -901,6 +969,8 @@ void CPlayer::Start_Jump()
 		m_eJumpState = JumpState::JUMPING;
 		m_eCurrentState = PlayerState::STATE_FALLING;
 		m_eNextState = PlayerState::STATE_FALLING;
+
+		m_pCurrentLandCollider = nullptr;
 	}
 	else if (m_eJumpState == JumpState::CLIMING)
 	{
@@ -910,6 +980,7 @@ void CPlayer::Start_Jump()
 		m_eJumpState = JumpState::JUMPING;
 		m_eCurrentState = PlayerState::STATE_FALLING;
 		m_eNextState = PlayerState::STATE_FALLING;
+		m_pCurrentClimbCollider = nullptr;
 	}
 }
 
@@ -1097,13 +1168,13 @@ void CPlayer::Free()
 		Safe_Release(Pair.second);
 	m_PlayerParts.clear();
 
-	for (auto iter : m_pLandColliders)
-		Safe_Release(iter);
-	m_pLandColliders.clear();
+	//for (auto iter : m_pLandColliders)
+	//	Safe_Release(iter);
+	//m_pLandColliders.clear();
 
-	for (auto iter : m_pClimbColliders)
-		Safe_Release(iter);
-	m_pClimbColliders.clear();
+	//for (auto iter : m_pClimbColliders)
+	//	Safe_Release(iter);
+	//m_pClimbColliders.clear();
 
 	Safe_Release(m_pCurrentLandCollider);
 	Safe_Release(m_pCurrentClimbCollider);

@@ -142,14 +142,42 @@ HRESULT CObstacle::Add_Component()
 		break;
 
 	case Client::OBSTACLE_SHAPE::SHAPE_PLANE:
-		CCollider::TRIANGLE_DESC desc;
-		desc.vVertex1 = { 0.f, 2.f, 0.f };
-		desc.vVertex2 = { 0.f, 0.f, 10.f };
+		desc.vVertex1 = { 0.f, 0.f, 0.f };
+		desc.vVertex2 = { 0.f, 3.f, 10.f };
 		desc.vVertex3 = { 10.f, 0.f, 0.f };
+		BoundingDesc.push_back(desc);
+		desc.vVertex1 = { 10.f, 0.f, 0.f };
+		desc.vVertex2 = { 0.f, 3.f, 10.f };
+		desc.vVertex3 = { 10.f, 0.f, 10.f };
+		BoundingDesc.push_back(desc);
+		desc.vVertex1 = { 10.f, 3.f, -10.f };
+		desc.vVertex2 = { 0.f, 0.f, 0.f };
+		desc.vVertex3 = { 10.f, 0.f, 0.f };
+		BoundingDesc.push_back(desc);
+		desc.vVertex1 = { 0.f, 0.f, -10.f };
+		desc.vVertex2 = { 0.f, 0.f, 0.f };
+		desc.vVertex3 = { 10.f, 3.f, -10.f };
 		BoundingDesc.push_back(desc);
 		break;
 
 	case Client::OBSTACLE_SHAPE::SHAPE_CUSTOM_1:
+		desc.vVertex1 = { 0.f, 0.f, 0.f };
+		desc.vVertex2 = { 0.f, 10.f, 3.f };
+		desc.vVertex3 = { 10.f, 0.f, 0.f };
+		BoundingDesc.push_back(desc);
+		desc.vVertex1 = { 10.f, 0.f, 0.f };
+		desc.vVertex2 = { 0.f, 10.f, 3.f };
+		desc.vVertex3 = { 10.f, 10.f, 1.f };
+		BoundingDesc.push_back(desc);
+		desc.vVertex1 = { 0.f, 10.f, 3.f };
+		desc.vVertex2 = { 0.f, 20.f, -1.f };
+		desc.vVertex3 = { 10.f, 10.f, 1.f };
+		BoundingDesc.push_back(desc);
+		desc.vVertex1 = { 10.f, 10.f, 1.f };
+		desc.vVertex2 = { 0.f, 20.f, -1.f };
+		desc.vVertex3 = { 10.f, 20.f, -3.f };
+		BoundingDesc.push_back(desc);
+		break;
 		break;
 
 	case Client::OBSTACLE_SHAPE::SHAPE_END:
