@@ -12,7 +12,7 @@ private:
 
 public:
 	virtual void* Get_Bounding() override { return nullptr; }
-	CCollider::TRIANGLE_DESC* Get_Desc() { return &m_MyDesc;}
+	vector<CCollider::TRIANGLE_DESC>& Get_Desc() { return m_vecMyDesc;}
 
 public:
 	HRESULT Initialize(void* pArg);
@@ -33,8 +33,8 @@ private:
 	void	Triangle_Tranform(_fmatrix WorldMatrix);
 
 private:
-	CCollider::TRIANGLE_DESC  m_OriginalMyDesc;
-	CCollider::TRIANGLE_DESC  m_MyDesc;
+	vector<CCollider::TRIANGLE_DESC>  m_vecOriginalMyDesc;
+	vector<CCollider::TRIANGLE_DESC>  m_vecMyDesc;
 
 public:
 	static CBounding_Triangles* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, void* pArg);

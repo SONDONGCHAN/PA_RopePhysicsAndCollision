@@ -148,7 +148,7 @@ HRESULT CProjectile_Rope::Add_Component()
 	BoundingDesc.vCenter = _float3(0.f, 0.f, 0.f);
 
 	ColliderDesc.ColData = ColData;
-	ColliderDesc.SphereDesc = BoundingDesc;
+	ColliderDesc.ColliderDesc = BoundingDesc;
 
 	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Collider_Sphere"),
 		TEXT("Com_Collider"), reinterpret_cast<CComponent**>(&m_pColliderCom), &ColliderDesc)))

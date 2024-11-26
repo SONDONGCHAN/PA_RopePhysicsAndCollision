@@ -25,6 +25,7 @@
 
 using namespace DirectX;
 
+#include <variant>
 #include <vector>
 #include <list>
 #include <map>

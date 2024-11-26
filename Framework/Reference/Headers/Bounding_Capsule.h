@@ -17,11 +17,12 @@ public:
 
 	struct ContactPoint
 	{
-		_vector ShapeContactPoints[2]; // 충돌한 두 물체에서의 접촉점 (월드 좌표)
-		_vector ShapeContactNormal;   // 접촉 지점의 법선 벡터
-		float Phi;                    // 충돌 깊이 (음수일 경우 관통)
-		ContactPointType ContactType; // 접촉점의 유형 (Vertex-Plane, Edge-Edge 등)
-		_int FaceIndex;              // 충돌한 면의 인덱스 (삼각형 등)
+		_vector ShapeContactPoints[2];	// 충돌한 두 물체에서의 접촉점 (월드 좌표)
+		_vector ShapeContactNormal;		// 접촉 지점의 법선 벡터
+		float Phi;						// 충돌 깊이 (음수일 경우 관통)
+		ContactPointType ContactType{ ContactPointType::Unknown };	// 접촉점의 유형 (Vertex-Plane, Edge-Edge 등)
+		_int FaceIndex;					// 충돌한 면의 인덱스 (삼각형 등)
+		_bool isCol{ false };			// 실제 접촉 여부
 	};
 
 
@@ -72,7 +73,8 @@ private:
 	_bool AddCapsuleTriangleParallelEdgeManifoldContacts(
 		const XMVECTOR& P0, const XMVECTOR& P1,
 		const XMVECTOR& EdgeP0, const XMVECTOR& EdgeP1,
-		const _float R, const _float RejectDistanceSq, const _float NormalToleranceSq);
+		const _float R, const _float RejectDistanceSq, const _float NormalToleranceSq,
+		vector<vector<ContactPoint>>& _vvecPoints);
 
 	inline bool InRangeClosed(float Value, float Min, float Max)
 	{
@@ -86,14 +88,16 @@ private:
 public:
 	_vector Get_ColNormal() { return vColNormal; }
 	_float	Get_ColDepth() { return fColDepth; }
-	vector<ContactPoint>&	Get_Points() { return m_vecPoints; }
+	vector<vector<vector<ContactPoint>>>&	Get_Points() { return m_vecPoints; }
 
 
 private:
 	CCollider::CAPSULE_DESC m_pOriginalMyDesc{  };
 	CCollider::CAPSULE_DESC m_pMyDesc{  };
-	vector<ContactPoint> m_vecPoints{	};
 
+	vector<vector<vector<ContactPoint>>> m_vecPoints{	};
+	//vector<여러 삼각형 세트vector<삼각형들vector <포인트2개 > >>
+	 
 	// 렌더링 용
 	BoundingSphere* m_pSphere_1			= { nullptr };
 	BoundingSphere* m_pSphere_2			= { nullptr };

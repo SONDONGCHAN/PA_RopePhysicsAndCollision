@@ -55,19 +55,19 @@ HRESULT CCollider::Initialize(void * pArg)
 	switch (m_eType)
 	{
 	case TYPE_AABB:
-		m_pBounding = CBounding_AABB::Create(m_pDevice, m_pContext, &pInitData->AABBDesc);
+		m_pBounding = CBounding_AABB::Create(m_pDevice, m_pContext, &pInitData->ColliderDesc);
 		break;
 	case TYPE_OBB:
-		m_pBounding = CBounding_OBB::Create(m_pDevice, m_pContext, &pInitData->OBBDesc);
+		m_pBounding = CBounding_OBB::Create(m_pDevice, m_pContext, &pInitData->ColliderDesc);
 		break;
 	case TYPE_SPHERE:
-		m_pBounding = CBounding_Sphere::Create(m_pDevice, m_pContext, &pInitData->SphereDesc);
+		m_pBounding = CBounding_Sphere::Create(m_pDevice, m_pContext, &pInitData->ColliderDesc);
 		break;
 	case TYPE_CAPSULE:
-		m_pBounding = CBounding_Capsule::Create(m_pDevice, m_pContext, &pInitData->CapsuleDesc);
+		m_pBounding = CBounding_Capsule::Create(m_pDevice, m_pContext, &pInitData->ColliderDesc);
 		break;
 	case TYPE_TRIANGLE:
-		m_pBounding = CBounding_Triangles::Create(m_pDevice, m_pContext, &pInitData->CapsuleDesc);
+		m_pBounding = CBounding_Triangles::Create(m_pDevice, m_pContext, &pInitData->ColliderDesc);
 		break;
 	}
 

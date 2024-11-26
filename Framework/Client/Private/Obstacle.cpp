@@ -22,12 +22,14 @@ HRESULT CObstacle::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
+	OBSTACLE_DESC* pObstacleDesc = (OBSTACLE_DESC*)pArg;
+	m_pTransformCom->Set_State(CTransform::STATE_POSITION, XMLoadFloat3(&pObstacleDesc->vStartpos));
+	m_eMyShape = pObstacleDesc->eShape;
+
 	if (FAILED(Add_Component()))
 		return E_FAIL;
 
-	OBSTACLE_DESC* pObstacleDesc = (OBSTACLE_DESC*)pArg;
-	m_pTransformCom->Set_State(CTransform::STATE_POSITION, XMLoadFloat3(&pObstacleDesc->vStartpos));
-
+	
 	return S_OK;
 }
 
@@ -92,15 +94,73 @@ HRESULT CObstacle::Add_Component()
 	//ColliderDesc.SphereDesc = BoundingDesc;
 
 	/*»ï°¢Çü*/
-	CCollider::TRIANGLE_DESC BoundingDesc{};
+	vector<CCollider::TRIANGLE_DESC> BoundingDesc{};
+	CCollider::TRIANGLE_DESC desc;
+	vector<_float3> vecPoints{};
+	vector<array<int, 3>> vecIndices{};
 
-	BoundingDesc.vVertex1 = {3.f, 0.f, 0.f };
-	BoundingDesc.vVertex2 = {0.f, 3.f, 10.f};
-	BoundingDesc.vVertex3 = {8.f, 6.f, 0.f};
-	BoundingDesc.vCenter;
+	switch (m_eMyShape)
+	{
+	case Client::OBSTACLE_SHAPE::SHAPE_BOX:
+		vecPoints =
+		{
+			{0.f, 0.f, 0.f},
+			{8.f, 0.f, 0.f},
+			{8.f, 0.f, 8.f},
+			{0.f, 0.f, 8.f},
+			{0.f, 8.f, 0.f},
+			{8.f, 8.f, 0.f},
+			{8.f, 8.f, 8.f},
+			{0.f, 8.f, 8.f}
+		};
+		vecIndices =
+		{
+			{0, 4, 5},
+			{0, 5, 1},
+			{2, 6, 7},
+			{2, 7, 3},
+			{1, 5, 6},
+			{1, 6, 2},
+			{3, 7, 4},
+			{3, 4, 0},
+			{4, 7, 6},
+			{4, 6, 5},
+			{3, 0, 1},
+			{3, 1, 2}
+		};
 
+		for (int i = 0; i < 12; ++i)
+		{
+			desc.vVertex1 = vecPoints[vecIndices[i][0]];
+			desc.vVertex2 = vecPoints[vecIndices[i][1]];
+			desc.vVertex3 = vecPoints[vecIndices[i][2]];
+			BoundingDesc.push_back(desc);
+		}
+		break;
+
+	case Client::OBSTACLE_SHAPE::SHAPE_PYRAMID:
+		break;
+
+	case Client::OBSTACLE_SHAPE::SHAPE_PLANE:
+		CCollider::TRIANGLE_DESC desc;
+		desc.vVertex1 = { 0.f, 2.f, 0.f };
+		desc.vVertex2 = { 0.f, 0.f, 10.f };
+		desc.vVertex3 = { 10.f, 0.f, 0.f };
+		BoundingDesc.push_back(desc);
+		break;
+
+	case Client::OBSTACLE_SHAPE::SHAPE_CUSTOM_1:
+		break;
+
+	case Client::OBSTACLE_SHAPE::SHAPE_END:
+		break;
+
+	default:
+		break;
+	}
+	
 	ColliderDesc.ColData = ColData;
-	ColliderDesc.TriangleDesc = BoundingDesc;
+	ColliderDesc.ColliderDesc = BoundingDesc;
 
 	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Collider_Triangle"),
 		TEXT("Com_Collider"), reinterpret_cast<CComponent**>(&m_pColliderCom), &ColliderDesc)))

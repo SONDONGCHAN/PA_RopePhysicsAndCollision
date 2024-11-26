@@ -140,8 +140,11 @@ private:
 	CCollider*			m_pCurrentClimbCollider{ nullptr };
 
 private:
+	_float3				m_vCurrentNormal{0.f, 1.f, 0.f};
+
+private:
 	const	_float m_fGravity{ -9.81f };		// 중력 가속도
-	const	_float m_fJumpforce{ 18.f };		// 초기 점프 속도
+	const	_float m_fJumpforce{ 10.f };		// 초기 점프 속도
 	const	_float m_fTerminalVelocity = -25.f; // 최대 낙하 속도
 	const	_float m_fDragCoefficient = 0.1f;	// 공기 저항 계수
 

@@ -55,15 +55,23 @@ public:
 		CGameObject::ColData ColData;
 
 		// 각 타입별 초기화 데이터를 위한 유니온
-		union
-		{
-			AABB_DESC		AABBDesc;
-			OBB_DESC		OBBDesc;
-			SPHERE_DESC		SphereDesc;
-			CYLINDER_DESC	SylinderDesc;
-			CAPSULE_DESC	CapsuleDesc;
-			TRIANGLE_DESC	TriangleDesc;
-		};
+		//union
+		//{
+		//	AABB_DESC		AABBDesc;
+		//	OBB_DESC		OBBDesc;
+		//	SPHERE_DESC		SphereDesc;
+		//	CYLINDER_DESC	SylinderDesc;
+		//	CAPSULE_DESC	CapsuleDesc;
+		//	vector<TRIANGLE_DESC>	TriangleDesc;
+		//};
+
+		std::variant<
+			AABB_DESC,
+			OBB_DESC,
+			SPHERE_DESC,
+			CYLINDER_DESC,
+			CAPSULE_DESC,
+			std::vector<TRIANGLE_DESC>> ColliderDesc;
 	};
 
 private:
