@@ -26,6 +26,7 @@ public:
 	virtual void Tick(_fmatrix WorldMatrix) = 0;
 	virtual HRESULT Render(PrimitiveBatch<VertexPositionColor>* pBatch) = 0;
 	virtual _bool Intersect(CCollider::TYPE eType, CBounding* pBounding) = 0;
+	virtual _int Check_State(CBounding* pTargetBounding, _int Index) { return -1; }
 
 public:
 	void	Reset_Iscoll() { m_isColl = false; }

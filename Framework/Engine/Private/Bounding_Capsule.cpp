@@ -446,7 +446,7 @@ _bool CBounding_Capsule::Intersect(CBounding_Triangles* pTargetBounding)
 			stContactPoint.ShapeContactNormal = FaceN;
 			stContactPoint.Phi = FaceD0 - R;
 			stContactPoint.ContactType = ContactPointType::VertexPlane;
-			stContactPoint.FaceIndex = 0;
+			stContactPoint.FaceIndex = i;
 			if (stContactPoint.Phi < 0)
 			{
 				isCol = true;
@@ -463,7 +463,7 @@ _bool CBounding_Capsule::Intersect(CBounding_Triangles* pTargetBounding)
 			stContactPoint.ShapeContactNormal = FaceN;
 			stContactPoint.Phi = FaceD1 - R;
 			stContactPoint.ContactType = ContactPointType::VertexPlane;
-			stContactPoint.FaceIndex = 0;
+			stContactPoint.FaceIndex = i;
 			if (stContactPoint.Phi < 0)
 			{
 				isCol = true;
@@ -499,7 +499,7 @@ _bool CBounding_Capsule::Intersect(CBounding_Triangles* pTargetBounding)
 				EdgeVertexIndex0 = EdgeVertexIndex1;
 				if (bIsParallelEdge[EdgeIndex])
 				{
-					if (AddCapsuleTriangleParallelEdgeManifoldContacts(P0, P1, EdgeP0, EdgeP1, R, RejectDistanceSq, NormalToleranceSq, vvecPoints))
+					if (AddCapsuleTriangleParallelEdgeManifoldContacts(P0, P1, EdgeP0, EdgeP1, R, RejectDistanceSq, NormalToleranceSq, vvecPoints, i))
 					{
 						isCol = true;
 					}
@@ -538,7 +538,7 @@ _bool CBounding_Capsule::Intersect(CBounding_Triangles* pTargetBounding)
 				}
 
 				// Utility to add a cylinder contact point, if it is within the edge planes
-				const auto& TryAddCylinderContact = [R, &RadialAxis, &V0, &V1, &V2, &FaceN, &FaceP, &EdgeNs, DistanceTolerance](const _vector& P, vector<ContactPoint>& _vecPoints) -> void
+				const auto& TryAddCylinderContact = [R, &RadialAxis, &V0, &V1, &V2, &FaceN, &FaceP, &EdgeNs, DistanceTolerance](const _vector& P, vector<ContactPoint>& _vecPoints, int _Index) -> void
 				{
 					const _vector CylinderP = P + R * RadialAxis;
 					const _float CylinderEdgeD0 = XMVectorGetX(XMVector3Dot(CylinderP - V0, EdgeNs[0]));
@@ -555,7 +555,7 @@ _bool CBounding_Capsule::Intersect(CBounding_Triangles* pTargetBounding)
 						stContactPoint.ShapeContactNormal = FaceN;
 						stContactPoint.Phi = CylinderFaceD;
 						stContactPoint.ContactType = ContactPointType::VertexPlane;
-						stContactPoint.FaceIndex = 0;
+						stContactPoint.FaceIndex = _Index;
 						_vecPoints.push_back(stContactPoint);
 					}
 				};
@@ -563,7 +563,7 @@ _bool CBounding_Capsule::Intersect(CBounding_Triangles* pTargetBounding)
 				if (bCheckCylinder0)
 				{
 					int iSize = vecPoints.size();
-					TryAddCylinderContact(P0, vecPoints);
+					TryAddCylinderContact(P0, vecPoints, i);
 					if ((vecPoints.size() > iSize) && (vecPoints[iSize].Phi < 0))
 					{
 						isCol = true;
@@ -573,7 +573,7 @@ _bool CBounding_Capsule::Intersect(CBounding_Triangles* pTargetBounding)
 				if (bCheckCylinder1)
 				{
 					int iSize = vecPoints.size();
-					TryAddCylinderContact(P1, vecPoints);
+					TryAddCylinderContact(P1, vecPoints, i);
 					if ((vecPoints.size() > iSize) && (vecPoints[iSize].Phi < 0))
 					{
 						isCol = true;
@@ -714,7 +714,7 @@ _bool CBounding_Capsule::Intersect(CBounding_Triangles* pTargetBounding)
 					stContactPoint.ShapeContactNormal = FaceN;
 					stContactPoint.Phi = CapsuleDist;
 					stContactPoint.ContactType = ContactPointType::VertexPlane;
-					stContactPoint.FaceIndex = 0;
+					stContactPoint.FaceIndex = i;
 					if (stContactPoint.Phi < 0)
 					{
 						stContactPoint.isCol = true;
@@ -730,7 +730,7 @@ _bool CBounding_Capsule::Intersect(CBounding_Triangles* pTargetBounding)
 					stContactPoint.ShapeContactNormal = SegmentEdgeN;
 					stContactPoint.Phi = SegmentEdgeDist - R;
 					stContactPoint.ContactType = ContactPointType::EdgeEdge;
-					stContactPoint.FaceIndex = 0;
+					stContactPoint.FaceIndex = i;
 					if (stContactPoint.Phi < 0)
 					{
 						stContactPoint.isCol = true;
@@ -999,11 +999,11 @@ void CBounding_Capsule::NearestPointsOnLineSegments(const XMVECTOR& P0, const XM
 	EdgeP = EdgeP0 + t * d2;
 }
 
-_bool CBounding_Capsule::AddCapsuleTriangleParallelEdgeManifoldContacts(const XMVECTOR& P0, const XMVECTOR& P1, const XMVECTOR& EdgeP0, const XMVECTOR& EdgeP1, const _float R, const _float RejectDistanceSq, const _float NormalToleranceSq, vector<vector<ContactPoint>>& _vvecPoints)
+_bool CBounding_Capsule::AddCapsuleTriangleParallelEdgeManifoldContacts(const XMVECTOR& P0, const XMVECTOR& P1, const XMVECTOR& EdgeP0, const XMVECTOR& EdgeP1, const _float R, const _float RejectDistanceSq, const _float NormalToleranceSq, vector<vector<ContactPoint>>& _vvecPoints, _int _Index)
 {
 	vector<ContactPoint> vecPoints;
 	// Utility to add a contact to the array if it is within cull distance
-	const auto& AddContact = [](const _vector& SegmentEdgeC, const _vector& SegmentEdgeDelta, const _float R, const _float RejectDistanceSq, const _float NormalToleranceSq, vector<ContactPoint>& _vecPoints) -> void
+	const auto& AddContact = [](const _vector& SegmentEdgeC, const _vector& SegmentEdgeDelta, const _float R, const _float RejectDistanceSq, const _float NormalToleranceSq, vector<ContactPoint>& _vecPoints, _int _iIndex) -> void
 	{
 		const _float SegmentEdgeDistSq = XMVectorGetX(XMVector3LengthSq(SegmentEdgeDelta));
 		if ((SegmentEdgeDistSq < RejectDistanceSq) && (SegmentEdgeDistSq > NormalToleranceSq))
@@ -1017,7 +1017,7 @@ _bool CBounding_Capsule::AddCapsuleTriangleParallelEdgeManifoldContacts(const XM
 			stContactPoint.ShapeContactNormal = SegmentEdgeN;
 			stContactPoint.Phi = SegmentEdgeDist - R;
 			stContactPoint.ContactType = ContactPointType::EdgeEdge;
-			stContactPoint.FaceIndex = 0;
+			stContactPoint.FaceIndex = _iIndex;
 			_vecPoints.push_back(stContactPoint);
 		}
 	};
@@ -1043,7 +1043,7 @@ _bool CBounding_Capsule::AddCapsuleTriangleParallelEdgeManifoldContacts(const XM
 
 			const _vector SegmentEdgeDelta0 = P0 - (EdgeP0 + T0 * EdgeDelta);
 			const _vector SegmentEdgeC0 = EdgeP0 + clamp(T0, (0.f), (1.f)) * EdgeDelta;
-			AddContact(SegmentEdgeC0, SegmentEdgeDelta0, R, RejectDistanceSq, NormalToleranceSq, vecPoints);
+			AddContact(SegmentEdgeC0, SegmentEdgeDelta0, R, RejectDistanceSq, NormalToleranceSq, vecPoints, _Index);
 			if (vecPoints[vecPoints.size() - 1].Phi < 0)
 			{
 				vecPoints[vecPoints.size() - 1].isCol = true;
@@ -1051,7 +1051,7 @@ _bool CBounding_Capsule::AddCapsuleTriangleParallelEdgeManifoldContacts(const XM
 			}
 			const _vector SegmentEdgeDelta1 = P1 - (EdgeP0 + T1 * EdgeDelta);
 			const _vector SegmentEdgeC1 = EdgeP0 + clamp(T1, (0.f), (1.f)) * EdgeDelta;
-			AddContact(SegmentEdgeC1, SegmentEdgeDelta1, R, RejectDistanceSq, NormalToleranceSq, vecPoints);
+			AddContact(SegmentEdgeC1, SegmentEdgeDelta1, R, RejectDistanceSq, NormalToleranceSq, vecPoints, _Index);
 			if (vecPoints[vecPoints.size() - 1].Phi < 0)
 			{
 				vecPoints[vecPoints.size() - 1].isCol = true;
@@ -1077,7 +1077,7 @@ _bool CBounding_Capsule::AddCapsuleTriangleParallelEdgeManifoldContacts(const XM
 			}
 			const _vector SegmentEdgeC = EdgeP0 + clamp(SegmentEdgeT, (0.f), (1.f)) * EdgeDelta;
 			const _vector SegmentEdgeDelta = (SegmentEdgeP - SegmentEdgeC);
-			AddContact(SegmentEdgeC, SegmentEdgeDelta, R, RejectDistanceSq, NormalToleranceSq, vecPoints);
+			AddContact(SegmentEdgeC, SegmentEdgeDelta, R, RejectDistanceSq, NormalToleranceSq, vecPoints, _Index);
 			if (vecPoints[vecPoints.size() - 1].Phi < 0)
 			{
 				vecPoints[vecPoints.size() - 1].isCol = true;
@@ -1090,6 +1090,182 @@ _bool CBounding_Capsule::AddCapsuleTriangleParallelEdgeManifoldContacts(const XM
 		_vvecPoints.push_back(vecPoints);
 
 	return isCol;
+}
+
+
+_int CBounding_Capsule::Check_State(CBounding* pTargetBounding, _int Index)
+{
+	// 캡슐정보
+	const _vector P0 = XMVectorAdd(XMLoadFloat3(&m_pMyDesc.vCenter), XMVectorScale(XMLoadFloat3(&m_pMyDesc.vDir), m_pMyDesc.fHeight));
+	const _vector P1 = XMVectorAdd(XMLoadFloat3(&m_pMyDesc.vCenter), -(XMVectorScale(XMLoadFloat3(&m_pMyDesc.vDir), m_pMyDesc.fHeight)));
+	const _float R = m_pMyDesc.fRadius;
+	const _vector Axis = XMLoadFloat3(&m_pMyDesc.vDir);
+	const _float L = m_pMyDesc.fHeight;
+	const _float RejectDistance = R + 50.f;
+	const _float RejectDistanceSq = RejectDistance * RejectDistance;
+
+	// 오차허용범위
+	const _float DistanceTolerance = _float(1.e-5) * L;
+	const _float NormalTolerance = _float(1.e-5);
+	const _float NormalToleranceSq = NormalTolerance * NormalTolerance;
+	const _float FaceContactSinAngleThreshold = _float(0.34);	// ~Sin(20deg)
+
+	CCollider::TRIANGLE_DESC Desc = dynamic_cast<CBounding_Triangles*>(pTargetBounding)->Get_Desc()[Index];
+
+	// 삼각형 정보
+	const _vector V0 = XMLoadFloat3(&Desc.vVertex1);
+	const _vector V1 = XMLoadFloat3(&Desc.vVertex2);
+	const _vector V2 = XMLoadFloat3(&Desc.vVertex3);
+	const _vector vVertex[3] = { V0, V1, V2 };
+
+	const _vector Centroid = XMLoadFloat3(&Desc.vCenter);
+
+	// 삼각형 노말
+	const _vector& FaceP = V0;
+	_vector FaceN = XMVector3Cross(V1 - V0, V2 - V0);
+	;
+	if (XMVectorGetX(XMVector3Length(FaceN)) < (NormalToleranceSq))
+	{
+		return 0;
+	}
+	FaceN = XMVector3Normalize(FaceN);
+
+	//캡슐과 삼각형의 거리
+	const _float FaceD0 = XMVectorGetX(XMVector3Dot(P0 - V0, FaceN));
+	const _float FaceD1 = XMVectorGetX(XMVector3Dot(P1 - V0, FaceN));
+	const bool bIsParallelFace = XMScalarNearEqual(FaceD0, FaceD1, DistanceTolerance);
+
+	// 거리기반 컬링
+	if ((FaceD0 > RejectDistance) && (FaceD1 > RejectDistance))
+		return 0;
+
+	// Reject if the middle of the capsule is inside the face (single-sided collision)
+	// 백페이스 컬링
+	const _float FaceDMid = 0.5f * (FaceD0 + FaceD1);
+	if (FaceDMid < -DistanceTolerance)
+	{
+		return 0;
+	}
+
+
+	// 삼각형의 각 엣지와 캡슐축과의 거리
+	// Edge plane normals and signed distances to each segment point
+	_vector EdgeNs[3];	// 엣지 노말
+	_float	EdgeD0s[3]; // 엣지와 축의 한쪽 끝과의 거리
+	_float	EdgeD1s[3];	// 엣지와 축의 다른 한쪽 끝과의 거리
+
+	EdgeNs[0] = XMVector3Cross(V0 - V2, FaceN);
+	EdgeNs[0] = XMVector3Normalize(EdgeNs[0]);
+	EdgeD0s[0] = XMVectorGetX(XMVector3Dot(P0 - V0, EdgeNs[0]));
+	EdgeD1s[0] = XMVectorGetX(XMVector3Dot(P1 - V0, EdgeNs[0]));
+	if (((EdgeD0s[0] > RejectDistance) && (EdgeD1s[0] > RejectDistance)))
+		return 0;
+
+	EdgeNs[1] = XMVector3Cross(V1 - V0, FaceN);
+	EdgeNs[1] = XMVector3Normalize(EdgeNs[1]);
+	EdgeD0s[1] = XMVectorGetX(XMVector3Dot(P0 - V1, EdgeNs[1]));
+	EdgeD1s[1] = XMVectorGetX(XMVector3Dot(P1 - V1, EdgeNs[1]));
+	if (((EdgeD0s[1] > RejectDistance) & (EdgeD1s[1] > RejectDistance)) != 0)
+		return 0;
+
+	EdgeNs[2] = XMVector3Cross(V2 - V1, FaceN);
+	EdgeNs[2] = XMVector3Normalize(EdgeNs[2]);
+	EdgeD0s[2] = XMVectorGetX(XMVector3Dot(P0 - V2, EdgeNs[2]));
+	EdgeD1s[2] = XMVectorGetX(XMVector3Dot(P1 - V2, EdgeNs[2]));
+	if (((EdgeD0s[2] > RejectDistance) & (EdgeD1s[2] > RejectDistance)) != 0)
+		return 0;
+
+	_vector	EdgeSegmentDeltas[3];	//캡슐의 축과 삼각형의 엣지 간의 벡터 차이
+	_vector	EdgeEdgePs[3];			//삼각형 엣지와 캡슐 축에서 가장 가까운 점의 좌표
+	_vector EdgeSegmentPs[3];
+	_float	EdgeEdgeTs[3];			//선분의 파라메트릭 값
+	_float	EdgeSegmentTs[3];
+	_float	EdgeDistSqs[3];			//두 선분 사이 거리의 제곱
+	_float	EdgeDistSigns[3];		//거리의 방향(양수 또는 음수)을 저장
+	_float	EdgeDotFace[3];			//삼각형의 법선(Face Normal)과 엣지 간의 관계를 저장
+	_int	EdgeVertexIndex0 = 2;	//삼각형 엣지의 첫 번째 꼭짓점 인덱스 (2 -> 0 -> 1 -> 순환).
+
+	for (int EdgeIndex = 0; EdgeIndex < 3; ++EdgeIndex)
+	{
+		const int EdgeVertexIndex1 = EdgeIndex;
+		const _vector& EdgeP0 = vVertex[EdgeVertexIndex0];
+		const _vector& EdgeP1 = vVertex[EdgeVertexIndex1];
+		EdgeVertexIndex0 = EdgeVertexIndex1;
+
+		// Find the nearest point on the capsule segment to the edge segment
+		_float	SegmentT, EdgeT;
+		_vector	SegmentP, EdgeP;
+		NearestPointsOnLineSegments(P0, P1, EdgeP0, EdgeP1, SegmentT, EdgeT, SegmentP, EdgeP);
+
+		// Calculate the separation vector (from triangle to capsule)
+		_vector SegmentEdgeN = SegmentP - EdgeP;
+		_float SegmentEdgeDistSign = 1.f;
+		const _float SegmentEdgeDistSq = XMVectorGetX(XMVector3LengthSq(SegmentEdgeN));
+
+		// If the near point on the capsule axis is inside the triangle, fix the normal
+		const _float DotEdge = XMVectorGetX(XMVector3Dot(SegmentEdgeN, EdgeNs[EdgeIndex]));
+		if (DotEdge < (-NormalTolerance))
+		{
+			SegmentEdgeN = -SegmentEdgeN;
+			SegmentEdgeDistSign = -1.f;
+		}
+		const _float DotFace = XMVectorGetX(XMVector3Dot(SegmentEdgeN, FaceN));
+
+		// If the near point on the capsule axis is outside the triangle check for cull distance
+		if (SegmentEdgeDistSign > 0.f)
+		{
+			_float SeparationAxisCullDistance = RejectDistance;
+			if (DotFace < -NormalTolerance)
+			{
+				SeparationAxisCullDistance = R;
+			}
+
+			if (SegmentEdgeDistSq > (SeparationAxisCullDistance * SeparationAxisCullDistance))
+			{
+				return 0;
+			}
+		}
+
+		EdgeSegmentDeltas[EdgeIndex] = SegmentEdgeN;
+		EdgeEdgePs[EdgeIndex] = EdgeP;
+		EdgeSegmentPs[EdgeIndex] = SegmentP;
+		EdgeEdgeTs[EdgeIndex] = EdgeT;
+		EdgeSegmentTs[EdgeIndex] = SegmentT;
+		EdgeDistSqs[EdgeIndex] = SegmentEdgeDistSq;
+		EdgeDistSigns[EdgeIndex] = SegmentEdgeDistSign;
+		EdgeDotFace[EdgeIndex] = DotFace;
+	}
+
+	bool bCollided0 = false;
+	bool bCollided1 = false;
+	// 음수면 내부에 있다는 뜻
+	const bool bInsideAll0 = ((EdgeD0s[0] <= DistanceTolerance) & (EdgeD0s[1] <= DistanceTolerance) & (EdgeD0s[2] <= DistanceTolerance)) != 0;
+	const bool bInsideAll1 = ((EdgeD1s[0] <= DistanceTolerance) & (EdgeD1s[1] <= DistanceTolerance) & (EdgeD1s[2] <= DistanceTolerance)) != 0;
+
+	if ((bInsideAll0 & (FaceD0 < RejectDistance) & (FaceD0 < FaceD1 + DistanceTolerance)) != 0)
+	{
+		ContactPoint stContactPoint;
+		stContactPoint.ShapeContactPoints[0] = P0 - R * FaceN;
+		stContactPoint.ShapeContactPoints[1] = P0 - FaceD0 * FaceN;
+		stContactPoint.ShapeContactNormal = FaceN;
+		stContactPoint.Phi = FaceD0 - R;
+		stContactPoint.ContactType = ContactPointType::VertexPlane;
+		bCollided0 = true;
+		return 1;
+	}
+	if ((bInsideAll1 & (FaceD1 < RejectDistance) & (FaceD1 < FaceD0 + DistanceTolerance)) != 0)
+	{
+		ContactPoint stContactPoint;
+		stContactPoint.ShapeContactPoints[0] = P1 - R * FaceN;
+		stContactPoint.ShapeContactPoints[1] = P1 - FaceD1 * FaceN;
+		stContactPoint.ShapeContactNormal = FaceN;
+		stContactPoint.Phi = FaceD1 - R;
+		stContactPoint.ContactType = ContactPointType::VertexPlane;
+		bCollided1 = true;
+		return 1;
+	}
+
+	return 0;
 }
 
 CBounding_Capsule* CBounding_Capsule::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, void* pArg)

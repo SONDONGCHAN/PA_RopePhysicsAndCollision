@@ -13,6 +13,9 @@ private:
 public:
 	virtual void* Get_Bounding() override { return nullptr; }
 	vector<CCollider::TRIANGLE_DESC>& Get_Desc() { return m_vecMyDesc;}
+	vector<_float3>& Get_Normals() { return m_vecNormals; }
+
+
 
 public:
 	HRESULT Initialize(void* pArg);
@@ -35,6 +38,8 @@ private:
 private:
 	vector<CCollider::TRIANGLE_DESC>  m_vecOriginalMyDesc;
 	vector<CCollider::TRIANGLE_DESC>  m_vecMyDesc;
+	vector<_float3>  m_vecNormals;
+
 
 public:
 	static CBounding_Triangles* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, void* pArg);

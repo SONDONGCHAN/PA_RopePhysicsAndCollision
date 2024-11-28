@@ -21,7 +21,7 @@ HRESULT CProjectile_Rope::Initialize_Prototype()
 HRESULT CProjectile_Rope::Initialize(void* pArg)
 {
 	PROJECTILE_DESC* pProjectileDesc = (PROJECTILE_DESC*)pArg;
-	pProjectileDesc->fSpeedPerSec = 70.f;
+	pProjectileDesc->fSpeedPerSec = 80.f;
 	m_pOwnerObject = pProjectileDesc->pOwnerObject;
 	
 	if (FAILED(__super::Initialize(pArg)))
@@ -53,7 +53,7 @@ void CProjectile_Rope::Tick(_float fTimeDelta)
 
 void CProjectile_Rope::Late_Tick(_float fTimeDelta)
 {
-	m_pGameInstance->Add_DebugComponent(m_pColliderCom);
+	//m_pGameInstance->Add_DebugComponent(m_pColliderCom);
 
 	if (FAILED(m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this)))
 		return;
@@ -176,7 +176,7 @@ HRESULT CProjectile_Rope::Add_Component()
 
 	CCollider::CAPSULE_DESC	BoundingDesc{};
 	BoundingDesc.fHeight = 0.01f;
-	BoundingDesc.fRadius = 0.6f;
+	BoundingDesc.fRadius = 0.8f;
 	BoundingDesc.vCenter = { 0.f, 0.f, 0.f };
 	BoundingDesc.vDir = { 0.f, 1.f, 0.f };
 	

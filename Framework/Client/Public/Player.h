@@ -12,6 +12,7 @@ BEGIN(Engine)
 class CCollider;
 class CNavigation;
 
+
 END
 
 
@@ -115,6 +116,11 @@ private:
 	void	Escape_Swing(JumpState _eJumpState);
 
 private:
+	_bool	Check_TriangleState(JumpState _eJumpState);
+	void	Move_Control();
+
+
+private:
 	PlayerState	m_eCurrentState = PlayerState :: STATE_IDLE;	// 현재 상태
 	PlayerState	m_eNextState	= PlayerState :: STATE_IDLE;	// 다음 상태
 	_float		m_fStateTimer	= 0.0f;							// 상태 유지 시간
@@ -124,7 +130,7 @@ private:
 private:
 	CNavigation*		m_pNavigationCom = { nullptr };
 	CCollider*			m_pRigidColliderCom = { nullptr };
-	CCollider*			m_pTrigerColliderCom = { nullptr };
+	CCollider*			m_pTriggerColliderCom = { nullptr };
 
 	CProjectile_Rope*	m_pProjectile_Rope = { nullptr };
 	CCrossHair*			m_pCrossHair = { nullptr };
@@ -134,10 +140,15 @@ private:
 	CSimulation_Pool*	m_pSimulationPool = { nullptr };
 
 private:
-	//list<CCollider*>	m_pLandColliders;
 	CCollider*			m_pCurrentLandCollider{nullptr};
-	//list<CCollider*>	m_pClimbColliders;
+	_int				m_iCurrentLandIndex{ -1 };
+
 	CCollider*			m_pCurrentClimbCollider{ nullptr };
+	_int				m_iCurrentClimbIndex = -1 ;
+
+private:
+	unordered_map<int, _float3> m_CurrentLandIndeces{};
+	unordered_map<int, _float3> m_CurrentClimbIndeces{};
 
 private:
 	_float3				m_vCurrentNormal {0.f, 1.f, 0.f};

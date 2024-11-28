@@ -74,7 +74,7 @@ private:
 		const XMVECTOR& P0, const XMVECTOR& P1,
 		const XMVECTOR& EdgeP0, const XMVECTOR& EdgeP1,
 		const _float R, const _float RejectDistanceSq, const _float NormalToleranceSq,
-		vector<vector<ContactPoint>>& _vvecPoints);
+		vector<vector<ContactPoint>>& _vvecPoints, _int _Index);
 
 	inline bool InRangeClosed(float Value, float Min, float Max)
 	{
@@ -84,12 +84,18 @@ private:
 	{
 		return (Value > Min) && (Value < Max);
 	}
+public:
+	_int Get_State() { return iState; }
+	inline _int Check_State(CBounding* pTargetBounding, _int Index) override;
 
+	//0 : x, 1 : 내부에 있음, 2 : 내부에 없음
 public:
 	_vector Get_ColNormal() { return vColNormal; }
 	_float	Get_ColDepth() { return fColDepth; }
 	vector<vector<vector<ContactPoint>>>&	Get_Points() { return m_vecPoints; }
 
+private:
+	_int iState{ -1 };
 
 private:
 	CCollider::CAPSULE_DESC m_pOriginalMyDesc{  };

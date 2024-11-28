@@ -3,7 +3,6 @@
 
 #include "Body_Player.h"
 #include "Weapon.h"
-#include "Collider.h"
 #include "Projectile_Rope.h"
 #include "Simulation_Pool.h"
 #include "Simulation.h"
@@ -74,6 +73,7 @@ void CPlayer::Priority_Tick(_float fTimeDelta)
 
 void CPlayer::Tick(_float fTimeDelta)
 {
+	Move_Control();
 	Root_Transform();
 
 	KeyInput(fTimeDelta);
@@ -85,7 +85,7 @@ void CPlayer::Tick(_float fTimeDelta)
 		(Pair.second)->Tick(fTimeDelta);
 
 	m_pRigidColliderCom->Tick(m_pTransformCom->Get_WorldMatrix());
-	m_pTrigerColliderCom->Tick(m_pTransformCom->Get_WorldMatrix());
+	m_pTriggerColliderCom->Tick(m_pTransformCom->Get_WorldMatrix());
 
 	m_pSimulationPool->Tick(fTimeDelta);
 	//m_pRopeSimulation->Operate(fTimeDelta);
@@ -96,7 +96,7 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 #ifdef _DEBUG
 	//m_pGameInstance->Add_DebugComponent(m_pNavigationCom);
 	m_pGameInstance->Add_DebugComponent(m_pRigidColliderCom);
-	m_pGameInstance->Add_DebugComponent(m_pTrigerColliderCom);
+	m_pGameInstance->Add_DebugComponent(m_pTriggerColliderCom);
 #endif
 
 	for (auto& Pair : m_PlayerParts)
@@ -151,9 +151,7 @@ void CPlayer::Event_CollisionEnter(ColData* _TargetColData, ColData* _MyColData)
 			float magnitude = XMVectorGetX(XMVector3Length(vNormal));	// 크기 계산
 			float angleRad = acosf(dot / magnitude);					// 라디안 단위 기울기
 			float angleDeg = XMConvertToDegrees(angleRad);				// 각도를 도 단위로 변환
-
-			_float	fDepth	= (-ContactPoint.Phi) + (0.001f);
-
+			_float	fDepth	= (-ContactPoint.Phi) + (0.001f);			// 충돌 깊이
 
 			if (m_eJumpState == JumpState::SWINGING)
 			{
@@ -174,10 +172,12 @@ void CPlayer::Event_CollisionEnter(ColData* _TargetColData, ColData* _MyColData)
 					m_eNextState = PlayerState::STATE_IDLE;
 
 					m_pCurrentLandCollider = _TargetColData->pCol;
+					m_iCurrentLandIndex = ContactPoint.FaceIndex;
 				}
 				else
 				{
 					m_pCurrentLandCollider = _TargetColData->pCol;
+					m_iCurrentLandIndex = ContactPoint.FaceIndex;
 				}
 				
 			}
@@ -201,119 +201,188 @@ void CPlayer::Event_CollisionEnter(ColData* _TargetColData, ColData* _MyColData)
 						m_eNextState = PlayerState::STATE_CLIMING;
 
 						m_pCurrentClimbCollider = _TargetColData->pCol;
+						m_iCurrentClimbIndex = ContactPoint.FaceIndex;
 						m_pTransformCom->Set_Look_ForLandObject(-vNormal);
 					}
 					else
 					{
 						m_pCurrentClimbCollider = _TargetColData->pCol;
+						m_iCurrentClimbIndex = ContactPoint.FaceIndex;
 					}
 				}
 				
 			}
 			m_pTransformCom->Move_Dir(vNormal, fDepth);
 			m_pRigidColliderCom->Tick(m_pTransformCom->Get_WorldMatrix());
-			m_pTrigerColliderCom->Tick(m_pTransformCom->Get_WorldMatrix());
+			m_pTriggerColliderCom->Tick(m_pTransformCom->Get_WorldMatrix());
 
 			if (!m_pRigidColliderCom->Intersect(_TargetColData->pCol))
 			{
 				m_pRigidColliderCom->CollisionExit(_TargetColData->pCol);
+			}			
+			
+		}
+
+		if (_MyColData->pCol == m_pTriggerColliderCom)
+		{
+			m_CurrentLandIndeces.clear();
+			m_CurrentClimbIndeces.clear();
+			vector<vector<CBounding_Capsule::ContactPoint>>& vecPoints = dynamic_cast<CBounding_Capsule*>(m_pTriggerColliderCom->Get_Bounding())->Get_Points()[0];
+			for (int i = 0; i < vecPoints.size(); ++i)
+			{
+				if (vecPoints[i][0].isCol)
+				{
+					CBounding_Capsule::ContactPoint ContactPoint = vecPoints[i][0];
+					_vector vNormal = ContactPoint.ShapeContactNormal;
+					_vector vUp = { 0.0f, 1.0f, 0.0f };
+					float dot = XMVectorGetX(XMVector3Dot(vNormal, vUp));
+					float magnitude = XMVectorGetX(XMVector3Length(vNormal));
+					float angleRad = acosf(dot / magnitude);
+					float angleDeg = XMConvertToDegrees(angleRad);
+					_float	fDepth = (-ContactPoint.Phi) + (0.001f);
+
+					if (angleDeg <= 60.f)
+					{
+						_float3 StoreNormal;
+						XMStoreFloat3(&StoreNormal, vNormal);
+
+						//if (m_CurrentLandIndeces.count(ContactPoint.FaceIndex) > 0)
+						m_CurrentLandIndeces.emplace(ContactPoint.FaceIndex, StoreNormal);
+						    
+					}
+					else if (120.f <= angleDeg)
+					{
+						return;
+					}
+					else
+					{
+						if (m_eJumpState == JumpState::ONGROUND || m_eJumpState == JumpState::ONOBJECT)
+						{
+
+						}
+						else
+						{
+							_float3 StoreNormal;
+							XMStoreFloat3(&StoreNormal, vNormal);
+							m_CurrentClimbIndeces.emplace(ContactPoint.FaceIndex, StoreNormal);
+						}
+					}
+				}
 			}
-			//if (vNormal.m128_f32[1] > 0.9f)
-			//{
-			//	if (m_pLandColliders.empty())
-			//	{
-			//		m_eJumpState = JumpState::ONOBJECT;
-			//		m_eCurrentState = PlayerState::STATE_IDLE;
-			//		m_eNextState = PlayerState::STATE_IDLE;
 
-			//		m_pCurrentLandCollider = _TargetColData->pCol;
-			//		m_pLandColliders.push_back(_TargetColData->pCol);
-			//	}
-			//	else
-			//	{
-			//		//auto iter = find(m_pLandColliders.begin(), m_pLandColliders.end(), _ColData->pCol);
-			//		//if (iter == m_pLandColliders.end())
-			//		m_pLandColliders.push_back(_TargetColData->pCol);
-			//	}
-			//}
-			//else if (vNormal.m128_f32[1] < -0.9f)
-			//{
-			//	return;
-			//}
-			//else
-			//{
-			//	if (m_pClimbColliders.empty())
-			//	{
-			//		m_eJumpState = JumpState::CLIMING;
-			//		m_eCurrentState = PlayerState::STATE_CLIMING;
-			//		m_eNextState = PlayerState::STATE_CLIMING;
-
-			//		m_pCurrentClimbCollider = _TargetColData->pCol;
-			//		m_pClimbColliders.push_back(_TargetColData->pCol);
-
-			//		m_pTransformCom->Set_Look_ForLandObject(-vNormal);
-			//	}
-			//	else
-			//	{
-			//		//auto iter = find(m_pClimbColliders.begin(), m_pClimbColliders.end(), _ColData->pCol);
-			//		//if (iter == m_pClimbColliders.end())
-			//		m_pClimbColliders.push_back(_TargetColData->pCol);
-			//	}
-			//}
-			
-			
 		}
 	}
 }
 
 void CPlayer::Event_CollisionStay(ColData* _ColData, ColData* _MyColData)
 {
+	if (_ColData->eMyColType == COL_STATIC_OBJECT)
+	{
+		if (_MyColData->pCol == m_pTriggerColliderCom)
+		{
+			m_CurrentLandIndeces.clear();
+			m_CurrentClimbIndeces.clear();
+			vector<vector<CBounding_Capsule::ContactPoint>>& vecPoints = dynamic_cast<CBounding_Capsule*>(m_pTriggerColliderCom->Get_Bounding())->Get_Points()[0];
+			for (int i = 0; i < vecPoints.size(); ++i)
+			{
+				if (vecPoints[i][0].isCol)
+				{
+					CBounding_Capsule::ContactPoint ContactPoint = vecPoints[i][0];
+					_vector vNormal = ContactPoint.ShapeContactNormal;
+					_vector vUp = { 0.0f, 1.0f, 0.0f };
+					float dot = XMVectorGetX(XMVector3Dot(vNormal, vUp));
+					float magnitude = XMVectorGetX(XMVector3Length(vNormal));
+					float angleRad = acosf(dot / magnitude);
+					float angleDeg = XMConvertToDegrees(angleRad);
+					_float	fDepth = (-ContactPoint.Phi) + (0.001f);
 
+					if (angleDeg <= 60.f)
+					{
+						_float3 N = dynamic_cast<CBounding_Triangles*>(_ColData->pCol->Get_Bounding())->Get_Normals()[ContactPoint.FaceIndex];
+
+						//if (m_CurrentLandIndeces.count(ContactPoint.FaceIndex) > 0)
+						m_CurrentLandIndeces.emplace(ContactPoint.FaceIndex, N);
+						
+					}
+					else if (120.f <= angleDeg)
+					{
+						return;
+					}
+					else
+					{
+						if (m_eJumpState == JumpState::ONGROUND || m_eJumpState == JumpState::ONOBJECT)
+						{
+
+						}
+						else
+						{
+							_float3 N = dynamic_cast<CBounding_Triangles*>(_ColData->pCol->Get_Bounding())->Get_Normals()[ContactPoint.FaceIndex];
+							m_CurrentClimbIndeces.emplace(ContactPoint.FaceIndex, N);
+						}
+					}
+				}
+			}
+					
+		}
+	}
 }
 
 void CPlayer::Event_CollisionExit(ColData* _ColData, ColData* _MyColData)
 {
 	if (_ColData->eMyColType == COL_STATIC_OBJECT)
 	{
-		/*디버깅*/
-
-		/*if (_MyColData->pCol == m_pTrigerColliderCom)
+		if (_MyColData->pCol == m_pTriggerColliderCom)
 		{
-			
-			auto iter = find(m_pLandColliders.begin(), m_pLandColliders.end(), _ColData->pCol);
-			if (iter != m_pLandColliders.end())
-				m_pLandColliders.erase(iter);
-
 			if (_ColData->pCol == m_pCurrentLandCollider)
 			{
-				if (m_pLandColliders.empty())
-				{
-					m_eJumpState = JumpState::FALLING;
-					m_eCurrentState = PlayerState::STATE_FALLING;
-					m_eNextState = PlayerState::STATE_FALLING;
-					m_pCurrentLandCollider = nullptr;
-				}
-				else
-					m_pCurrentLandCollider = m_pLandColliders.front();
+				//_bool isFind = false;
+				//for (auto pair : m_CurrentLandIndeces)
+				//{
+				//	if (pair.first == m_iCurrentLandIndex)
+				//		continue;
+
+				//	m_iCurrentLandIndex = pair.first;
+				//	m_vCurrentNormal = pair.second;
+				//	isFind = true;
+				//	break;
+				//}
+
+				//if (!isFind)
+				//{
+				//	m_eJumpState = JumpState::FALLING;
+				//	m_eCurrentState = PlayerState::STATE_FALLING;
+				//	m_eNextState = PlayerState::STATE_FALLING;
+				//	m_iCurrentLandIndex = -1;
+				//}
+
+				m_CurrentLandIndeces.clear();
+				m_pCurrentLandCollider = nullptr;
 			}
-
-			iter = find(m_pClimbColliders.begin(), m_pClimbColliders.end(), _ColData->pCol);
-			if (iter != m_pClimbColliders.end())
-				m_pClimbColliders.erase(iter);
-
-			if (_ColData->pCol == m_pCurrentClimbCollider)
+			else if (_ColData->pCol == m_pCurrentClimbCollider)
 			{
-				if (m_pClimbColliders.empty())
-				{
-					m_eJumpState = JumpState::FALLING;
-					m_eCurrentState = PlayerState::STATE_FALLING;
-					m_eNextState = PlayerState::STATE_FALLING;
-					m_pCurrentClimbCollider = nullptr;
-				}
-				else
-					m_pCurrentClimbCollider = m_pClimbColliders.front();
+				//_bool isFind = false;
+				//for (auto pair : m_CurrentClimbIndeces)
+				//{
+				//	if (pair.first == m_iCurrentClimbIndex)
+				//		continue;
+
+				//	m_iCurrentClimbIndex = pair.first;
+				//	m_vClimingNormal = pair.second;
+				//	isFind = true;
+				//	break;
+				//}
+
+				//if (!isFind)
+				//{
+				//	m_eJumpState = JumpState::FALLING;
+				//	m_eCurrentState = PlayerState::STATE_FALLING;
+				//	m_eNextState = PlayerState::STATE_FALLING;
+				//	m_iCurrentClimbIndex = -1;
+				//}
+				m_CurrentClimbIndeces.clear();
+				m_pCurrentClimbCollider = nullptr;
 			}
-		}*/
+		}
 	}
 }
 
@@ -969,8 +1038,6 @@ void CPlayer::Start_Jump()
 		m_eJumpState = JumpState::JUMPING;
 		m_eCurrentState = PlayerState::STATE_FALLING;
 		m_eNextState = PlayerState::STATE_FALLING;
-
-		m_pCurrentLandCollider = nullptr;
 	}
 	else if (m_eJumpState == JumpState::CLIMING)
 	{
@@ -980,7 +1047,6 @@ void CPlayer::Start_Jump()
 		m_eJumpState = JumpState::JUMPING;
 		m_eCurrentState = PlayerState::STATE_FALLING;
 		m_eNextState = PlayerState::STATE_FALLING;
-		m_pCurrentClimbCollider = nullptr;
 	}
 }
 
@@ -1009,6 +1075,82 @@ void CPlayer::Escape_Swing(JumpState _eJumpState)
 	dynamic_cast<CRope_Simulation*>(m_pCurrentSimulation)->Set_Accelerating(false);
 
 	m_pCurrentSimulation = nullptr;
+}
+
+_bool CPlayer::Check_TriangleState(JumpState _eJumpState)
+{
+	int iState = 1;
+
+	if ((_eJumpState == JumpState::ONOBJECT) && m_pCurrentLandCollider != nullptr)
+	{
+		int iState = m_pRigidColliderCom->Get_Bounding()
+			->Check_State(dynamic_cast<CBounding_Triangles*>(m_pCurrentLandCollider->Get_Bounding()), m_iCurrentLandIndex);		
+	}
+	else if ((_eJumpState == JumpState::CLIMING) && m_pCurrentClimbCollider != nullptr)
+	{
+		int iState = m_pRigidColliderCom->Get_Bounding()
+			->Check_State(dynamic_cast<CBounding_Triangles*>(m_pCurrentClimbCollider->Get_Bounding()), m_iCurrentClimbIndex);
+	}
+
+	if (iState == 1)
+		return true;
+	else
+		return false;
+}
+
+void CPlayer::Move_Control()
+{
+	if (m_eJumpState == JumpState::ONOBJECT)
+	{
+		if(!Check_TriangleState(JumpState::ONOBJECT))
+		{
+			_bool isFind = false;
+			for (auto pair : m_CurrentLandIndeces)
+			{
+				if (pair.first == m_iCurrentLandIndex)
+					continue;
+
+				m_iCurrentLandIndex = pair.first;
+				m_vCurrentNormal = pair.second;
+				isFind = true;
+				break;
+			}
+
+			if (!isFind)
+			{
+				m_eJumpState = JumpState::FALLING;
+				m_eCurrentState = PlayerState::STATE_FALLING;
+				m_eNextState = PlayerState::STATE_FALLING;
+				m_iCurrentLandIndex = -1;
+			}
+		}
+	}
+
+	else if (m_eJumpState == JumpState::CLIMING)
+	{
+		if (!Check_TriangleState(JumpState::CLIMING)) 
+		{
+			_bool isFind = false;
+			for (auto pair : m_CurrentClimbIndeces)
+			{
+				if (pair.first == m_iCurrentClimbIndex)
+					continue;
+			
+				m_iCurrentClimbIndex = pair.first;
+				m_vClimingNormal = pair.second;
+				isFind = true;
+				break;
+			}
+			
+			if (!isFind)
+			{
+				m_eJumpState = JumpState::FALLING;
+				m_eCurrentState = PlayerState::STATE_FALLING;
+				m_eNextState = PlayerState::STATE_FALLING;
+				m_iCurrentClimbIndex = -1;
+			}
+		}
+	}
 }
 
 HRESULT CPlayer::Add_Components()
@@ -1060,13 +1202,13 @@ HRESULT CPlayer::Add_Components()
 		return E_FAIL;
 	CGameInstance::GetInstance()->Add_Collider(m_pRigidColliderCom);
 
-	BoundingDesc.fRadius = 0.33f;
+	BoundingDesc.fRadius = 0.4f;
 	ColliderDesc.ColliderDesc = BoundingDesc;
 
 	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Collider_Capsule"),
-		TEXT("Com_TrigerCollider"), reinterpret_cast<CComponent**>(&m_pTrigerColliderCom), &ColliderDesc)))
+		TEXT("Com_TrigerCollider"), reinterpret_cast<CComponent**>(&m_pTriggerColliderCom), &ColliderDesc)))
 		return E_FAIL;
-	CGameInstance::GetInstance()->Add_Collider(m_pTrigerColliderCom);
+	CGameInstance::GetInstance()->Add_Collider(m_pTriggerColliderCom);
 
 	return S_OK;
 }
@@ -1181,7 +1323,7 @@ void CPlayer::Free()
 
 	Safe_Release(m_pNavigationCom);
 	Safe_Release(m_pRigidColliderCom);
-	Safe_Release(m_pTrigerColliderCom);
+	Safe_Release(m_pTriggerColliderCom);
 
 	Safe_Release(m_pCurrentSimulation);
 	Safe_Release(m_pSimulationPool);

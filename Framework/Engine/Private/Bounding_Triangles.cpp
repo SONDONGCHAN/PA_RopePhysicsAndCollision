@@ -13,6 +13,17 @@ HRESULT CBounding_Triangles::Initialize(void* pArg)
 	
 	m_vecOriginalMyDesc = vecCapsuleDesc;
 	m_vecMyDesc = vecCapsuleDesc;
+	m_vecNormals.reserve(m_vecOriginalMyDesc.size());
+	for (int i = 0; i < m_vecOriginalMyDesc.size(); ++i)
+	{
+		_vector A = XMLoadFloat3(&m_vecOriginalMyDesc[i].vVertex2) - XMLoadFloat3(&m_vecOriginalMyDesc[i].vVertex1);
+		_vector B = XMLoadFloat3(&m_vecOriginalMyDesc[i].vVertex3) - XMLoadFloat3(&m_vecOriginalMyDesc[i].vVertex1);
+
+		_vector vNor = XMVector3Normalize(XMVector3Cross(A, B));
+		_float3 N;
+		XMStoreFloat3(&N, vNor);
+		m_vecNormals.push_back(N);
+	}
 	
 	return S_OK;
 }
