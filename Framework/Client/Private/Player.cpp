@@ -1083,12 +1083,12 @@ _bool CPlayer::Check_TriangleState(JumpState _eJumpState)
 
 	if ((_eJumpState == JumpState::ONOBJECT) && m_pCurrentLandCollider != nullptr)
 	{
-		int iState = m_pRigidColliderCom->Get_Bounding()
+		 iState = m_pRigidColliderCom->Get_Bounding()
 			->Check_State(dynamic_cast<CBounding_Triangles*>(m_pCurrentLandCollider->Get_Bounding()), m_iCurrentLandIndex);		
 	}
 	else if ((_eJumpState == JumpState::CLIMING) && m_pCurrentClimbCollider != nullptr)
 	{
-		int iState = m_pRigidColliderCom->Get_Bounding()
+		 iState = m_pRigidColliderCom->Get_Bounding()
 			->Check_State(dynamic_cast<CBounding_Triangles*>(m_pCurrentClimbCollider->Get_Bounding()), m_iCurrentClimbIndex);
 	}
 
@@ -1100,6 +1100,9 @@ _bool CPlayer::Check_TriangleState(JumpState _eJumpState)
 
 void CPlayer::Move_Control()
 {
+	if (m_pCurrentLandCollider == nullptr && m_pCurrentClimbCollider == nullptr)
+		return;
+
 	if (m_eJumpState == JumpState::ONOBJECT)
 	{
 		if(!Check_TriangleState(JumpState::ONOBJECT))
