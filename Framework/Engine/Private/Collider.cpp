@@ -1,5 +1,5 @@
 #include "..\Public\Collider.h"
-#include "GameINstance.h"
+#include "GameInstance.h"
 
 CCollider::CCollider(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CComponent(pDevice, pContext)
@@ -55,13 +55,19 @@ HRESULT CCollider::Initialize(void * pArg)
 	switch (m_eType)
 	{
 	case TYPE_AABB:
-		m_pBounding = CBounding_AABB::Create(m_pDevice, m_pContext, &pInitData->AABBDesc);
+		m_pBounding = CBounding_AABB::Create(m_pDevice, m_pContext, &pInitData->ColliderDesc);
 		break;
 	case TYPE_OBB:
-		m_pBounding = CBounding_OBB::Create(m_pDevice, m_pContext, &pInitData->OBBDesc);
+		m_pBounding = CBounding_OBB::Create(m_pDevice, m_pContext, &pInitData->ColliderDesc);
 		break;
 	case TYPE_SPHERE:
-		m_pBounding = CBounding_Sphere::Create(m_pDevice, m_pContext, &pInitData->SphereDesc);
+		m_pBounding = CBounding_Sphere::Create(m_pDevice, m_pContext, &pInitData->ColliderDesc);
+		break;
+	case TYPE_CAPSULE:
+		m_pBounding = CBounding_Capsule::Create(m_pDevice, m_pContext, &pInitData->ColliderDesc);
+		break;
+	case TYPE_TRIANGLE:
+		m_pBounding = CBounding_Triangles::Create(m_pDevice, m_pContext, &pInitData->ColliderDesc);
 		break;
 	}
 
@@ -105,19 +111,19 @@ void CCollider::CollisionEnter(CCollider* pTarget_Collider)
 	m_CurrentCollisions.insert(pTarget_Collider);
 	Safe_AddRef(pTarget_Collider);
 
-	m_ColData.pGameObject->Event_CollisionEnter(pTarget_Collider->Get_ColData());
+	m_ColData.pGameObject->Event_CollisionEnter(pTarget_Collider->Get_ColData(), &m_ColData);
 }
 
 void CCollider::CollisionStay(CCollider* pTarget_Collider)
 {
-	m_ColData.pGameObject->Event_CollisionStay(pTarget_Collider->Get_ColData());
+	m_ColData.pGameObject->Event_CollisionStay(pTarget_Collider->Get_ColData(), &m_ColData);
 }
 
 void CCollider::CollisionExit(CCollider* pTarget_Collider)
 {
 	m_CurrentCollisions.erase(pTarget_Collider);
 	Safe_Release(pTarget_Collider);
-	m_ColData.pGameObject->Event_CollisionExit(pTarget_Collider->Get_ColData());
+	m_ColData.pGameObject->Event_CollisionExit(pTarget_Collider->Get_ColData(), &m_ColData);
 }
 
 #ifdef _DEBUG

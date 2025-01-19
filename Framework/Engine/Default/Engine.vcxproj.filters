@@ -187,6 +187,12 @@
     <Filter Include="01.Utility\03.Component\Collider\Bounding\Cylinder">
       <UniqueIdentifier>{4eb6921d-2e69-4ca7-949c-5644d93edaec}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\03.Component\Collider\Bounding\Capsule">
+      <UniqueIdentifier>{cce2ff94-e55a-44f4-905b-0e1d4b719abd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.Component\Collider\Bounding\Triangles">
+      <UniqueIdentifier>{b7aa7255-c14b-4c8c-8458-363e66b4fc39}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\public\Base.h">
@@ -372,6 +378,12 @@
     <ClInclude Include="..\Public\Bounding_Cylinder.h">
       <Filter>01.Utility\03.Component\Collider\Bounding\Cylinder</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Bounding_Capsule.h">
+      <Filter>01.Utility\03.Component\Collider\Bounding\Capsule</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Bounding_Triangles.h">
+      <Filter>01.Utility\03.Component\Collider\Bounding\Triangles</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\Base.cpp">
@@ -544,6 +556,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\Bounding_Cylinder.cpp">
       <Filter>01.Utility\03.Component\Collider\Bounding\Cylinder</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Bounding_Capsule.cpp">
+      <Filter>01.Utility\03.Component\Collider\Bounding\Capsule</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Bounding_Triangles.cpp">
+      <Filter>01.Utility\03.Component\Collider\Bounding\Triangles</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -22,6 +22,45 @@ HRESULT CBounding_Cylinder::Render(PrimitiveBatch<VertexPositionColor>* pBatch)
 
 _bool CBounding_Cylinder::Intersect(CCollider::TYPE eType, CBounding* pBounding)
 {
+	_bool isColl = false;
+		
+	switch (eType)
+	{
+	case CCollider::TYPE_AABB:
+		isColl = Intersect((CBounding_AABB*)pBounding);
+		break;
+
+	case CCollider::TYPE_OBB:
+		isColl = Intersect((CBounding_OBB*)pBounding);
+		break;
+
+	case CCollider::TYPE_SPHERE:
+		isColl = Intersect((CBounding_Sphere*)pBounding);
+		break;
+
+	case CCollider::TYPE_CYLINDER:
+		isColl = Intersect((CBounding_Cylinder*)pBounding);
+		break;
+	}
+	
+	if (isColl && (!m_isColl))
+		m_isColl = true;
+	
+	return isColl;
+}
+
+_bool CBounding_Cylinder::Intersect(CBounding_AABB* pTargetBounding)
+{
+	return _bool();
+}
+
+_bool CBounding_Cylinder::Intersect(CBounding_OBB* pTargetBounding)
+{
+	return _bool();
+}
+
+_bool CBounding_Cylinder::Intersect(CBounding_Sphere* pTargetBounding)
+{
 	return _bool();
 }
 
@@ -37,4 +76,5 @@ CBounding_Cylinder* CBounding_Cylinder::Create(ID3D11Device* pDevice, ID3D11Devi
 
 void CBounding_Cylinder::Free()
 {
+	__super::Free();
 }

@@ -9,12 +9,22 @@ END
 
 BEGIN(Client)
 
+enum class OBSTACLE_SHAPE
+{
+	SHAPE_BOX,
+	SHAPE_PYRAMID,
+	SHAPE_PLANE,
+	SHAPE_CUSTOM_1,
+	SHAPE_END
+};
+
 class CObstacle final : public CGameObject
 {
 public:
 	struct OBSTACLE_DESC : public GAMEOBJECT_DESC
 	{
 		_float3 vStartpos;
+		OBSTACLE_SHAPE eShape;
 	};
 
 private:
@@ -31,12 +41,15 @@ public:
 	virtual HRESULT Render() override;
 
 public:
-	virtual void Event_CollisionEnter(ColData* _ColData) override;
-	virtual void Event_CollisionStay(ColData* _ColData) override;
-	virtual void Event_CollisionExit(ColData* _ColData) override;
+	virtual void Event_CollisionEnter(ColData* _ColData, ColData* _MyColData) override;
+	virtual void Event_CollisionStay(ColData* _ColData, ColData* _MyColData) override;
+	virtual void Event_CollisionExit(ColData* _ColData, ColData* _MyColData) override;
 
 private:
 	CCollider* m_pColliderCom = { nullptr };
+
+private:
+	OBSTACLE_SHAPE m_eMyShape{ OBSTACLE_SHAPE::SHAPE_BOX };
 
 private:
 	HRESULT Add_Component();

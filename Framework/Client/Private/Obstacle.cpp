@@ -22,12 +22,14 @@ HRESULT CObstacle::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
+	OBSTACLE_DESC* pObstacleDesc = (OBSTACLE_DESC*)pArg;
+	m_pTransformCom->Set_State(CTransform::STATE_POSITION, XMLoadFloat3(&pObstacleDesc->vStartpos));
+	m_eMyShape = pObstacleDesc->eShape;
+
 	if (FAILED(Add_Component()))
 		return E_FAIL;
 
-	OBSTACLE_DESC* pObstacleDesc = (OBSTACLE_DESC*)pArg;
-	m_pTransformCom->Set_State(CTransform::STATE_POSITION, XMLoadFloat3(&pObstacleDesc->vStartpos));
-
+	
 	return S_OK;
 }
 
@@ -51,15 +53,15 @@ HRESULT CObstacle::Render()
 	return S_OK;
 }
 
-void CObstacle::Event_CollisionEnter(ColData* _ColData)
+void CObstacle::Event_CollisionEnter(ColData* _ColData, ColData* _MyColData)
 {
 }
 
-void CObstacle::Event_CollisionStay(ColData* _ColData)
+void CObstacle::Event_CollisionStay(ColData* _ColData, ColData* _MyColData)
 {
 }
 
-void CObstacle::Event_CollisionExit(ColData* _ColData)
+void CObstacle::Event_CollisionExit(ColData* _ColData, ColData* _MyColData)
 {
 }
 
@@ -73,21 +75,124 @@ HRESULT CObstacle::Add_Component()
 	ColData.iTargetColType = COL_NONE;
 	ColData.isDead = false;
 
-	CCollider::OBB_DESC	BoundingDesc{};
-	_float3		vExtents;
-	_float3		vRadians;
+	/*OBB*/
+	//CCollider::OBB_DESC	BoundingDesc{};
 
-	BoundingDesc.vExtents = _float3{4.f, 2.f, 4.f};
-	BoundingDesc.vRadians = _float3(0.f, 0.f, 0.f);;
-	BoundingDesc.vCenter = _float3(0.f, BoundingDesc.vExtents.y, 0.f);
+	//BoundingDesc.vExtents = _float3{4.f, 2.f, 4.f};
+	////BoundingDesc.vRadians = _float3(XMConvertToRadians(45.f), 0.f, XMConvertToRadians(45.f));;
+	//BoundingDesc.vRadians = _float3(0.f, 0.f, 0.f);;
+	//BoundingDesc.vCenter = _float3(0.f, BoundingDesc.vExtents.y, 0.f);
+	//ColliderDesc.ColData = ColData;
+	//ColliderDesc.OBBDesc = BoundingDesc;
 
+	/*±¸*/
+	//CCollider::SPHERE_DESC	BoundingDesc{};
+
+	//BoundingDesc.fRadius = 4.f;
+	//BoundingDesc.vCenter = _float3(0.f, BoundingDesc.fRadius, 0.f);
+	//ColliderDesc.ColData = ColData;
+	//ColliderDesc.SphereDesc = BoundingDesc;
+
+	/*»ï°¢Çü*/
+	vector<CCollider::TRIANGLE_DESC> BoundingDesc{};
+	CCollider::TRIANGLE_DESC desc;
+	vector<_float3> vecPoints{};
+	vector<array<int, 3>> vecIndices{};
+
+	switch (m_eMyShape)
+	{
+	case Client::OBSTACLE_SHAPE::SHAPE_BOX:
+		vecPoints =
+		{
+			{0.f, 0.f, 0.f},
+			{8.f, 0.f, 0.f},
+			{8.f, 0.f, 8.f},
+			{0.f, 0.f, 8.f},
+			{0.f, 8.f, 0.f},
+			{8.f, 8.f, 0.f},
+			{8.f, 8.f, 8.f},
+			{0.f, 8.f, 8.f}
+		};
+		vecIndices =
+		{
+			{0, 4, 5},
+			{0, 5, 1},
+			{2, 6, 7},
+			{2, 7, 3},
+			{1, 5, 6},
+			{1, 6, 2},
+			{3, 7, 4},
+			{3, 4, 0},
+			{4, 7, 6},
+			{4, 6, 5},
+			{3, 0, 1},
+			{3, 1, 2}
+		};
+
+		for (int i = 0; i < 12; ++i)
+		{
+			desc.vVertex1 = vecPoints[vecIndices[i][0]];
+			desc.vVertex2 = vecPoints[vecIndices[i][1]];
+			desc.vVertex3 = vecPoints[vecIndices[i][2]];
+			BoundingDesc.push_back(desc);
+		}
+		break;
+
+	case Client::OBSTACLE_SHAPE::SHAPE_PYRAMID:
+		break;
+
+	case Client::OBSTACLE_SHAPE::SHAPE_PLANE:
+		desc.vVertex1 = { 0.f, 0.f, 0.f };
+		desc.vVertex2 = { 0.f, 3.f, 10.f };
+		desc.vVertex3 = { 10.f, 0.f, 0.f };
+		BoundingDesc.push_back(desc);
+		desc.vVertex1 = { 10.f, 0.f, 0.f };
+		desc.vVertex2 = { 0.f, 3.f, 10.f };
+		desc.vVertex3 = { 10.f, 0.f, 10.f };
+		BoundingDesc.push_back(desc);
+		desc.vVertex1 = { 10.f, 3.f, -10.f };
+		desc.vVertex2 = { 0.f, 0.f, 0.f };
+		desc.vVertex3 = { 10.f, 0.f, 0.f };
+		BoundingDesc.push_back(desc);
+		desc.vVertex1 = { 0.f, 0.f, -10.f };
+		desc.vVertex2 = { 0.f, 0.f, 0.f };
+		desc.vVertex3 = { 10.f, 3.f, -10.f };
+		BoundingDesc.push_back(desc);
+		break;
+
+	case Client::OBSTACLE_SHAPE::SHAPE_CUSTOM_1:
+		desc.vVertex1 = { 0.f, 0.f, 0.f };
+		desc.vVertex2 = { 0.f, 10.f, 3.f };
+		desc.vVertex3 = { 10.f, 0.f, 0.f };
+		BoundingDesc.push_back(desc);
+		desc.vVertex1 = { 10.f, 0.f, 0.f };
+		desc.vVertex2 = { 0.f, 10.f, 3.f };
+		desc.vVertex3 = { 10.f, 10.f, 1.f };
+		BoundingDesc.push_back(desc);
+		desc.vVertex1 = { 0.f, 10.f, 3.f };
+		desc.vVertex2 = { 0.f, 20.f, -1.f };
+		desc.vVertex3 = { 10.f, 10.f, 1.f };
+		BoundingDesc.push_back(desc);
+		desc.vVertex1 = { 10.f, 10.f, 1.f };
+		desc.vVertex2 = { 0.f, 20.f, -1.f };
+		desc.vVertex3 = { 10.f, 20.f, -3.f };
+		BoundingDesc.push_back(desc);
+		break;
+		break;
+
+	case Client::OBSTACLE_SHAPE::SHAPE_END:
+		break;
+
+	default:
+		break;
+	}
+	
 	ColliderDesc.ColData = ColData;
-	ColliderDesc.OBBDesc = BoundingDesc;
+	ColliderDesc.ColliderDesc = BoundingDesc;
 
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Collider_OBB"),
+	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Collider_Triangle"),
 		TEXT("Com_Collider"), reinterpret_cast<CComponent**>(&m_pColliderCom), &ColliderDesc)))
 		return E_FAIL;
-
 	CGameInstance::GetInstance()->Add_Collider(m_pColliderCom);
 
 	return S_OK;

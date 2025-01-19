@@ -25,8 +25,7 @@ public:
 	HRESULT Initialize(void* pArg);
 	virtual void Tick(_fmatrix WorldMatrix) override;
 	virtual HRESULT Render(PrimitiveBatch<VertexPositionColor>* pBatch) override;
-
-	_bool Intersect(CCollider::TYPE eType, CBounding * pBounding);
+	virtual _bool Intersect(CCollider::TYPE eType, CBounding * pBounding);
 
 private:
 	BoundingSphere*				m_pOriginalSphere = { nullptr };

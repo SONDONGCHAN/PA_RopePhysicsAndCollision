@@ -8,7 +8,7 @@ BEGIN(Engine)
 class ENGINE_DLL CCollider final : public CComponent
 {
 public:
-	enum TYPE { TYPE_SPHERE, TYPE_AABB, TYPE_OBB, TYPE_END };
+	enum TYPE { TYPE_SPHERE, TYPE_AABB, TYPE_OBB, TYPE_CYLINDER, TYPE_CAPSULE, TYPE_TRIANGLE, TYPE_END };
 
 	struct BOUNDING_DESC
 	{
@@ -31,17 +31,47 @@ public:
 		_float3		vExtents;
 	};
 
+	struct CYLINDER_DESC : public BOUNDING_DESC
+	{
+		_float		fRadius;
+		_float		fHeight;
+		_float3		vDir;
+	};
+	struct CAPSULE_DESC : public BOUNDING_DESC
+	{
+		_float		fRadius;
+		_float		fHeight;
+		_float3		vDir;
+	};
+	struct TRIANGLE_DESC: public BOUNDING_DESC
+	{
+		_float3		vVertex1;
+		_float3		vVertex2;
+		_float3		vVertex3;
+	};
+
 	struct ColliderInitData
 	{
 		CGameObject::ColData ColData;
 
 		// 각 타입별 초기화 데이터를 위한 유니온
-		union
-		{
-			AABB_DESC AABBDesc;
-			OBB_DESC OBBDesc;
-			SPHERE_DESC SphereDesc;
-		};
+		//union
+		//{
+		//	AABB_DESC		AABBDesc;
+		//	OBB_DESC		OBBDesc;
+		//	SPHERE_DESC		SphereDesc;
+		//	CYLINDER_DESC	SylinderDesc;
+		//	CAPSULE_DESC	CapsuleDesc;
+		//	vector<TRIANGLE_DESC>	TriangleDesc;
+		//};
+
+		std::variant<
+			AABB_DESC,
+			OBB_DESC,
+			SPHERE_DESC,
+			CYLINDER_DESC,
+			CAPSULE_DESC,
+			std::vector<TRIANGLE_DESC>> ColliderDesc;
 	};
 
 private:

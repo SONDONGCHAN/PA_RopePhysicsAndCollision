@@ -42,9 +42,9 @@ public:
 	virtual HRESULT Render_Shadow() { return S_OK; }
 
 public:
-	virtual void Event_CollisionEnter(ColData* _ColData) {};
-	virtual void Event_CollisionStay(ColData* _ColData) {};
-	virtual void Event_CollisionExit(ColData* _ColData) {};
+	virtual void Event_CollisionEnter(ColData* _ColData, ColData* _MyColData) {};
+	virtual void Event_CollisionStay(ColData* _ColData, ColData* _MyColData) {};
+	virtual void Event_CollisionExit(ColData* _ColData, ColData* _MyColData) {};
 
 public:
 	_bool	Get_isEnable() { return m_isEnable; }

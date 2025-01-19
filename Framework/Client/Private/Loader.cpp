@@ -199,6 +199,16 @@ HRESULT CLoader::Loading_For_GamePlayLevel()
 		CCollider::Create(m_pDevice, m_pContext, CCollider::TYPE_SPHERE))))
 		return E_FAIL;
 
+	/* For.Prototype_Component_Collider_Capsule */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Collider_Capsule"),
+		CCollider::Create(m_pDevice, m_pContext, CCollider::TYPE_CAPSULE))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Collider_Triangle*/
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Collider_Triangle"),
+		CCollider::Create(m_pDevice, m_pContext, CCollider::TYPE_TRIANGLE))))
+		return E_FAIL;
+
 	
 
 	m_strLoadingText = TEXT("셰이더를(을) 로딩 중 입니다.");

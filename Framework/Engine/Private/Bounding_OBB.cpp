@@ -287,6 +287,23 @@ void CBounding_OBB::TransformMyDesc(_fmatrix WorldMatrix)
 	XMStoreFloat4(&m_MyDesc._Orientation, vOrientation);
 }
 
+void CBounding_OBB::GetCorners(XMFLOAT3* Corners)
+{
+	m_pOBB->GetCorners(Corners);
+}
+
+void CBounding_OBB::GetOBBAxes(_vector& outXAxis, _vector& outYAxis, _vector& outZAxis)
+{
+	_vector baseX = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
+	_vector baseY = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+	_vector baseZ = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+
+	// 쿼터니언으로 각 축을 회전
+	outXAxis = XMVector3Rotate(baseX, XMLoadFloat4(&m_MyDesc._Orientation));
+	outYAxis = XMVector3Rotate(baseY, XMLoadFloat4(&m_MyDesc._Orientation));
+	outZAxis = XMVector3Rotate(baseZ, XMLoadFloat4(&m_MyDesc._Orientation));
+}
+
 _bool CBounding_OBB::Intersect(CBounding_OBB * pTargetBounding)
 {
 	OBB_COL_DESC		OBBDesc[2];

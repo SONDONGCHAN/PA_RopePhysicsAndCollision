@@ -12,6 +12,7 @@ BEGIN(Engine)
 class CCollider;
 class CNavigation;
 
+
 END
 
 
@@ -74,9 +75,9 @@ public:
 	virtual HRESULT Render() override;
 
 public:
-	virtual void Event_CollisionEnter(ColData* _ColData) override;
-	virtual void Event_CollisionStay(ColData* _ColData) override;
-	virtual void Event_CollisionExit(ColData* _ColData) override;
+	virtual void Event_CollisionEnter(ColData* _ColData, ColData* _MyColData) override;
+	virtual void Event_CollisionStay(ColData* _ColData, ColData* _MyColData) override;
+	virtual void Event_CollisionExit(ColData* _ColData, ColData* _MyColData) override;
 
 public:
 	void	Start_Stiff_Simulating(_vector _vDir, _vector _vPos, _float _fM, _float _fLastM);
@@ -115,6 +116,11 @@ private:
 	void	Escape_Swing(JumpState _eJumpState);
 
 private:
+	_bool	Check_TriangleState(JumpState _eJumpState);
+	void	Move_Control();
+
+
+private:
 	PlayerState	m_eCurrentState = PlayerState :: STATE_IDLE;	// 현재 상태
 	PlayerState	m_eNextState	= PlayerState :: STATE_IDLE;	// 다음 상태
 	_float		m_fStateTimer	= 0.0f;							// 상태 유지 시간
@@ -123,7 +129,9 @@ private:
 
 private:
 	CNavigation*		m_pNavigationCom = { nullptr };
-	CCollider*			m_pColliderCom = { nullptr };
+	CCollider*			m_pRigidColliderCom = { nullptr };
+	CCollider*			m_pTriggerColliderCom = { nullptr };
+
 	CProjectile_Rope*	m_pProjectile_Rope = { nullptr };
 	CCrossHair*			m_pCrossHair = { nullptr };
 
@@ -132,14 +140,24 @@ private:
 	CSimulation_Pool*	m_pSimulationPool = { nullptr };
 
 private:
-	list<CCollider*>	m_pLandColliders;
 	CCollider*			m_pCurrentLandCollider{nullptr};
-	list<CCollider*>	m_pClimbColliders;
+	_int				m_iCurrentLandIndex{ -1 };
+
 	CCollider*			m_pCurrentClimbCollider{ nullptr };
+	_int				m_iCurrentClimbIndex = -1 ;
+
+private:
+	unordered_map<int, _float3> m_CurrentLandIndeces{};
+	unordered_map<int, _float3> m_CurrentClimbIndeces{};
+
+private:
+	_float3				m_vCurrentNormal {0.f, 1.f, 0.f};
+	_float3				m_vClimingNormal{ 0.f, 1.f, 0.f };
+
 
 private:
 	const	_float m_fGravity{ -9.81f };		// 중력 가속도
-	const	_float m_fJumpforce{ 20.f };		// 초기 점프 속도
+	const	_float m_fJumpforce{ 10.f };		// 초기 점프 속도
 	const	_float m_fTerminalVelocity = -25.f; // 최대 낙하 속도
 	const	_float m_fDragCoefficient = 0.1f;	// 공기 저항 계수
 

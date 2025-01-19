@@ -1,3 +1,0 @@
-https://sites.google.com/a/cgspeed.com/cgspeed/motion-capture/the-3dsmax-friendly-bvh-release-of-cmus-motion-capture-database
-
-https://github.com/walkoncross/blender_bvh_addon_enhanced?tab=readme-ov-file

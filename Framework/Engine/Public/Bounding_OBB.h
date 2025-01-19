@@ -53,6 +53,10 @@ private:
 public:
 	My_Desc*	Get_MyDesc() { return &m_MyDesc; }
 	_vector		Get_ColFace() { return vColFace; }
+	void		GetCorners(XMFLOAT3* Corners);
+
+public:
+	void GetOBBAxes(_vector& outXAxis, _vector& outYAxis, _vector& outZAxis);
 
 private:
 	BoundingOrientedBox*				m_pOriginalOBB = { nullptr };
